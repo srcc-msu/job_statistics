@@ -1,0 +1,96 @@
+<!doctype html>
+
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title> {{ app_config.cluster.name }} tasks table</title>
+
+	<link rel="stylesheet" type="text/css" href="/job_table/static/job_table.css">
+
+	<link rel="stylesheet" type="text/css" href="/static/jquery/jquery.tagit.css">
+	<link rel="stylesheet" type="text/css" href="/static/jquery/jquery-ui-1.11.4.css">
+
+	<link rel="stylesheet" type="text/css" href="/static/tablesorter/blue/style.css">
+</head>
+
+<body>
+
+	<script type="text/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="/static/jquery/jquery-ui-1.11.4.min.js"></script>
+
+	<script type="text/javascript" src="/static/tablesorter/jquery.tablesorter.min.js"></script>
+
+	<script type="text/javascript" src="/static/jquery/tag-it.min.js"></script>
+
+	<script type="text/javascript" src="/job_table/static/job_table.js"></script>
+
+	<script type="text/javascript">
+		$(document).ready(function()
+		{
+			$("#tasks_table").tablesorter();
+			InitTags();
+			set_current_page();
+		});
+	</script>
+
+	<h1> {{ app_config.cluster.name }} task table</h1>
+
+	<form id="query_form">
+		<ul id="req_tags"></ul>
+		<ul id="opt_tags"></ul>
+		<ul id="no_tags"></ul>
+
+		<input id="query_button" type="button" value="query" onclick="update_current_page();"/>
+	</form>
+
+
+<table id="tasks_table" class="tablesorter" border="1">
+	<thead>
+		<tr>
+			<th>id</th>
+			<th>account</th>
+			<th>t_start</th>
+			<th>t_end</th>
+			<th>state</th>
+			<th>cores_hours</th>
+			<th>num_cores</th>
+			<th>duration</th>
+			<th>partition</th>
+
+			{% for sensor in sensors %}
+				<th> {{sensor}} </th>
+			{% endfor %}
+
+			<th>tags</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		{% for job, tag, performance in jobs %}
+			<tr>
+				<td class="task_state_{{job.state}}">
+					<a href="/jd/{{job.job_id}}" class="table_text">
+						{{ job.job_id }}
+					</a>
+				</td>
+
+				<td class="table_text"> {{ job.account }} </td>
+				<td class="table_text"> {{ job.t_start }} </td>
+				<td class="table_text"> {{ job.t_end }} </td>
+				<td class="table_text"> {{ job.state }} </td>
+				<td class="table_text"> {{ "{:.1f}".format((job.t_end - job.t_start) * job.num_cores / 3600) }} </td>
+				<td class="table_text"> {{ job.num_cores }} </td>
+				<td class="table_text"> {{ "{:.1f}".format((job.t_end - job.t_start) / 60) }} </td>
+				<td class="table_text"> {{ job.partition }} </td>
+
+				{% for sensor in sensors %}
+					<td  style="background-color: {{ get_color(sensor, performance[sensor]) }}" class="sensor_text" > {{ performance[sensor] }} </td>
+				{% endfor %}
+
+				<td class="table_text"> {{ tag.tags }} </td>
+
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>

@@ -1,0 +1,31 @@
+<!doctype html>
+
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Autoags</title>
+
+</head>
+
+<body>
+	<script type="text/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
+
+	<table border="1">
+		<thead>
+			<tr>
+				<th>tag label</th>
+				<th>autotag condition</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			{% for tag, autotag in data %}
+				<tr>
+					<td> {{ tag.label }} </td>
+					<td> {{ autotag.condition }} </td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</body>

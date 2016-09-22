@@ -1,0 +1,51 @@
+.task_state_3 {
+	background-color: #00FF00 !important;
+}
+
+.task_state_4 {
+	background-color: #00EEFF !important;
+}
+
+.task_state_5 {
+	background-color: #FF0000 !important;
+}
+
+.task_state_6 {
+	background-color: #FF00FF !important;
+}
+
+.task_state_7 {
+	background-color: #BB0000 !important;
+}
+
+.task_state_COMPLETED {
+	background-color: #00FF00 !important;
+}
+
+.task_state_COMPLETING {
+	background-color: #FFA500 !important;
+}
+
+.task_state_CANCELLED {
+	background-color: #00EEFF !important;
+}
+
+.task_state_FAILED {
+	background-color: #FF0000 !important;
+}
+
+.task_state_TIMEOUT {
+	background-color: #FF00FF !important;
+}
+
+.task_state_NODE_FAIL {
+	background-color: #BB0000 !important;
+}
+
+.table_text {
+	font-size: 11pt;
+}
+
+.sensor_text {
+	font-size: 12pt;
+}

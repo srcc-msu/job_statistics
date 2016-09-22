@@ -1,0 +1,485 @@
+<!doctype html>
+
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Task Job Digest</title>
+
+	<link rel="stylesheet" type="text/css" href="/static/jquery/jquery.datetimepicker.css"/>
+	<link rel="stylesheet" type="text/css" href="/static/jquery/jquery-ui-1.11.4.css">
+	<link rel="stylesheet" type="text/css" href="/static/jquery/jquery.tagit.css"/>
+</head>
+
+<body>
+	<script type="text/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="/static/jquery/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" src="/static/jquery/jquery-ui-1.11.4.min.js"></script>
+
+	<script type="text/javascript" src="/static/jquery/tag-it.min.js"></script>
+
+	<script type="text/javascript" src="/jd/static/jd.js"></script>
+
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+	<script type="text/javascript">
+		google.charts.load('current', {'packages':['corechart']});
+		google.charts.setOnLoadCallback(google_callback_wrapper);
+
+		function google_callback_wrapper() {
+			{% if "gpu" in job.partition %}
+				LoadData( {{ job.id }}, true);
+			{% else %}
+				LoadData( {{ job.id }}, false);
+			{% endif %}
+		}
+
+		$(document).ready(function() {
+			FillTags({{ job.id }});
+
+		ApplyToggle();
+		});
+	</script>
+
+	<table>
+		<tr valign="top">
+			<td valign="top" style="width:400pt;">
+				<table border="1" cellpadding="5">
+					<tr>
+						<td>job id</td>
+						<td> {{ job.id }} </td>
+					</tr>
+					<tr>
+						<td>account</td>
+						<td><a href=""> {{ job.account }} </a></td>
+					</tr>
+					<tr>
+						<td>command</td>
+						<td> {{ job.command }} </td>
+					</tr>
+					<tr>
+						<td>workdir</td>
+						<td> {{ job.workdir }} </td>
+					</tr>
+					<tr>
+						<td>slurm-out</td>
+						<td> {{ job.workdir }} /slurm-{{ job.id }}.out</td>
+					</tr>
+
+					<tr>
+						<td>partition</td>
+						<td> {{ job.partition }} </td>
+					</tr>
+					<tr>
+						<td>timelimit(min)</td>
+						<td> {{ job.timelimit }} </td>
+					</tr>
+					<tr>
+						<td>submit</td>
+						<td> {{ job.t_submit }} </td>
+					</tr>
+					<tr>
+						<td>start</td>
+						<td> {{ job.t_start }} </td>
+					</tr>
+					<tr>
+						<td>end</td>
+						<td> {{ job.t_end }} </td>
+					</tr>
+					<tr>
+						<td>duration (minutes)</td>
+						<td> {{ job.duration }} </td>
+					</tr>
+					<tr>
+						<td>number of cores</td>
+						<td> {{ job.num_cores }} </td>
+					</tr>
+					<tr>
+						<td>number of nodes</td>
+						<td> {{ job.num_nodes }} </td>
+					</tr>
+					<tr>
+						<td>number of cores * hours</td>
+						<td> {{ job.cores_hours }} </td>
+					</tr>
+
+					<tr>
+						<td colspan="2"> {{ job.nodelist }} </td>
+					</tr>
+
+				</table>
+
+				<ul id="jd_tags"></ul>
+
+			</td>
+
+			<td valign="top">
+				<table border="1" cellpadding="5">
+					{% for key in monitoring["avg"].keys()|sort %}
+						<tr>
+							<td> {{ key }} </td>
+							<td style="background-color: {{ get_color(key, monitoring['avg'][key]) }} "> {{ monitoring["avg"][key] }} </td>
+						</tr>
+					{% endfor %}
+				</table>
+			</td>
+
+			<td valign="top">
+				<table border="1" cellpadding="5">
+					{% for key in monitoring["max"].keys()|sort %}
+						<tr>
+							<td> {{ key }} </td>
+							<td style="background-color: {{ get_color(key, monitoring['max'][key]) }} "> {{ monitoring["max"][key] }} </td>
+						</tr>
+					{% endfor %}
+				</table>
+			</td>
+
+			<td valign="top">
+				<table border="1" cellpadding="5">
+					{% for key in monitoring["min"].keys()|sort %}
+						<tr>
+							<td> {{ key }} </td>
+							<td style="background-color: {{ get_color(key, monitoring['min'][key]) }} "> {{ monitoring["min"][key] }} </td>
+						</tr>
+					{% endfor %}
+				</table>
+			</td>
+
+			<td valign="top">
+				<table border="1" cellpadding="5">
+					{% for key in derivative.keys()|sort %}
+						<tr>
+							<td> {{ key }} </td>
+							<td> {{ derivative[key] }} </td>
+						</tr>
+					{% endfor %}
+				</table>
+			</td>
+
+		</tr>
+	</table>
+
+	<p>
+		<span style="color: red; font-size: x-large; ">Keep in mind 5-min approximation: average data and graphs for small tasks may be very
+			inaccurate.</span>
+	</p>
+
+	<h2>Big tasks may require up to half minute to load, be patient.</h2>
+
+	<h3>General information: <input type="button" value="Click to show details" onclick="ToggleInfo();"></h3>
+
+	<div class="info"><p>
+		All processor counters (CPU user load, CPU flops, l1 miss, l3 miss, mem_load, mem_store) are gatherd from each core by monitoring agents. Then processor counters from all cores are mixed together to calculate minimum, maximum and average value withhin every 300 seconds interval.<br />
+
+		Visual graphics are calculated as follows:
+		'min' graphs - Minimum accross all minimal values from all nodes for the interval<br />
+		'max' graphs - Maximum accross all maximal values from all nodes for the interval<br />
+		'avg' graphs - Average accross all average values from all nodes for the interval<br />
+		'avg_min' graphs - Average accross all minimum values from all nodes for the interval<br />
+		'avg_max' graphs - Average accross all maximum values from all nodes for the interval<br />
+
+		sql: SELECT time, MIN(min) as min, MAX(max) as max, AVG(min) as avg_min, AVG(max) as avg_max, AVG(avg) as avg from
+		{0} WHERE time > t_start + 300 AND time < t_end - 300 AND node_id in ({1}) GROUP BY time ORDER BY time;
+	</p></div>
+
+	<input type="button" value="show/hide all graphs" onclick="ToggleAll();">
+
+	<h1>CPU user load</h1>
+
+	<div id="cpu_user" class="graph"></div>
+	<a href="/heatmap/cpu_user/$id" target="_blank">heatmap</a>
+	<a href="/data/cpu_user/$id" target="_blank">JSON data</a>
+	<a href="/data/cpu_user/$id?format=csv" target="_blank">CSV data</a>
+
+
+
+	<div class="info"><p>
+		CPU user load, minimum 0, max 100
+		<br />
+		Percent of time a core was busy with user task (not including io/system work and so on)
+	</p></div>
+
+	<h1>CPU flops</h1>
+
+	<div id="cpu_flops" class="graph"></div>
+	<a href="/heatmap/cpu_flops/$id" target="_blank">heatmap</a>
+	<a href="/data/cpu_flops/$id" target="_blank">JSON data</a>
+	<a href="/data/cpu_flops/$id?format=csv" target="_blank">CSV data</a>
+
+
+
+	<div class="info"><p>
+		CPU 'flops' counter<br />
+		CPU in lomonosov: 06_2CH, intel manual, 19.6, p2603<br />
+		Config(2015.05.22): CPU_PERF_COUNTER02:0x0510<br />
+		<br />
+		FP_COMP_OPS_EXE.X87: Counts the number of FP Computational Uops Executed. The number of FADD, FSUB, FCOM, FMULs,
+		integer ULsand IMULs, FDIVs, FPREMs, FSQRTS, integer DIVs, and IDIVs. This event does not distinguish an FADD used
+		in the middle of a transcendental flow from a separate FADD instruction.<br />
+		<br />
+		FP_COMP_OPS_EXE.SSE_FP: Counts number of SSE and SSE2 FP uops executed.<br />
+	</p></div>
+
+
+	{% if "gpu" in job.partition %}
+		<h1>GPU load</h1>
+
+		<div id="gpu_load" class="graph"></div>
+		<a href="/heatmap/gpu_load/$id" target="_blank">heatmap</a>
+		<a href="/data/gpu_load/$id" target="_blank">JSON data</a>
+		<a href="/data/gpu_load/$id?format=csv" target="_blank">CSV data</a>
+
+
+		<div class="info"><p>
+			GPU load in percent, as reported by NVML<br />
+		</p></div>
+
+		<h1>GPU mem load</h1>
+
+		<div id="gpu_mem_load" class="graph"></div>
+		<a href="/heatmap/gpu_mem_load/$id" target="_blank">heatmap</a>
+		<a href="/data/gpu_mem_load/$id" target="_blank">JSON data</a>
+		<a href="/data/gpu_mem_load/$id?format=csv" target="_blank">CSV data</a>
+
+
+
+		<div class="info"><p>
+			GPU memory load in percent, as reported by NVML<br />
+		</p></div>
+
+		<h1>GPU mem used</h1>
+
+		<div id="gpu_mem_usage" class="graph"></div>
+		<a href="/heatmap/gpu_mem_usage/$id" target="_blank">heatmap</a>
+		<a href="/data/gpu_mem_usage/$id" target="_blank">JSON data</a>
+		<a href="/data/gpu_mem_usage/$id?format=csv" target="_blank">CSV data</a>
+
+
+
+		<div class="info"><p>
+			GPU memory usage in MB<br />
+		</p></div>
+
+
+	{% endif %}
+
+	<h1>l1 miss</h1>
+
+	<div id="cpu_perf_l1d_repl" class="graph"></div>
+	<a href="/heatmap/cpu_perf_l1d_repl/$id" target="_blank">heatmap</a>
+	<a href="/data/cpu_perf_l1d_repl/$id" target="_blank">JSON data</a>
+	<a href="/data/cpu_perf_l1d_repl/$id?format=csv" target="_blank">CSV data</a>
+
+
+
+	<div class="info"><p>
+		CPU l1 cache miss counter<br />
+		CPU in lomonosov: 06_2CH, intel manual, 19.6, p2608<br />
+		<br />
+		Config(2015.05.22): CPU_PERF_COUNTER01:0x0151<br />
+		<br />
+		L1D.REPL: Counts the number of lines brought into the L1 data cache.
+	</p></div>
+
+	<h1>l3 miss</h1>
+
+	<div id="llc_miss" class="graph"></div>
+	<a href="/heatmap/llc_miss/$id" target="_blank">heatmap</a>
+	<a href="/data/llc_miss/$id" target="_blank">JSON data</a>
+	<a href="/data/llc_miss/$id?format=csv" target="_blank">CSV data</a>
+
+
+
+	<div class="info"><p>
+		CPU last level cache miss counter<br />
+		intel manual, 19.1, p2536<br />
+		<br />
+		Config(2015.05.22): CPU_PERF_FIXED01:0x412e<br />
+		<br />
+		LLC miss: Longest latency cache miss
+	</p></div>
+
+	<h1>mem_load</h1>
+
+	<div id="mem_load" class="graph"></div>
+	<a href="/heatmap/mem_load/$id" target="_blank">heatmap</a>
+	<a href="/data/mem_load/$id" target="_blank">JSON data</a>
+	<a href="/data/mem_load/$id?format=csv" target="_blank">CSV data</a>
+
+
+
+	<div class="info"><p>
+		CPU memory load instructions counter<br />
+		CPU in lomonosov: 06_2CH, intel manual, 19.6, p2602<br />
+		<br />
+		Config(2015.05.22): CPU_PERF_COUNTER03:0x010B<br />
+		<br />
+		MEM_INST_RETIRED.LOADS: Counts the number of instructions with an architecturally-visible load retired on the
+		architected path.
+	</p></div>
+
+	<h1>mem_store</h1>
+
+	<div id="mem_store" class="graph"></div>
+	<a href="/heatmap/mem_store/$id" target="_blank">heatmap</a>
+	<a href="/data/mem_store/$id" target="_blank">JSON data</a>
+	<a href="/data/mem_store/$id?format=csv" target="_blank">CSV data</a>
+
+
+
+	<div class="info"><p>
+		CPU memory store instructions counter<br />
+		CPU in lomonosov: 06_2CH, intel manual, 19.6, p2602<br />
+		<br />
+		Config(2015.05.22): CPU_PERF_COUNTER04:0x020B<br />
+		<br />
+		MEM_INST_RETIRED.STORES: Counts the number of instructions with an architecturally-visibl store retired on the
+		architected path.
+	</p></div>
+
+	<h1>ib_rcv_data</h1>
+
+	<div id="ib_rcv_data" class="graph"></div>
+	<a href="/heatmap/ib_rcv_data/$id" target="_blank">heatmap</a>
+	<a href="/data/ib_rcv_data/$id" target="_blank">JSON data</a>
+	<a href="/data/ib_rcv_data/$id?format=csv" target="_blank">CSV data</a>
+
+
+
+	<div class="info"><p>
+		Infiniband recieved data in bytes
+	</p></div>
+
+
+	<h1>ib_xmit_data</h1>
+
+	<div id="ib_xmit_data" class="graph"></div>
+	<a href="/heatmap/ib_xmit_data/$id" target="_blank">heatmap</a>
+	<a href="/data/ib_xmit_data/$id" target="_blank">JSON data</a>
+	<a href="/data/ib_xmit_data/$id?format=csv" target="_blank">CSV data</a>
+
+
+
+	<div class="info"><p>
+		Infiniband sent data in bytes
+	</p></div>
+
+	<h1>ib_rcv_pckts</h1>
+
+	<div id="ib_rcv_pckts" class="graph"></div>
+	<a href="/heatmap/ib_rcv_pckts/$id" target="_blank">heatmap</a>
+	<a href="/data/ib_rcv_pckts/$id" target="_blank">JSON data</a>
+	<a href="/data/ib_rcv_pckts/$id?format=csv" target="_blank">CSV data</a>
+
+
+
+	<div class="info"><p>
+		Infiniband recieved data in packets
+	</p></div>
+
+	<h1>ib_xmit_pckts</h1>
+
+	<div id="ib_xmit_pckts" class="graph"></div>
+	<a href="/heatmap/ib_xmit_pckts/$id" target="_blank">heatmap</a>
+	<a href="/data/ib_xmit_pckts/$id" target="_blank">JSON data</a>
+	<a href="/data/ib_xmit_pckts/$id?format=csv" target="_blank">CSV data</a>
+
+
+	<div class="info"><p>
+		Infiniband sent data in packets
+	</p></div>
+
+	<h1>loadavg</h1>
+
+	<div id="loadavg" class="graph"></div>
+	<a href="/heatmap/loadavg/$id" target="_blank">heatmap</a>
+	<a href="/data/loadavg/$id" target="_blank">JSON data</a>
+	<a href="/data/loadavg/$id?format=csv" target="_blank">CSV data</a>
+
+
+	<div class="info"><p>
+		Average number of processes ready for execution for last minute.<br />
+		see /proc/loadavg (http://man7.org/linux/man-pages/man5/proc.5.html)
+	</p></div>
+
+	<h1>CPU system load</h1>
+
+	<div id="cpu_system" class="graph"></div>
+	<a href="/heatmap/cpu_system/$id" target="_blank">heatmap</a>
+	<a href="/data/cpu_system/$id" target="_blank">JSON data</a>
+	<a href="/data/cpu_system/$id?format=csv" target="_blank">CSV data</a>
+
+
+	<div class="info"><p>
+		Percent of time a core was busy in kernel space
+		<br />
+	</p></div>
+
+	<h1>CPU iowait</h1>
+
+	<div id="cpu_iowait" class="graph"></div>
+	<a href="/heatmap/cpu_iowait/$id" target="_blank">heatmap</a>
+	<a href="/data/cpu_iowait/$id" target="_blank">JSON data</a>
+	<a href="/data/cpu_iowait/$id?format=csv" target="_blank">CSV data</a>
+
+
+	<div class="info"><p>
+		CPU iowait load, minimum 0, max 100
+		<br />
+		Percent of time a core was idle due to waiting for IO operation to complete
+	</p></div>
+
+	<h1>CPU idle</h1>
+
+	<div id="cpu_idle" class="graph"></div>
+	<a href="/heatmap/cpu_idle/$id" target="_blank">heatmap</a>
+	<a href="/data/cpu_idle/$id" target="_blank">JSON data</a>
+	<a href="/data/cpu_idle/$id?format=csv" target="_blank">CSV data</a>
+
+
+	<div class="info"><p>
+		CPU idle load, minimum 0, max 100
+		<br />
+		Percent of time a core was in idle state
+	</p></div>
+
+	<h1>CPU nice load</h1>
+
+	<div id="cpu_nice" class="graph"></div>
+	<a href="/heatmap/ib_rcv_data/$id" target="_blank">heatmap</a>
+	<a href="/data/ib_rcv_data/$id" target="_blank">JSON data</a>
+	<a href="/data/ib_rcv_data/$id?format=csv" target="_blank">CSV data</a>
+
+	<div class="info"><p>
+		Percent of time a core was busy with nice(low priority) tasks
+		<br />
+	</p></div>
+
+	<h1>CPU irq load</h1>
+
+	<div id="cpu_irq" class="graph"></div>
+	<a href="/heatmap/cpu_irq/$id" target="_blank">heatmap</a>
+	<a href="/data/cpu_irq/$id" target="_blank">JSON data</a>
+	<a href="/data/cpu_irq/$id?format=csv" target="_blank">CSV data</a>
+
+	<div class="info"><p>
+		CPU irq load, minimum 0, max 100
+		<br />
+		Percent of time a core was busy with hardware interrupts
+	</p></div>
+
+	<h1>CPU soft_irq load</h1>
+
+	<div id="cpu_soft_irq" class="graph"></div>
+	<a href="/heatmap/cpu_soft_irq/$id" target="_blank">heatmap</a>
+	<a href="/data/cpu_soft_irq/$id" target="_blank">JSON data</a>
+	<a href="/data/cpu_soft_irq/$id?format=csv" target="_blank">CSV data</a>
+
+	<div class="info"><p>
+		CPU soft_irq load, minimum 0, max 100
+		<br />
+		Percent of time a core was busy with software interrupts
+	</p></div>
+</body>
+</html>

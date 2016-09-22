@@ -1,0 +1,141 @@
+<!doctype html>
+
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Charts preview</title>
+
+	<link rel="stylesheet" href="/static/jquery/jquery-ui-1.11.4.css">
+	<link rel="stylesheet" href="/job_stat/static/preset.css">
+</head>
+
+<body>
+<script type="text/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/static/jquery/jquery-ui-1.11.4.min.js"></script>
+<script type="text/javascript" src="/static/jquery/jquery.csv.min.js"></script>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<script type="text/javascript" src="/job_stat/static/job_stat.js"></script>
+<script type="text/javascript" src="/job_stat/static/preset.js"></script>
+
+<script type="text/javascript">
+
+		jQuery(document).ready(function() {
+			google.charts.load('current', {'packages':['corechart', 'bar']});
+			google.charts.setOnLoadCallback(DrawCharts);
+		});
+
+
+</script>
+
+<h1 style="color:green">General statistics of {{ app_config.cluster.name }}</h1>
+
+<table>
+	<tr>
+		<th></th>
+		<th><p class="text_day_ago">yesterday</p></th>
+		<th><p class="text_week_ago">for last week</p></th>
+		<th><p class="text_month_ago">for last month</p></th>
+		<th><p class="text_year_ago">since 1 Jan 2016</p></th>
+	</tr>
+
+	<tr>
+		<td class="text_header">Task scheduling efficiency:</td>
+		<td class="text_day_ago"><span id="task_total_cpu_1"></span></td>
+		<td class="text_week_ago"><span id="task_total_cpu_7"></span></td>
+		<td class="text_month_ago"><span id="task_total_cpu_30"></span></td>
+		<td class="text_year_ago"><span id="task_total_cpu_365"></span></td>
+	</tr>
+	<tr>
+		<td class="text_header">Completed tasks per day:</td>
+		<td class="text_day_ago"><span id="avg_completed_1"></span></td>
+		<td class="text_week_ago"><span id="avg_completed_7"></span></td>
+		<td class="text_month_ago"><span id="avg_completed_30"></span></td>
+		<td class="text_year_ago"><span id="avg_completed_365"></span></td>
+	</tr>
+	<tr>
+		<td class="text_header">Started tasks per day:</td>
+		<td class="text_day_ago"><span id="avg_started_1"></span></td>
+		<td class="text_week_ago"><span id="avg_started_7"></span></td>
+		<td class="text_month_ago"><span id="avg_started_30"></span></td>
+		<td class="text_year_ago"><span id="avg_started_365"></span></td>
+	</tr>
+	<tr>
+		<td class="text_header">Average running task count:</td>
+		<td class="text_day_ago"><span id="avg_running_1"></span></td>
+		<td class="text_week_ago"><span id="avg_running_7"></span></td>
+		<td class="text_month_ago"><span id="avg_running_30"></span></td>
+		<td class="text_year_ago"><span id="avg_running_365"></span></td>
+	</tr>
+	<tr>
+		<td class="text_header">Average waiting task count:</td>
+		<td style="text-align: right">N/A</td>
+		<td class="text_week_ago"><span id="avg_waiting_7"></span></td>
+		<td class="text_month_ago"><span id="avg_waiting_30"></span></td>
+		<td class="text_year_ago"><span id="avg_waiting_365"></span></td>
+	</tr>
+
+	<tr>
+		<td colspan=5><p></p>
+	</tr>
+
+	<tr>
+		<td class="text_header">Total completed tasks:</td>
+		<td class="text_day_ago"><span id="total_completed_1"></span></td>
+		<td class="text_week_ago"><span id="total_completed_7"></span></td>
+		<td class="text_month_ago"><span id="total_completed_30"></span></td>
+		<td class="text_year_ago"><span id="total_completed_365"></span></td>
+	</tr>
+	<tr>
+		<td class="text_header">Total started tasks:</td>
+		<td class="text_day_ago"><span id="total_started_1"></span></td>
+		<td class="text_week_ago"><span id="total_started_7"></span></td>
+		<td class="text_month_ago"><span id="total_started_30"></span></td>
+		<td class="text_year_ago"><span id="total_started_365"></span></td>
+	</tr>
+
+	<tr>
+		<td class="text_header">Total users:</td>
+		<td class="text_day_ago"><span id="total_user_count_1"></span></td>
+		<td class="text_week_ago"><span id="total_user_count_7"></span></td>
+		<td class="text_month_ago"><span id="total_user_count_30"></span></td>
+		<td class="text_year_ago"><span id="total_user_count_365"></span></td>
+	</tr>
+
+
+</table>
+
+<h1 style="color:green">Queues</h1>
+
+<div>
+	<h2>Average wait time in queues for started tasks</h2>
+
+	<div id="queue_avg_wait_time_by_day"></div>
+</div>
+
+<div>
+	<h2>Unique users, who completed a task in every queue</h2>
+
+	<div id="users_by_day"></div>
+</div>
+
+<h1 style="color:green">User top</h1>
+
+<div style='height: 700px'>
+	<h2>Top 10 users by core*seconds time (single threaded tasks are treated as full node tasks) for last week</h2>
+
+	<div>
+		<div id="user_total_work_time"></div>
+	</div>
+</div>
+
+<div style='height: 500px'>
+	<h2>Top 10 users by completed tasks for last week</h2>
+
+	<div id="user_total_tasks"></div>
+</div>
+
+</body>
+</html>

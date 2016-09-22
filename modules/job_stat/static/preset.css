@@ -1,0 +1,27 @@
+.text_day_ago {
+    color: #f16c20;
+    font-size: 200%;
+    text-align: right;
+}
+
+.text_week_ago {
+    color: #1395ba;
+    font-size: 175%;
+    text-align: right;
+}
+
+.text_month_ago {
+    color: #13ba95;
+    font-size: 150%;
+    text-align: right;
+}
+
+.text_year_ago {
+    color: #0d3c55;
+    font-size: 125%;
+    text-align: right;
+}
+
+.text_header {
+    font-size: 150%;
+}

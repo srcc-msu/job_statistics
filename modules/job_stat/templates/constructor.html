@@ -1,0 +1,435 @@
+<!doctype html>
+
+<html>
+<head>
+	<link rel="stylesheet" href="/static/jquery/jquery-ui-1.11.4.css">
+
+	<meta charset="utf-8">
+
+	<title>Statistics constructor</title>
+</head>
+
+<body>
+<script type="text/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/static/jquery/jquery-ui-1.11.4.min.js"></script>
+<script type="text/javascript" src="/static/jquery/jquery.csv.min.js"></script>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<script type="text/javascript" src="/job_stat/static/job_stat.js"></script>
+
+<script type="text/javascript">
+		function Toggle(target){
+			$(target).each(function(i) { $(this).toggle(200); });
+		}
+
+		jQuery(document).ready(function() {
+			Toggle("#cores_params");
+			Toggle("#run_time_params");
+			Toggle("#wait_time_params");
+			Toggle("#tasks_count_params");
+			Toggle("#users_count_params");
+			google.charts.load('current', {'packages':['corechart', 'bar']});
+
+			$("#date_from").datepicker();
+			$("#date_to").datepicker();
+
+			$("#date_from").datepicker("setDate", "-30");
+			$("#date_to").datepicker("setDate", "today");
+		});
+</script>
+
+<script type="text/javascript">
+
+	function GetSelected(group_name, form)
+	{
+		var selected = [];
+
+		$('input[name="' + group_name + '"]:checked', form).each(function() {
+			selected.push($(this).val());
+		});
+
+		return selected;
+	}
+
+	function GetGeneralParams()
+	{
+		var cluster = GetSelected("cluster", '#general_params')[0];
+		var partition = GetSelected("partition", '#general_params')[0];
+
+		var account = GetSelected("account", '#general_params')[0];
+		if(account === "custom") account = $("#custom_account").val();
+
+		var state = GetSelected("state", '#general_params')[0];
+
+		var grouping = GetSelected("grouping", '#general_params');
+
+		data = {
+			t_from : $("#date_from").datepicker('getDate') / 1000
+			, t_to : $("#date_to").datepicker('getDate') / 1000
+		};
+
+		if(cluster   != "all") data.cluster   = cluster;
+		if(partition != "all") data.partition = partition;
+		if(account   != "all") data.account   = account;
+		if(state     != "all") data.state     = state;
+
+		data.grouping = grouping.join();
+
+		return data;
+	}
+
+	function Fetch(text_target, graph_target, params, api)
+	{
+		data = GetGeneralParams();
+		if(data === null)
+		{
+			$(text_target).val("error");
+			return;
+		}
+
+		var normalized = $('input[name="normalized"]', params).is(':checked');
+
+		$(text_target).val("");
+
+		$.ajax({
+			url: api + "/" + GetSelected("metric", params)
+			, data: data
+			, success: function(data) {
+				if(data) $(text_target).val(data);
+				}
+			, error: function() {
+				$(text_target).val("sorry, bad param configuration or internal error"); }
+		});
+	}
+
+	function DrawWrapper(target, data, params)
+	{
+	   var normalized = $('input[name="normalized"]', params).is(':checked');
+	   var rows_count = $('input[name="rows_count"]', params).val();
+
+	   Draw(target, data, rows_count, normalized, data.lastIndexOf("account") != 0);
+	}
+
+	function DrawCores()
+	{
+		DrawWrapper("#cores_graphic", $("#cores_result").val(), "#cores_params");
+	}
+
+	function DrawCoresSec()
+	{
+		DrawWrapper("#cores_sec_graphic", $("#cores_sec_result").val(), "#cores_sec_params");
+	}
+
+	function DrawRunTime()
+	{
+		DrawWrapper("#run_time_graphic", $("#run_time_result").val(), "#run_time_params");
+	}
+
+	function DrawWaitTime()
+	{
+		DrawWrapper("#wait_time_graphic", $("#wait_time_result").val(), "#wait_time_params");
+	}
+
+	function DrawTasksCount()
+	{
+		DrawWrapper("#tasks_count_graphic", $("#tasks_count_result").val(), "#tasks_count_params");
+	}
+
+	function DrawUsersCount()
+	{
+		DrawWrapper("#users_count_graphic", $("#users_count_result").val(), "#users_count_params");
+	}
+
+	function FetchCores()
+	{
+		Fetch("#cores_result", "#cores_graphic", "#cores_params", "/api/job_stat/cores");
+	}
+
+	function FetchCoresSec()
+	{
+		Fetch("#cores_sec_result", "#cores_sec_graphic", "#cores_sec_params", "/api/job_stat/cores_sec");
+	}
+
+	function FetchRunTime()
+	{
+		Fetch("#run_time_result", "#run_time_graphic", "#run_time_params", "/api/job_stat/run_time");
+	}
+
+	function FetchWaitTime()
+	{
+		Fetch("#wait_time_result", "#wait_time_graphic", "#wait_time_params", "/api/job_stat/wait_time");
+	}
+
+	function FetchTasksCount()
+	{
+		Fetch("#tasks_count_result", "#tasks_count_graphic", "#tasks_count_params", "/api/job_stat/tasks_count");
+	}
+
+	function FetchUsersCount()
+	{
+		Fetch("#users_count_result", "#users_count_graphic", "#users_count_params", "/api/job_stat/users_count");
+	}
+</script>
+
+<h1 style="color:green">General settings</h1>
+
+<form id="general_params">
+	<br>
+	<table border="1px">
+		<tr>
+			<td colspan="5" align="center">
+				Filters
+			</td>
+		</tr>
+		<tr>
+			<td>Cluster</td>
+			<td>Partition</td>
+			<td>Account</td>
+			<td>State</td>
+			<td>Time interval</td>
+		</tr>
+		<tr>
+			<td>
+				<input type="radio" name="cluster" value="all" checked>All<br>
+				<input type="radio" name="cluster" value="lomonosov">Lomonosov<br>
+			</td>
+			<td>
+				<input type="radio" name="partition" value="all" checked>All<br>
+				<input type="radio" name="partition" value="regular4">regular4<br>
+				<input type="radio" name="partition" value="reg4prio">reg4prio<br>
+				<input type="radio" name="partition" value="regular6">regular6<br>
+				<input type="radio" name="partition" value="hdd4">hdd4<br>
+				<input type="radio" name="partition" value="hdd6">hdd6<br>
+				<input type="radio" name="partition" value="gpu">gpu<br>
+			</td>
+			<td>
+				<input type="radio" name="account" value="all" checked>All tasks<br>
+				<input type="radio" name="account" value="custom">
+				<input type="text" name="account" id=custom_account placeholder="Enter username"><br>
+			</td>
+
+			<td>
+				<input type="radio" name="state" value="all" checked>All<br>
+				<input type="radio" name="state" value="COMPLETED">Completed<br>
+				<input type="radio" name="state" value="COMPLETING">Completing<br>
+				<input type="radio" name="state" value="NODE_FAIL">Node fail<br>
+				<input type="radio" name="state" value="TIMEOUT">Timeout<br>
+				<input type="radio" name="state" value="FAILED">Failed<br>
+				<input type="radio" name="state" value="CANCELED">Canceled<br>
+			</td>
+
+			<td>
+				<p>From: <input type="text" id="date_from"></p>
+				<p>To: <input type="text" id="date_to"></p>
+			</td>
+		</tr>
+	</table>
+
+	<table border="1px">
+		<tr>
+			<td colspan="7" align="center">
+				Grouping
+			</td>
+		</tr>
+		<tr>
+			<td>General</td>
+			<td>Submit time</td>
+			<td>Start time</td>
+			<td>End time</td>
+			<td>Special</td>
+		</tr>
+		<tr>
+			<td>
+				<input type="checkbox" name="grouping" value="cluster">by cluster<br>
+				<input type="checkbox" name="grouping" value="partition">by partition<br>
+				<input type="checkbox" name="grouping" value="account">by account<br>
+				<input type="checkbox" name="grouping" value="state">by state<br>
+			</td>
+			<td>
+				<input type="checkbox" name="grouping" value="submit_hour">by submit hour<br>
+				<input type="checkbox" name="grouping" value="submit_day">by submit day<br>
+				<input type="checkbox" name="grouping" value="submit_dow">by submit weekday<br>
+				<input type="checkbox" name="grouping" value="submit_month">by submit month<br>
+			</td>
+			<td>
+				<input type="checkbox" name="grouping" value="start_hour">by start hour<br>
+				<input type="checkbox" name="grouping" value="start_day">by start day<br>
+				<input type="checkbox" name="grouping" value="start_dow">by start weekday<br>
+				<input type="checkbox" name="grouping" value="start_month">by start month<br>
+			</td>
+			<td>
+				<input type="checkbox" name="grouping" value="end_hour">by end hour<br>
+				<input type="checkbox" name="grouping" value="end_day">by end day<br>
+				<input type="checkbox" name="grouping" value="end_dow">by end weekday<br>
+				<input type="checkbox" name="grouping" value="end_month">by end month<br>
+			</td>
+			<td>
+				<input type="checkbox" name="grouping" value="size_group">by size<br>
+				<input type="checkbox" name="grouping" value="duration_group">by duration<br>
+			</td>
+		</tr>
+	</table>
+</form>
+
+<br>
+
+<h1 style="color:green">Used cores_seconds statistics
+	<input type="button" value="Hide section" onclick="Toggle('#cores_sec_params');">
+</h1>
+
+<form id="cores_sec_params">
+	<br>
+	<table border="1px">
+		<tr>
+			<td width="100px" align="center">
+				<input type="radio" name="metric" value="min">min<br>
+				<input type="radio" name="metric" value="max">max<br>
+				<input type="radio" name="metric" value="avg">avg<br>
+				<input type="radio" name="metric" value="sum" checked>sum<br>
+				<input type="button" value="fetch data" onclick="FetchCoresSec();"><br>
+				<input type="checkbox" name="normalized">Normalized<br>
+				<input type="number" name="rows_count" value="10" min="1" max="999">
+				<input type="button" value="draw data" onclick="DrawCoresSec();">
+
+			</td>
+			<td>
+				<textarea rows="10" cols="45" id="cores_sec_result">Result</textarea>
+			</td>
+		</tr>
+	</table>
+	<div id="cores_sec_graphic"></div>
+</form>
+
+<h1 style="color:green">Used cores statistics
+	<input type="button" value="Hide section" onclick="Toggle('#cores_params');">
+</h1>
+
+<form id="cores_params">
+	<br>
+	<table border="1px">
+		<tr>
+			<td>
+				<input type="radio" name="metric" value="min">min<br>
+				<input type="radio" name="metric" value="max">max<br>
+				<input type="radio" name="metric" value="avg">avg<br>
+				<input type="radio" name="metric" value="sum" checked>sum<br>
+				<input type="button" value="fetch data" onclick="FetchCores();"><br>
+				<input type="checkbox" name="normalized">Normalized<br>
+				<input type="number" name="rows_count" value="10" min="1" max="999">
+				<input type="button" value="draw data" onclick="DrawCores();">
+
+			</td>
+			<td>
+				<textarea rows="10" cols="45" id="cores_result">Result</textarea>
+			</td>
+		</tr>
+	</table>
+	<div id="cores_graphic"></div>
+</form>
+
+<h1 style="color:green">Run time statistics
+	<input type="button" value="Hide section" onclick="Toggle('#run_time_params');">
+</h1>
+
+<form id="run_time_params">
+	<br>
+	<table border="1px">
+		<tr>
+			<td>
+				<input type="radio" name="metric" value="min">min<br>
+				<input type="radio" name="metric" value="max">max<br>
+				<input type="radio" name="metric" value="avg">avg<br>
+				<input type="radio" name="metric" value="sum" checked>sum<br>
+				<input type="button" value="fetch data" onclick="FetchRunTime();"><br>
+				<input type="checkbox" name="normalized">Normalized<br>
+				<input type="number" name="rows_count" value="10" min="1" max="999">
+				<input type="button" value="draw data" onclick="DrawRunTime();">
+
+			</td>
+			<td>
+				<textarea rows="10" cols="45" id="run_time_result">Result</textarea>
+			</td>
+		</tr>
+	</table>
+	<div id="run_time_graphic"></div>
+</form>
+
+<h1 style="color:green">Wait time statistics
+	<input type="button" value="Hide section" onclick="Toggle('#wait_time_params');">
+</h1>
+
+<form id="wait_time_params">
+	<br>
+	<table border="1px">
+		<tr>
+			<td>
+				<input type="radio" name="metric" value="min">min<br>
+				<input type="radio" name="metric" value="max">max<br>
+				<input type="radio" name="metric" value="avg">avg<br>
+				<input type="radio" name="metric" value="sum" checked>sum<br>
+				<input type="button" value="fetch data" onclick="FetchWaitTime();"><br>
+				<input type="checkbox" name="normalized">Normalized<br>
+				<input type="number" name="rows_count" value="10" min="1" max="999">
+				<input type="button" value="draw data" onclick="DrawWaitTime();">
+
+			</td>
+			<td>
+				<textarea rows="10" cols="45" id="wait_time_result">Result</textarea>
+			</td>
+		</tr>
+	</table>
+	<div id="wait_time_graphic"></div>
+</form>
+
+
+<h1 style="color:green">Tasks count statistics
+	<input type="button" value="Hide section" onclick="Toggle('#tasks_count_params');">
+</h1>
+
+<form id="tasks_count_params">
+	<br>
+	<table border="1px">
+		<tr>
+			<td>
+				<input type="radio" name="metric" value="count" checked>count<br>
+				<input type="button" value="fetch data" onclick="FetchTasksCount();"><br>
+				<input type="checkbox" name="normalized">Normalized<br>
+				<input type="number" name="rows_count" value="10" min="1" max="999">
+				<input type="button" value="draw data" onclick="DrawTasksCount();">
+
+			</td>
+			<td>
+				<textarea rows="10" cols="45" id="tasks_count_result">Result</textarea>
+			</td>
+		</tr>
+	</table>
+	<div id="tasks_count_graphic"></div>
+</form>
+
+
+<h1 style="color:green">Users count statistics
+	<input type="button" value="Hide section" onclick="Toggle('#users_count_params');">
+</h1>
+
+<form id="users_count_params">
+	<br>
+	<table border="1px">
+		<tr>
+			<td>
+				<input type="radio" name="metric" value="count" checked>count<br>
+				<input type="button" value="fetch data" onclick="FetchUsersCount();"><br>
+				<input type="checkbox" name="normalized">Normalized<br>
+				<input type="number" name="rows_count" value="10" min="1" max="999">
+				<input type="button" value="draw data" onclick="DrawUsersCount();">
+
+			</td>
+			<td>
+				<textarea rows="10" cols="45" id="users_count_result">Result</textarea>
+			</td>
+		</tr>
+	</table>
+	<div id="users_count_graphic"></div>
+</form>
+</body>
+</html>
