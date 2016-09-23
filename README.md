@@ -1,4 +1,4 @@
-# Jobs statistics app for supercomputer
+# Jobs statistics application for a supercomputer
 The application gathers all information about running and finished jobs
 and aggregated monitoring data from nodes.
 It allows to display all tasks, to filter them basing on custom tagging mechanism,
@@ -7,11 +7,14 @@ to show a general jobs statistics bu runtime, length, resources and so on.
 
 ## Requirements
 python3.5+
+
 virtualenv
 
 ## Installation
 `virtualenv -p /usr/bin/python3.5 venv`
+
 `source venv/bin/activate`
+
 `pip install -r requirements.txt`
 
 later use `source venv/bin/activate` every time you want to work with the project
@@ -21,7 +24,7 @@ If you want to use a default config, you must create postgresql user "user"
 with password "password" and with access to databases: testing, development, production.
 Or use your custom settings and edit `config.py`
 
-One time setup to create all databases:
+One time setup to create all tables:
 
 for development:
 `python init.py -c dev --drop`
