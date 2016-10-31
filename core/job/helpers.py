@@ -91,6 +91,32 @@ class SlurmConverter(DBMSConverter):
 
 		return result
 
+class SacctConverter(DBMSConverter):
+	def ParseConvert(self, job_info: str) -> dict:
+		# sacct -S 2015-01-01 --format=JobID,Partition,User,Submit,Start,End,Timelimit,State,Priority,NNodes,alloccpus,NodeList -P
+		# 5476|compute|serg|2016-01-14T17:21:23|2016-01-14T17:21:23|2016-01-14T17:21:26|1-00:00:00|COMPLETED|4294900803|2|20|n[48021-48022]
+
+		raw = job_info.split("|")
+
+		result = {
+			"job_id": int(raw[0])
+			, "task_id": 0
+			, "partition": raw[1]
+			, "account": raw[2]
+			, "t_submit": SlurmConverter.SlurmTime2TS(raw[3])
+			, "t_start": SlurmConverter.SlurmTime2TS(raw[4])
+			, "t_end": SlurmConverter.SlurmTime2TS(raw[5])
+			, "timelimit": SlurmConverter.SlurmInterval2TS(raw[6])
+			, "command": ""
+			, "workdir": ""
+			, "state": raw[7]
+			, "priority": int(raw[8])
+			, "num_nodes": int(raw[9])
+			, "num_cores": int(raw[10])
+			, "nodelist": raw[11]}
+
+		return result
+
 class CleoConverter(DBMSConverter):
 	def ParseConvert(self, job_info: str) -> dict:
 		# job_info = "9981;shvets;/bin/sleep 100;/export/home/shvets/graphit_jd;main;1452530336;1452530336;1452530441;cn11:1;1;864000;0"

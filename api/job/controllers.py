@@ -8,7 +8,7 @@ from sqlalchemy import func, Float
 from application.database import global_db
 from core.job.controllers import add_or_update
 from core.job.models import Job
-from core.job.helpers import LomSlurmConverter, SlurmConverter
+from core.job.helpers import LomSlurmConverter, SlurmConverter, SacctConverter
 from core.monitoring.controllers import update_performance
 from core.monitoring.models import JobPerformance
 from modules.autotag.controllers import apply_autotags
@@ -34,6 +34,8 @@ def add_job() -> Response:
 				parsed_data = LomSlurmConverter().ParseConvert(data)
 			elif request.form["format"].lower() == "slurm_plugin":
 				parsed_data = SlurmConverter().ParseConvert(data)
+			elif request.form["format"].lower() == "sacct":
+				parsed_data = SacctConverter().ParseConvert(data)
 			else:
 				return jsonify({"data": "unsupported format", "result": "error"})
 

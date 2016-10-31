@@ -123,6 +123,21 @@ class TestJob(TestSuit):
 		assert JobPerformance.query.get(job.id)
 		assert JobTag.query.get(job.id)
 
+	def test_create_job_sacct(self):
+		rv = TestSuit.client.post("/api/job/"
+			, data={"format" : "sacct"
+				, "data" : "5476|compute|serg|2016-01-14T17:21:23|2016-01-14T17:21:23|2016-01-14T17:21:26|1-00:00:00|COMPLETED|4294900803|2|20|n[48021-48022,51000-51010]"})
+
+		print(rv.status, rv.data)
+
+		assert "200" in rv.status
+		assert b"id" in rv.data
+
+		job = Job.query.filter(Job.account == "serg").one()
+
+		assert JobPerformance.query.get(job.id)
+		assert JobTag.query.get(job.id)
+
 	def test_create_job_slurm_plugin(self):
 		rv = TestSuit.client.post("/api/job/"
 			, data={"format" : "slurm_plugin"
