@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, Response, request
 
 from core.tag.models import Tag
-from database import global_db
+from application.database import global_db
 
 tag_api_pages = Blueprint('tag_api', __name__
 	, template_folder='templates', static_folder='static')

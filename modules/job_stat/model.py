@@ -1,7 +1,7 @@
 from flask import current_app
 from sqlalchemy import Column, Integer, Table
 
-from database import global_db
+from application.database import global_db
 
 class JobStat(global_db.Model):
 	TABLE_NAME = "job_stat"

@@ -5,7 +5,7 @@ import sys
 from flask import Blueprint, jsonify, Response, request, redirect, current_app
 from sqlalchemy import func, Float
 
-from database import global_db
+from application.database import global_db
 from core.job.controllers import add_or_update
 from core.job.models import Job
 from core.job.helpers import LomSlurmConverter, SlurmConverter

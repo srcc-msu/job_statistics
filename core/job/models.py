@@ -1,7 +1,7 @@
 import re
 from typing import List
 
-from database import global_db
+from application.database import global_db
 
 class Job(global_db.Model):
 	__tablename__ = 'job'

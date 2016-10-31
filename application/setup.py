@@ -2,7 +2,7 @@ import runpy
 
 from flask import Flask
 
-from database import global_db
+from application.database import global_db
 from application.helpers import app_log
 
 def create_job_stat_view(app, name):

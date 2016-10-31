@@ -2,7 +2,7 @@ import http.client
 
 from flask import Blueprint, Response, jsonify, render_template, request
 
-from database import global_db
+from application.database import global_db
 from modules.autotag.models import AutoTag
 from core.job.models import Job
 from core.monitoring.models import JobPerformance

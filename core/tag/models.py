@@ -1,6 +1,6 @@
 from typing import Iterable, List
 
-from database import global_db
+from application.database import global_db
 from core.tag.constants import TAG_SEPARATOR
 
 class JobTag(global_db.Model):

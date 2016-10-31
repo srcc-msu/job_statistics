@@ -1,7 +1,7 @@
 from optparse import OptionParser
 
 from application.helpers import app_log
-from setup import create_app, setup_database, register_blueprints, load_cluster_config
+from application.setup import create_app, setup_database, register_blueprints, load_cluster_config
 
 if __name__ == '__main__':
 	parser = OptionParser()

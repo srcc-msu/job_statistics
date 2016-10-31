@@ -7,7 +7,7 @@ from sqlalchemy import or_
 
 from core.tag.constants import TAG_SEPARATOR
 from modules.job_table.helpers import get_color
-from database import global_db
+from application.database import global_db
 from core.job.models import Job
 from core.tag.models import JobTag
 from core.monitoring.models import JobPerformance

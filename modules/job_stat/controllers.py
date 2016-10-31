@@ -6,7 +6,7 @@ from flask_sqlalchemy import BaseQuery
 
 from modules.job_stat.model import JobStat
 from core.job.models import Job
-from database import global_db
+from application.database import global_db
 
 job_stat_pages = Blueprint('job_stat', __name__
 	, template_folder='templates', static_folder='static')

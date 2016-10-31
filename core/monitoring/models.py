@@ -1,4 +1,4 @@
-from database import global_db
+from application.database import global_db
 
 from core.monitoring.constants import SENSOR_MAP
 

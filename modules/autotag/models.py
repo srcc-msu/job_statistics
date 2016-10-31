@@ -1,6 +1,6 @@
 from typing import Callable
 
-from database import global_db
+from application.database import global_db
 from core.job.models import Job
 from core.monitoring.models import JobPerformance
 

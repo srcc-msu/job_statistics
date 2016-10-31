@@ -1,12 +1,13 @@
 import unittest
 
-from database import global_db
+from application.database import global_db
+from application.setup import create_app, setup_database, register_blueprints, load_cluster_config
+
 from core.job.controllers import add
 from core.job.models import Job
 from core.monitoring.models import JobPerformance
 from core.tag.models import JobTag, Tag
 from modules.autotag.models import AutoTag
-from setup import create_app, setup_database, register_blueprints, load_cluster_config
 
 class TestSuit(unittest.TestCase):
 	client = None
