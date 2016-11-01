@@ -47,7 +47,7 @@
 				<table border="1" cellpadding="5">
 					<tr>
 						<td>job id</td>
-						<td> {{ job.id }} </td>
+						<td> {{ job.job_id }} </td>
 					</tr>
 					<tr>
 						<td>account</td>
@@ -63,7 +63,7 @@
 					</tr>
 					<tr>
 						<td>slurm-out</td>
-						<td> {{ job.workdir }}/slurm-{{ job.id }}.out</td>
+						<td> {{ job.workdir }}/slurm-{{ job.job_id }}.out</td>
 					</tr>
 
 					<tr>
@@ -186,14 +186,7 @@
 	<input type="button" value="show/hide all graphs" onclick="ToggleAll();">
 
 	<h1>CPU user load</h1>
-
 	<div id="cpu_user" class="graph"></div>
-	<a href="/heatmap/cpu_user/$id" target="_blank">heatmap</a>
-	<a href="/data/cpu_user/$id" target="_blank">JSON data</a>
-	<a href="/data/cpu_user/$id?format=csv" target="_blank">CSV data</a>
-
-
-
 	<div class="info"><p>
 		CPU user load, minimum 0, max 100
 		<br />
@@ -201,18 +194,10 @@
 	</p></div>
 
 	<h1>CPU flops</h1>
-
 	<div id="cpu_flops" class="graph"></div>
-	<a href="/heatmap/cpu_flops/$id" target="_blank">heatmap</a>
-	<a href="/data/cpu_flops/$id" target="_blank">JSON data</a>
-	<a href="/data/cpu_flops/$id?format=csv" target="_blank">CSV data</a>
-
-
-
 	<div class="info"><p>
 		CPU 'flops' counter<br />
-		CPU in lomonosov: 06_2CH, intel manual, 19.6, p2603<br />
-		Config(2015.05.22): CPU_PERF_COUNTER02:0x0510<br />
+		Config(2016.11.01): CPU_PERF_COUNTER02:0x0510<br />
 		<br />
 		FP_COMP_OPS_EXE.X87: Counts the number of FP Computational Uops Executed. The number of FADD, FSUB, FCOM, FMULs,
 		integer ULsand IMULs, FDIVs, FPREMs, FSQRTS, integer DIVs, and IDIVs. This event does not distinguish an FADD used
@@ -222,208 +207,96 @@
 	</p></div>
 
 
-	{% if "gpu" in job.partition %}
-		<h1>GPU load</h1>
+	<h1>GPU load</h1>
+	<div id="gpu_load" class="graph"></div>
+	<div class="info"><p>
+		GPU load in percent, as reported by NVML<br />
+	</p></div>
 
-		<div id="gpu_load" class="graph"></div>
-		<a href="/heatmap/gpu_load/$id" target="_blank">heatmap</a>
-		<a href="/data/gpu_load/$id" target="_blank">JSON data</a>
-		<a href="/data/gpu_load/$id?format=csv" target="_blank">CSV data</a>
+	<h1>GPU mem load</h1>
+	<div id="gpu_mem_load" class="graph"></div>
+	<div class="info"><p>
+		GPU memory load in percent, as reported by NVML<br />
+	</p></div>
 
-
-		<div class="info"><p>
-			GPU load in percent, as reported by NVML<br />
-		</p></div>
-
-		<h1>GPU mem load</h1>
-
-		<div id="gpu_mem_load" class="graph"></div>
-		<a href="/heatmap/gpu_mem_load/$id" target="_blank">heatmap</a>
-		<a href="/data/gpu_mem_load/$id" target="_blank">JSON data</a>
-		<a href="/data/gpu_mem_load/$id?format=csv" target="_blank">CSV data</a>
-
-
-
-		<div class="info"><p>
-			GPU memory load in percent, as reported by NVML<br />
-		</p></div>
-
-		<h1>GPU mem used</h1>
-
-		<div id="gpu_mem_usage" class="graph"></div>
-		<a href="/heatmap/gpu_mem_usage/$id" target="_blank">heatmap</a>
-		<a href="/data/gpu_mem_usage/$id" target="_blank">JSON data</a>
-		<a href="/data/gpu_mem_usage/$id?format=csv" target="_blank">CSV data</a>
-
-
-
-		<div class="info"><p>
-			GPU memory usage in MB<br />
-		</p></div>
-
-
-	{% endif %}
+	<h1>GPU mem used</h1>
+	<div id="gpu_mem_usage" class="graph"></div>
+	<div class="info"><p>
+		GPU memory usage in MB<br />
+	</p></div>
 
 	<h1>l1 miss</h1>
-
 	<div id="cpu_perf_l1d_repl" class="graph"></div>
-	<a href="/heatmap/cpu_perf_l1d_repl/$id" target="_blank">heatmap</a>
-	<a href="/data/cpu_perf_l1d_repl/$id" target="_blank">JSON data</a>
-	<a href="/data/cpu_perf_l1d_repl/$id?format=csv" target="_blank">CSV data</a>
-
-
-
 	<div class="info"><p>
 		CPU l1 cache miss counter<br />
-		CPU in lomonosov: 06_2CH, intel manual, 19.6, p2608<br />
-		<br />
-		Config(2015.05.22): CPU_PERF_COUNTER01:0x0151<br />
+		Config(2016.11.01): CPU_PERF_COUNTER01:0x0151<br />
 		<br />
 		L1D.REPL: Counts the number of lines brought into the L1 data cache.
 	</p></div>
 
 	<h1>l3 miss</h1>
-
 	<div id="llc_miss" class="graph"></div>
-	<a href="/heatmap/llc_miss/$id" target="_blank">heatmap</a>
-	<a href="/data/llc_miss/$id" target="_blank">JSON data</a>
-	<a href="/data/llc_miss/$id?format=csv" target="_blank">CSV data</a>
-
-
-
 	<div class="info"><p>
 		CPU last level cache miss counter<br />
-		intel manual, 19.1, p2536<br />
-		<br />
-		Config(2015.05.22): CPU_PERF_FIXED01:0x412e<br />
+		Config(2016.11.01): CPU_PERF_FIXED01:0x412e<br />
 		<br />
 		LLC miss: Longest latency cache miss
 	</p></div>
 
 	<h1>mem_load</h1>
-
 	<div id="mem_load" class="graph"></div>
-	<a href="/heatmap/mem_load/$id" target="_blank">heatmap</a>
-	<a href="/data/mem_load/$id" target="_blank">JSON data</a>
-	<a href="/data/mem_load/$id?format=csv" target="_blank">CSV data</a>
-
-
-
 	<div class="info"><p>
-		CPU memory load instructions counter<br />
-		CPU in lomonosov: 06_2CH, intel manual, 19.6, p2602<br />
-		<br />
-		Config(2015.05.22): CPU_PERF_COUNTER03:0x010B<br />
-		<br />
-		MEM_INST_RETIRED.LOADS: Counts the number of instructions with an architecturally-visible load retired on the
-		architected path.
+		All retired memory load uops(!), not ops.<br />
+		Config(2016.11.01): CPU_PERF_COUNTER03:0x81D0 # MEM_UOPS_RETIRED.ALL_LOADS<br />
 	</p></div>
 
 	<h1>mem_store</h1>
-
 	<div id="mem_store" class="graph"></div>
-	<a href="/heatmap/mem_store/$id" target="_blank">heatmap</a>
-	<a href="/data/mem_store/$id" target="_blank">JSON data</a>
-	<a href="/data/mem_store/$id?format=csv" target="_blank">CSV data</a>
-
-
-
 	<div class="info"><p>
-		CPU memory store instructions counter<br />
-		CPU in lomonosov: 06_2CH, intel manual, 19.6, p2602<br />
-		<br />
-		Config(2015.05.22): CPU_PERF_COUNTER04:0x020B<br />
-		<br />
-		MEM_INST_RETIRED.STORES: Counts the number of instructions with an architecturally-visibl store retired on the
-		architected path.
+		All retired memory store uops(!), not ops.<br />
+		Config(2016.11.01): CPU_PERF_COUNTER04:0x82D0 # MEM_UOPS_RETIRED.ALL_STORE<br />
 	</p></div>
 
 	<h1>ib_rcv_data</h1>
-
 	<div id="ib_rcv_data" class="graph"></div>
-	<a href="/heatmap/ib_rcv_data/$id" target="_blank">heatmap</a>
-	<a href="/data/ib_rcv_data/$id" target="_blank">JSON data</a>
-	<a href="/data/ib_rcv_data/$id?format=csv" target="_blank">CSV data</a>
-
-
-
 	<div class="info"><p>
 		Infiniband recieved data in bytes
 	</p></div>
 
-
 	<h1>ib_xmit_data</h1>
-
 	<div id="ib_xmit_data" class="graph"></div>
-	<a href="/heatmap/ib_xmit_data/$id" target="_blank">heatmap</a>
-	<a href="/data/ib_xmit_data/$id" target="_blank">JSON data</a>
-	<a href="/data/ib_xmit_data/$id?format=csv" target="_blank">CSV data</a>
-
-
-
 	<div class="info"><p>
 		Infiniband sent data in bytes
 	</p></div>
 
 	<h1>ib_rcv_pckts</h1>
-
 	<div id="ib_rcv_pckts" class="graph"></div>
-	<a href="/heatmap/ib_rcv_pckts/$id" target="_blank">heatmap</a>
-	<a href="/data/ib_rcv_pckts/$id" target="_blank">JSON data</a>
-	<a href="/data/ib_rcv_pckts/$id?format=csv" target="_blank">CSV data</a>
-
-
-
 	<div class="info"><p>
 		Infiniband recieved data in packets
 	</p></div>
 
 	<h1>ib_xmit_pckts</h1>
-
 	<div id="ib_xmit_pckts" class="graph"></div>
-	<a href="/heatmap/ib_xmit_pckts/$id" target="_blank">heatmap</a>
-	<a href="/data/ib_xmit_pckts/$id" target="_blank">JSON data</a>
-	<a href="/data/ib_xmit_pckts/$id?format=csv" target="_blank">CSV data</a>
-
-
 	<div class="info"><p>
 		Infiniband sent data in packets
 	</p></div>
 
 	<h1>loadavg</h1>
-
 	<div id="loadavg" class="graph"></div>
-	<a href="/heatmap/loadavg/$id" target="_blank">heatmap</a>
-	<a href="/data/loadavg/$id" target="_blank">JSON data</a>
-	<a href="/data/loadavg/$id?format=csv" target="_blank">CSV data</a>
-
-
 	<div class="info"><p>
 		Average number of processes ready for execution for last minute.<br />
 		see /proc/loadavg (http://man7.org/linux/man-pages/man5/proc.5.html)
 	</p></div>
 
 	<h1>CPU system load</h1>
-
 	<div id="cpu_system" class="graph"></div>
-	<a href="/heatmap/cpu_system/$id" target="_blank">heatmap</a>
-	<a href="/data/cpu_system/$id" target="_blank">JSON data</a>
-	<a href="/data/cpu_system/$id?format=csv" target="_blank">CSV data</a>
-
-
 	<div class="info"><p>
 		Percent of time a core was busy in kernel space
 		<br />
 	</p></div>
 
 	<h1>CPU iowait</h1>
-
 	<div id="cpu_iowait" class="graph"></div>
-	<a href="/heatmap/cpu_iowait/$id" target="_blank">heatmap</a>
-	<a href="/data/cpu_iowait/$id" target="_blank">JSON data</a>
-	<a href="/data/cpu_iowait/$id?format=csv" target="_blank">CSV data</a>
-
-
 	<div class="info"><p>
 		CPU iowait load, minimum 0, max 100
 		<br />
@@ -431,13 +304,7 @@
 	</p></div>
 
 	<h1>CPU idle</h1>
-
 	<div id="cpu_idle" class="graph"></div>
-	<a href="/heatmap/cpu_idle/$id" target="_blank">heatmap</a>
-	<a href="/data/cpu_idle/$id" target="_blank">JSON data</a>
-	<a href="/data/cpu_idle/$id?format=csv" target="_blank">CSV data</a>
-
-
 	<div class="info"><p>
 		CPU idle load, minimum 0, max 100
 		<br />
@@ -445,24 +312,14 @@
 	</p></div>
 
 	<h1>CPU nice load</h1>
-
 	<div id="cpu_nice" class="graph"></div>
-	<a href="/heatmap/ib_rcv_data/$id" target="_blank">heatmap</a>
-	<a href="/data/ib_rcv_data/$id" target="_blank">JSON data</a>
-	<a href="/data/ib_rcv_data/$id?format=csv" target="_blank">CSV data</a>
-
 	<div class="info"><p>
 		Percent of time a core was busy with nice(low priority) tasks
 		<br />
 	</p></div>
 
 	<h1>CPU irq load</h1>
-
 	<div id="cpu_irq" class="graph"></div>
-	<a href="/heatmap/cpu_irq/$id" target="_blank">heatmap</a>
-	<a href="/data/cpu_irq/$id" target="_blank">JSON data</a>
-	<a href="/data/cpu_irq/$id?format=csv" target="_blank">CSV data</a>
-
 	<div class="info"><p>
 		CPU irq load, minimum 0, max 100
 		<br />
@@ -470,12 +327,7 @@
 	</p></div>
 
 	<h1>CPU soft_irq load</h1>
-
 	<div id="cpu_soft_irq" class="graph"></div>
-	<a href="/heatmap/cpu_soft_irq/$id" target="_blank">heatmap</a>
-	<a href="/data/cpu_soft_irq/$id" target="_blank">JSON data</a>
-	<a href="/data/cpu_soft_irq/$id?format=csv" target="_blank">CSV data</a>
-
 	<div class="info"><p>
 		CPU soft_irq load, minimum 0, max 100
 		<br />
