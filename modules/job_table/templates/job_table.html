@@ -59,7 +59,7 @@
 			<th>partition</th>
 
 			{% for sensor in sensors %}
-				<th> {{sensor}} </th>
+				<th> {{ sensor | replace("avg_", "") }} </th>
 			{% endfor %}
 
 			<th>tags</th>
@@ -76,8 +76,8 @@
 				</td>
 
 				<td class="table_text"> {{ job.account }} </td>
-				<td class="table_text"> {{ job.t_start }} </td>
-				<td class="table_text"> {{ job.t_end }} </td>
+				<td class="table_text"> {{ job.t_start | ts2datetime }} </td>
+				<td class="table_text"> {{ job.t_end | ts2datetime }} </td>
 				<td class="table_text"> {{ job.state }} </td>
 				<td class="table_text"> {{ "{:.1f}".format((job.t_end - job.t_start) * job.num_cores / 3600) }} </td>
 				<td class="table_text"> {{ job.num_cores }} </td>

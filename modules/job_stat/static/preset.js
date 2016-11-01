@@ -124,7 +124,7 @@ function ShowUsage(target, t_from, t_to)
 
 	function transform(data)
 	{
-		var lom_cores = 52168;
+		var lom_cores = 1472 * 14;
 		var lom_cores_sec = (parseInt(data.split('\n')[1])) / (t_to - t_from) / lom_cores;
 
 		return (lom_cores_sec * 100).toFixed(1) + "%";

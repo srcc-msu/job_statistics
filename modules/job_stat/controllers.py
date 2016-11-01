@@ -97,4 +97,4 @@ def generate_query(url_args: dict, metric: str, aggregation_function: str) -> Ba
 	query = gen_where(base_query, query, cluster, partition, account, state)
 	query = gen_group(base_query, query, grouping)
 
-	return query
+	return query.order_by(sqlalchemy.desc(aggregation_function + "_" + metric))

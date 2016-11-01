@@ -11,7 +11,7 @@ class BaseConfig(object):
 class TestingConfig(BaseConfig):
 	TESTING = True
 	SQLALCHEMY_ECHO = False
-	SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://***REMOVED***:***REMOVED***@localhost/***REMOVED***'
+	SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://***REMOVED***:***REMOVED***@localhost/test'
 
 class DevelopmentConfig(BaseConfig):
 	DEBUG = True

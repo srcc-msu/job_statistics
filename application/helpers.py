@@ -1,4 +1,5 @@
 import csv
+import datetime
 import io
 from typing import List
 import time
@@ -19,3 +20,6 @@ def gen_csv_response(header: List[dict], data: List[List]):
 
 def app_log(string: str):
 	print(time.strftime('[%x %X]'), "app: " + string)
+
+def ts2datetime(ts: int) -> str:
+	return datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')

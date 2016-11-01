@@ -44,7 +44,7 @@ def construct_filtered_query(t_from: Optional[int], t_to: Optional[int]
 	for tag in no_tags:
 		query = query.filter(~JobTag.tags.contains(tag))
 
-	return query
+	return query.filter(Job.state != "RUNNING").order_by(Job.t_end.desc()).limit(20) # TODO
 
 @job_table_pages.route("/table")
 def jobs() -> Response:

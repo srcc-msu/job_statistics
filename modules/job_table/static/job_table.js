@@ -51,7 +51,7 @@ function InitTags()
 {
     jQuery.ajax({
         dataType: "json",
-        url: "/api/tag/tags",
+        url: "/api/tag/",
         async: false,
         success: function(data) {
             var tags = [];

@@ -63,7 +63,7 @@
 					</tr>
 					<tr>
 						<td>slurm-out</td>
-						<td> {{ job.workdir }} /slurm-{{ job.id }}.out</td>
+						<td> {{ job.workdir }}/slurm-{{ job.id }}.out</td>
 					</tr>
 
 					<tr>
@@ -76,19 +76,19 @@
 					</tr>
 					<tr>
 						<td>submit</td>
-						<td> {{ job.t_submit }} </td>
+						<td> {{ job.t_submit | ts2datetime }} ( {{ job.t_submit }} ) </td>
 					</tr>
 					<tr>
 						<td>start</td>
-						<td> {{ job.t_start }} </td>
+						<td> {{ job.t_start | ts2datetime }} ( {{ job.t_start }} ) </td>
 					</tr>
 					<tr>
 						<td>end</td>
-						<td> {{ job.t_end }} </td>
+						<td> {{ job.t_end | ts2datetime }} ( {{ job.t_end }} ) </td>
 					</tr>
 					<tr>
 						<td>duration (minutes)</td>
-						<td> {{ job.duration }} </td>
+						<td> {{ "{:.1f}".format((job.t_end - job.t_start) / 60) }} </td>
 					</tr>
 					<tr>
 						<td>number of cores</td>
@@ -100,7 +100,7 @@
 					</tr>
 					<tr>
 						<td>number of cores * hours</td>
-						<td> {{ job.cores_hours }} </td>
+						<td> {{ "{0:.2f}".format(1.0 * (job.t_end - job.t_start) / 3600 * job.num_cores) }} </td>
 					</tr>
 
 					<tr>
