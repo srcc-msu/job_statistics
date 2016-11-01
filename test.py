@@ -138,17 +138,32 @@ class TestJob(TestSuit):
 		assert JobPerformance.query.get(job.id)
 		assert JobTag.query.get(job.id)
 
-	def test_create_job_slurm_plugin(self):
+	def test_create_job_slurm_plugin_2_5_6(self):
 		rv = TestSuit.client.post("/api/job/"
 			, data={"format" : "slurm_plugin"
-				, "data": "JobId=1142390 Name=impi UserId=test_create_job_slurm_plugin(655) GroupId=test_create_job_slurm_plugin(655) Priority=152 Account=test_create_job_slurm_plugin QOS=normal JobState=COMPLETED Reason=None Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 ExitCode=0:0 DerivedExitCode=0:0 RunTime=00:59:54 TimeLimit=3-00:00:00 TimeMin=N/A SubmitTime=2015-10-30T13:45:57 EligibleTime=2015-10-30T13:45:57 StartTime=2015-10-30T13:45:57 EndTime=2015-11-02T13:45:57 PreemptTime=None SuspendTime=None SecsPreSuspend=0 Partition=regular6 AllocNode:Sid=access2:16866 ReqNodeList=(null) ExcNodeList=(null) NodeList=node4-132-[04-07],node4-134-[07-09],node4-136-[04-07],node4-138-[25-28],node4-142-[22-26],node4-144-[04-07],node4-146-[13-17],node4-148-[04-08],node4-149-[31-32],node4-150-[01-02,04-08] BatchHost=node4-132-04 NumNodes=43 NumCPUs=516 CPUs/Task=1 ReqS:C:T=*:*:*   Nodes=node4-132-[04-07],node4-134-[07-09],node4-136-[04-07],node4-138-[25-28],node4-142-[22-26],node4-144-[04-07],node4-146-[13-17],node4-148-[04-08],node4-149-[31-32],node4-150-[01-02,04-08] CPU_IDs=0-11 Mem=0 MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) Gres=(null) Reservation=(null) Shared=0 Contiguous=0 Licenses=(null) Network=(null) Command=/opt/mpi/wrappers/impi ./cdynak WorkDir=/mnt/msu/users/ztsv/bm_l5_r6"})
+				, "data": "JobId=1142390 Name=impi UserId=test_create_job_slurm_plugin_2(655) GroupId=test_create_job_slurm_plugin(655) Priority=152 Account=test_create_job_slurm_plugin QOS=normal JobState=COMPLETED Reason=None Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 ExitCode=0:0 DerivedExitCode=0:0 RunTime=00:59:54 TimeLimit=3-00:00:00 TimeMin=N/A SubmitTime=2015-10-30T13:45:57 EligibleTime=2015-10-30T13:45:57 StartTime=2015-10-30T13:45:57 EndTime=2015-11-02T13:45:57 PreemptTime=None SuspendTime=None SecsPreSuspend=0 Partition=regular6 AllocNode:Sid=access2:16866 ReqNodeList=(null) ExcNodeList=(null) NodeList=node4-132-[04-07],node4-134-[07-09],node4-136-[04-07],node4-138-[25-28],node4-142-[22-26],node4-144-[04-07],node4-146-[13-17],node4-148-[04-08],node4-149-[31-32],node4-150-[01-02,04-08] BatchHost=node4-132-04 NumNodes=43 NumCPUs=516 CPUs/Task=1 ReqS:C:T=*:*:*   Nodes=node4-132-[04-07],node4-134-[07-09],node4-136-[04-07],node4-138-[25-28],node4-142-[22-26],node4-144-[04-07],node4-146-[13-17],node4-148-[04-08],node4-149-[31-32],node4-150-[01-02,04-08] CPU_IDs=0-11 Mem=0 MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) Gres=(null) Reservation=(null) Shared=0 Contiguous=0 Licenses=(null) Network=(null) Command=/opt/mpi/wrappers/impi ./cdynak WorkDir=/mnt/msu/users/ztsv/bm_l5_r6"})
 
 		print(rv.status, rv.data)
 
 		assert "200" in rv.status
 		assert b"id" in rv.data
 
-		job = Job.query.filter(Job.account == "test_create_job_slurm_plugin").one()
+		job = Job.query.filter(Job.account == "test_create_job_slurm_plugin_2").one()
+
+		assert JobPerformance.query.get(job.id)
+		assert JobTag.query.get(job.id)
+
+	def test_create_job_slurm_plugin_15_08(self):
+		rv = TestSuit.client.post("/api/job/"
+			, data={"format" : "slurm_plugin"
+				, "data": "JobId=98865 JobName=3cont.sh UserId=test_create_job_slurm_plugin_15(10035) GroupId=users(10000) Priority=100000000 Nice=0 Account=ivanov QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 DerivedExitCode=0:0 RunTime=6-01:17:37 TimeLimit=6-22:40:00 TimeMin=N/A SubmitTime=2016-10-26T15:12:09 EligibleTime=2016-10-26T15:12:09 StartTime=2016-10-26T15:12:12 EndTime=2016-11-02T13:52:12 PreemptTime=None SuspendTime=None SecsPreSuspend=0 Partition=compute AllocNode:Sid=access-02:29092 ReqNodeList=(null) ExcNodeList=(null) NodeList=n50216 BatchHost=n50216 NumNodes=1 NumCPUs=14 CPUs/Task=1 ReqB:S:C:T=0:0:*:* TRES=cpu=14,node=1 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*   Nodes=n50216 CPU_IDs=0-13 Mem=0 MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) Gres=(null) Reservation=(null) Shared=0 Contiguous=0 Licenses=(null) Network=(null) Command=/mnt/scratch/users/ivanov/something/pull_spec_collapsed_2048/3cont.sh WorkDir=/mnt/scratch/users/ivanov/something/pull_spec_collapsed_2048 StdErr=/mnt/scratch/users/ivanov/something/pull_spec_collapsed_2048/slurm-98865.out StdIn=/dev/null StdOut=/mnt/scratch/users/ivanov/something/pull_spec_collapsed_2048/slurm-98865.out Power= SICP=0"})
+
+		print(rv.status, rv.data)
+
+		assert "200" in rv.status
+		assert b"id" in rv.data
+
+		job = Job.query.filter(Job.account == "test_create_job_slurm_plugin_15").one()
 
 		assert JobPerformance.query.get(job.id)
 		assert JobTag.query.get(job.id)

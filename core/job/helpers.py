@@ -8,13 +8,14 @@ class DBMSConverter(object):
 		raise NotImplementedError("convert function not specified")
 
 class SlurmConverter(DBMSConverter):
-	fields = ["JobId", " Name", " UserId", " GroupId", " Priority", " Account", " QOS", " JobState", " Reason"
+	# this works for scontrol -o -d show job fom versions 2.5.6 and 15.08
+	fields = ["JobId", " Name", " JobName", " UserId", " GroupId", " Priority", " Account", " QOS", " JobState", " Reason"
 		, " Dependency", " Requeue", " Restarts", " BatchFlag", " ExitCode", " DerivedExitCode", " RunTime", " TimeLimit"
 		, " TimeMin", " SubmitTime", " EligibleTime", " StartTime", " EndTime", " PreemptTime", " SuspendTime"
 		, " SecsPreSuspend", " Partition", " AllocNode:Sid", " ReqNodeList", " ExcNodeList", " NodeList", " BatchHost"
 		, " NumNodes", " NumCPUs", " CPUs/Task", " ReqS:C:T", " Nodes", " CPU_IDs", " Mem", " MinCPUsNode"
 		, " MinMemoryNode", " MinTmpDiskNode", " Features", " Gres", " Reservation", " Shared", " Contiguous"
-		, " Licenses", " Network", " Command", " WorkDir"]
+		, " Licenses", " Network", " Command", " WorkDir", " Nice"]
 
 	@staticmethod
 	def FindLastIndex(job_info: str) -> Tuple[int, str]:
