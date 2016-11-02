@@ -27,6 +27,7 @@ class JobPerformance(global_db.Model):
 			, "cpu_flops", "cpu_perf_l1d_repl", "llc_miss"
 			, "mem_load", "mem_store"
 			, "ib_rcv_data", "ib_xmit_data"
+			, "ib_rcv_data2", "ib_xmit_data2"
 			, "loadavg", "gpu_load"]
 
 		for sensor_name in sensor_list:
@@ -111,6 +112,18 @@ class Sensor_ib_rcv_pckts(Sensor):
 
 class Sensor_ib_xmit_pckts(Sensor):
 	__tablename__ = "ib_xmit_pckts"
+
+class Sensor_ib_rcv_data2(Sensor):
+	__tablename__ = "ib_rcv_data2"
+
+class Sensor_ib_xmit_data2(Sensor):
+	__tablename__ = "ib_xmit_data2"
+
+class Sensor_ib_rcv_pckts2(Sensor):
+	__tablename__ = "ib_rcv_pckts2"
+
+class Sensor_ib_xmit_pckts2(Sensor):
+	__tablename__ = "ib_xmit_pckts2"
 
 class Sensor_gpu_mem_usage(Sensor):
 	__tablename__ = "gpu_mem_usage"

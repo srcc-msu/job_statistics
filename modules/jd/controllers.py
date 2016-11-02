@@ -42,6 +42,18 @@ def calculate_derivative(monitoring: dict):
 	except:
 		pass
 
+	try:
+		derivative["ib_rcv_pckt_size2"] = \
+			monitoring["avg"]["ib_rcv_data2"] / monitoring["avg"]["ib_rcv_pckts2"]
+	except:
+		pass
+
+	try:
+		derivative["ib_xmt_pckt_size2"] = \
+			monitoring["avg"]["ib_xmit_data2"] / monitoring["avg"]["ib_xmit_pckts2"]
+	except:
+		pass
+
 	return derivative
 
 @jd_pages.route("/<int:job_id>/<int:task_id>")

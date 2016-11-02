@@ -27,6 +27,11 @@ SENSOR_MAP = {
 	, 2210: "ib_rcv_pckts"
 	, 2211: "ib_xmit_pckts"
 
+	, 22208: "ib_rcv_data"
+	, 22209: "ib_xmit_data"
+	, 22210: "ib_rcv_pckts"
+	, 22211: "ib_xmit_pckts"
+
 	, 3008: "gpu_mem_usage"
 	, 3009: "gpu_load"
 	, 3010: "gpu_mem_load"

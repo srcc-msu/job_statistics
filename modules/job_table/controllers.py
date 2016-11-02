@@ -62,8 +62,10 @@ def jobs() -> Response:
 	opt_tags = extract_tag("opt_tags")
 	no_tags = extract_tag("no_tags")
 
-	sensors = ["avg_cpu_user", "avg_cpu_flops", "avg_cpu_perf_l1d_repl", "avg_llc_miss", "avg_mem_load",
-		"avg_mem_store", "avg_ib_rcv_data", "avg_ib_xmit_data", "avg_loadavg", "avg_gpu_load"]
+	sensors = ["avg_cpu_user", "avg_cpu_flops", "avg_cpu_perf_l1d_repl", "avg_llc_miss", "avg_mem_load", "avg_mem_store"
+		, "avg_ib_rcv_data", "avg_ib_xmit_data"
+		, "avg_ib_rcv_data2", "avg_ib_xmit_data2"
+		, "avg_loadavg", "avg_gpu_load"]
 
 	return render_template("job_table.html"
 		, jobs=construct_filtered_query(t_from, t_to, req_tags, opt_tags, no_tags).all()

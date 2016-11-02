@@ -91,7 +91,11 @@ function highlightLine(chart, data, options) {
 }
 
 function LoadData(task_id, with_gpu) {
-    var sensors = ["llc_miss", "cpu_perf_l1d_repl", "cpu_flops", "mem_load", "mem_store", "cpu_user", "cpu_nice", "cpu_system", "cpu_idle", "cpu_iowait", "cpu_irq", "cpu_soft_irq", "ib_rcv_data", "ib_xmit_data", "ib_rcv_pckts", "ib_xmit_pckts", "loadavg"];
+    var sensors = ["llc_miss", "cpu_perf_l1d_repl", "cpu_flops", "mem_load", "mem_store"
+    	, "cpu_user", "cpu_nice", "cpu_system", "cpu_idle", "cpu_iowait", "cpu_irq", "cpu_soft_irq"
+    	, "ib_rcv_data", "ib_xmit_data", "ib_rcv_pckts", "ib_xmit_pckts"
+    	, "ib_rcv_data2", "ib_xmit_data2", "ib_rcv_pckts2", "ib_xmit_pckts2"
+    	, "loadavg"];
     var gpu_sensors = ["gpu_load", "gpu_mem_load", "gpu_mem_usage"];
 
     for(var i = 0; i < sensors.length; i++)
