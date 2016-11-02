@@ -23,3 +23,8 @@ def app_log(string: str):
 
 def ts2datetime(ts: int) -> str:
 	return datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+
+def float2(float) -> str:
+	if float is None:
+		return "None"
+	return  "{0:.2f}".format(float)

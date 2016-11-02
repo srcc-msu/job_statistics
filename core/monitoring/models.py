@@ -23,8 +23,11 @@ class JobPerformance(global_db.Model):
 	def to_dict(self) -> dict:
 		result = {"min": {}, "max": {}, "avg": {}}
 
-		sensor_list = ["cpu_user", "cpu_flops", "cpu_perf_l1d_repl", "llc_miss", "mem_load", "mem_store", "ib_rcv_data",
-			"ib_xmit_data", "loadavg", "gpu_load"]
+		sensor_list = ["cpu_user", "cpu_system"
+			, "cpu_flops", "cpu_perf_l1d_repl", "llc_miss"
+			, "mem_load", "mem_store"
+			, "ib_rcv_data", "ib_xmit_data"
+			, "loadavg", "gpu_load"]
 
 		for sensor_name in sensor_list:
 			result["min"][sensor_name] = getattr(self, "min_" + sensor_name)

@@ -75,7 +75,8 @@ def json_job_performance(record_id: int) -> Response:
 
 		update_performance(global_db, job)
 		apply_autotags(job)
-		return jsonify("ok")
+
+		return jsonify("updated")
 
 @job_api_pages.route("/<int:record_id>/sensor/<string:sensor>")
 def job_sensor(sensor: str, record_id: int) -> Response:

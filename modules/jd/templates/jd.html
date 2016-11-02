@@ -96,7 +96,7 @@
 					</tr>
 					<tr>
 						<td>number of cores * hours</td>
-						<td> {{ "{0:.2f}".format(1.0 * (job.t_end - job.t_start) / 3600 * job.num_cores) }} </td>
+						<td> {{ (1.0 * (job.t_end - job.t_start) / 3600 * job.num_cores) | float2 }} </td>
 					</tr>
 
 					<tr>
@@ -114,7 +114,9 @@
 					{% for key in monitoring["avg"].keys()|sort %}
 						<tr>
 							<td> {{ key }} </td>
-							<td style="background-color: {{ get_color(key, monitoring['avg'][key]) }} "> {{ monitoring["avg"][key] }} </td>
+							<td style="background-color: {{ get_color(key, monitoring['avg'][key]) }} ">
+								{{ monitoring["avg"][key]| float2  }}
+							</td>
 						</tr>
 					{% endfor %}
 				</table>
@@ -125,7 +127,9 @@
 					{% for key in monitoring["max"].keys()|sort %}
 						<tr>
 							<td> {{ key }} </td>
-							<td style="background-color: {{ get_color(key, monitoring['max'][key]) }} "> {{ monitoring["max"][key] }} </td>
+							<td style="background-color: {{ get_color(key, monitoring['max'][key]) }} ">
+								{{ monitoring["max"][key]| float2  }}
+							</td>
 						</tr>
 					{% endfor %}
 				</table>
@@ -136,7 +140,8 @@
 					{% for key in monitoring["min"].keys()|sort %}
 						<tr>
 							<td> {{ key }} </td>
-							<td style="background-color: {{ get_color(key, monitoring['min'][key]) }} "> {{ monitoring["min"][key] }} </td>
+							<td style="background-color: {{ get_color(key, monitoring['min'][key]) }} ">
+								{{ monitoring["min"][key] | float2 }} </td>
 						</tr>
 					{% endfor %}
 				</table>
@@ -147,7 +152,7 @@
 					{% for key in derivative.keys()|sort %}
 						<tr>
 							<td> {{ key }} </td>
-							<td> {{ derivative[key] }} </td>
+							<td> {{ derivative[key] | float2 }} </td>
 						</tr>
 					{% endfor %}
 				</table>

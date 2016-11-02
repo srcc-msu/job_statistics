@@ -3,7 +3,7 @@ import runpy
 from flask import Flask
 
 from application.database import global_db
-from application.helpers import app_log, ts2datetime
+from application.helpers import app_log, ts2datetime, float2
 
 def create_job_stat_view(app, name):
 	connection = global_db.get_engine(app).connect()
@@ -82,6 +82,7 @@ def create_app(config: str) -> Flask:
 	app = Flask(__name__, static_folder=None)
 
 	app.template_filter('ts2datetime')(ts2datetime)
+	app.template_filter('float2')(float2)
 
 	if config == "dev":
 		app.config.from_object('config.DevelopmentConfig')

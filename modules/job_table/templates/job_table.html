@@ -79,13 +79,15 @@
 				<td class="table_text"> {{ job.t_start | ts2datetime }} </td>
 				<td class="table_text"> {{ job.t_end | ts2datetime }} </td>
 				<td class="table_text"> {{ job.state }} </td>
-				<td class="table_text"> {{ "{:.1f}".format((job.t_end - job.t_start) * job.num_cores / 3600) }} </td>
+				<td class="table_text"> {{ ((job.t_end - job.t_start) * job.num_cores / 3600) | float2 }} </td>
 				<td class="table_text"> {{ job.num_cores }} </td>
-				<td class="table_text"> {{ "{:.1f}".format((job.t_end - job.t_start) / 60) }} </td>
+				<td class="table_text"> {{ ((job.t_end - job.t_start) / 60) | float2 }} </td>
 				<td class="table_text"> {{ job.partition }} </td>
 
 				{% for sensor in sensors %}
-					<td  style="background-color: {{ get_color(sensor, performance[sensor]) }}" class="sensor_text" > {{ performance[sensor] }} </td>
+					<td  style="background-color: {{ get_color(sensor, performance[sensor]) }}" class="sensor_text" >
+						{{ performance[sensor] | float2 }}
+					</td>
 				{% endfor %}
 
 				<td class="table_text"> {{ tag.tags }} </td>

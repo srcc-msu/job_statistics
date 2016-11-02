@@ -19,26 +19,26 @@ def calculate_derivative(monitoring: dict):
 	derivative = {}
 
 	try:
-		derivative["mem_l1_ratio"] = "{0:.2f}".format(
-			(monitoring["avg"]["mem_load"] + monitoring["avg"]["mem_store"]) / monitoring["avg"]["cpu_perf_l1d_repl"])
+		derivative["mem_l1_ratio"] = \
+			(monitoring["avg"]["mem_load"] + monitoring["avg"]["mem_store"]) / monitoring["avg"]["cpu_perf_l1d_repl"]
 	except:
 		pass
 
 	try:
-		derivative["l1_l3_ratio"] = "{0:.2f}".format(
-			monitoring["avg"]["cpu_perf_l1d_repl"] / monitoring["avg"]["llc_miss"])
+		derivative["l1_l3_ratio"] = \
+			monitoring["avg"]["cpu_perf_l1d_repl"] / monitoring["avg"]["llc_miss"]
 	except:
 		pass
 
 	try:
-		derivative["ib_rcv_pckt_size"] = "{0:.2f}".format(
-			monitoring["avg"]["ib_rcv_data"] / monitoring["avg"]["ib_rcv_pckts"])
+		derivative["ib_rcv_pckt_size"] = \
+			monitoring["avg"]["ib_rcv_data"] / monitoring["avg"]["ib_rcv_pckts"]
 	except:
 		pass
 
 	try:
-		derivative["ib_xmt_pckt_size"] = "{0:.2f}".format(
-			monitoring["avg"]["ib_xmit_data"] / monitoring["avg"]["ib_xmit_pckts"])
+		derivative["ib_xmt_pckt_size"] = \
+			monitoring["avg"]["ib_xmit_data"] / monitoring["avg"]["ib_xmit_pckts"]
 	except:
 		pass
 

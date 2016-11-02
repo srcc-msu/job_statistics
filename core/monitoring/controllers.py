@@ -34,6 +34,7 @@ def update_performance(db: SQLAlchemy, job: Job) -> JobPerformance:
 
 	query = JobPerformance.query.filter(JobPerformance.fk_job_id == job.id)
 	query.update(data)
+	db.session.commit()
 
 	return query.one()
 
