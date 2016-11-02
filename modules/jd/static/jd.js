@@ -20,7 +20,7 @@ function ConvertForMultiLine(input)
 }
 
 function LoadOne(name, task_id){
-    jQuery.get("/api/monitoring/job_sensor/" + name + "/" + task_id, function(input) {
+    jQuery.get("/api/job/" + task_id + "/sensor/" + name, function(input) {
         var raw_data = ConvertForMultiLine(input);
 
         var ticks = [];
@@ -136,7 +136,7 @@ function ToggleAll(){
 
 function FillTags(id)
 {
-    jQuery.getJSON("/api/jobs/" + id + "/tags",
+    jQuery.getJSON("/api/job/" + id + "/tags",
         function(data) {
             for(var i = 0; i < data.tags.length; i++)
             {
@@ -149,7 +149,7 @@ function FillTags(id)
 
 function InitTags(id)
 {
-    jQuery.getJSON("/api/tags",
+    jQuery.getJSON("/api/tag",
         function(data) {
             var tags = [];
 

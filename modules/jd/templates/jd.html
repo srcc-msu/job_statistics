@@ -27,11 +27,7 @@
 		google.charts.setOnLoadCallback(google_callback_wrapper);
 
 		function google_callback_wrapper() {
-			{% if "gpu" in job.partition %}
-				LoadData( {{ job.id }}, true);
-			{% else %}
-				LoadData( {{ job.id }}, false);
-			{% endif %}
+			LoadData( {{ job.id }}, true);
 		}
 
 		$(document).ready(function() {

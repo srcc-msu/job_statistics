@@ -39,9 +39,9 @@ class Sensor(global_db.Model):
 
 	time = global_db.Column("time", global_db.Integer, primary_key=True)
 	node_id = global_db.Column("node_id", global_db.Integer, primary_key=True)
-	min = global_db.Column("min", global_db.Integer)
-	max = global_db.Column("max", global_db.Integer)
-	avg = global_db.Column("avg", global_db.Integer)
+	min = global_db.Column("min", global_db.Float)
+	max = global_db.Column("max", global_db.Float)
+	avg = global_db.Column("avg", global_db.Float)
 
 class Sensor_bytes_in(Sensor):
 	__tablename__ = "bytes_in"
