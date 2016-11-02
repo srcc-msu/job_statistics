@@ -63,12 +63,19 @@ def json_job_info(record_id: int) -> Response:
 
 # monitoring
 
-@job_api_pages.route("/<int:record_id>/performance")
+@job_api_pages.route("/<int:record_id>/performance", methods=["GET", "POST"])
 def json_job_performance(record_id: int) -> Response:
-	_ = Job.query.get_or_404(record_id)
-	data = JobPerformance.query.get(record_id)
+	if request.method == 'GET':
+		_ = Job.query.get_or_404(record_id)
+		data = JobPerformance.query.get(record_id)
 
-	return jsonify(data.to_dict())
+		return jsonify(data.to_dict())
+	elif request.method == 'POST':
+		job = Job.query.get_or_404(record_id)
+
+		update_performance(global_db, job)
+		apply_autotags(job)
+		return jsonify("ok")
 
 @job_api_pages.route("/<int:record_id>/sensor/<string:sensor>")
 def job_sensor(sensor: str, record_id: int) -> Response:
