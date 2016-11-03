@@ -1,4 +1,3 @@
-import importlib
 import traceback
 import sys
 
@@ -10,7 +9,7 @@ from core.job.controllers import add_or_update
 from core.job.models import Job
 from core.job.helpers import LomSlurmConverter, SlurmConverter, SacctConverter
 from core.monitoring.controllers import update_performance
-from core.monitoring.models import JobPerformance
+from core.monitoring.models import JobPerformance, SENSOR_CLASS_MAP
 from modules.autotag.controllers import apply_autotags
 from core.tag.models import JobTag, Tag
 
@@ -82,7 +81,7 @@ def json_job_performance(record_id: int) -> Response:
 def job_sensor(sensor: str, record_id: int) -> Response:
 	job = Job.query.get(record_id)
 
-	sensor_class = getattr(importlib.import_module("core.monitoring.models"), "Sensor_" + sensor)
+	sensor_class = SENSOR_CLASS_MAP[sensor]
 
 	offset = current_app.app_config.general["aggregation_interval"]
 

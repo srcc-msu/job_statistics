@@ -30,8 +30,8 @@ function LoadOne(name, task_id){
 //            title: name
             legend: { position: 'bottom' }
             , 'chartArea': {backgroundColor: "#f8f8f8", left: 50, top: 20, 'height': '80%', 'width': '100%'}
-            ,  hAxis: { format: 'HH:mm' } // 'dd/MM/yyyy HH:mm'
-            , vAxis: {format: 'short'}
+            , hAxis: { format: 'HH:mm' } // 'dd/MM/yyyy HH:mm'
+            , vAxis: { format: 'short', minValue: 0}
             , 'height': 400
             , series: {
                 0: { lineWidth: 2 },
@@ -90,20 +90,9 @@ function highlightLine(chart, data, options) {
     chart.draw(data, options); //redraw
 }
 
-function LoadData(task_id, with_gpu) {
-    var sensors = ["llc_miss", "cpu_perf_l1d_repl", "cpu_flops", "mem_load", "mem_store"
-    	, "cpu_user", "cpu_nice", "cpu_system", "cpu_idle", "cpu_iowait", "cpu_irq", "cpu_soft_irq"
-    	, "ib_rcv_data", "ib_xmit_data", "ib_rcv_pckts", "ib_xmit_pckts"
-    	, "ib_rcv_data2", "ib_xmit_data2", "ib_rcv_pckts2", "ib_xmit_pckts2"
-    	, "loadavg"];
-    var gpu_sensors = ["gpu_load", "gpu_mem_load", "gpu_mem_usage"];
-
+function LoadData(task_id, sensors) {
     for(var i = 0; i < sensors.length; i++)
         LoadOne(sensors[i], task_id);
-
-    if(with_gpu)
-        for(var i = 0; i < gpu_sensors.length; i++)
-            LoadOne(gpu_sensors[i], task_id);
 }
 
 function ApplyToggle(){

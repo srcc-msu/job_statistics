@@ -58,7 +58,7 @@
 			<th>duration</th>
 			<th>partition</th>
 
-			{% for sensor in sensors %}
+			{% for sensor in app_config.monitoring["DISPLAY_SENSOR_LIST"] %}
 				<th> {{ sensor | replace("avg_", "") }} </th>
 			{% endfor %}
 
@@ -84,7 +84,7 @@
 				<td class="table_text"> {{ ((job.t_end - job.t_start) / 60) | float2 }} </td>
 				<td class="table_text"> {{ job.partition }} </td>
 
-				{% for sensor in sensors %}
+				{% for sensor in app_config.monitoring.DISPLAY_SENSOR_LIST %}
 					<td  style="background-color: {{ get_color(sensor, performance[sensor]) }}" class="sensor_text" >
 						{{ performance[sensor] | float2 }}
 					</td>

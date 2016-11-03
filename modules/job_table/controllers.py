@@ -44,7 +44,7 @@ def construct_filtered_query(t_from: Optional[int], t_to: Optional[int]
 	for tag in no_tags:
 		query = query.filter(~JobTag.tags.contains(tag))
 
-	return query.filter(Job.state != "RUNNING").order_by(Job.t_end.desc()).limit(50) # TODO
+	return query.filter(Job.state != "RUNNING").filter(Job.t_end - Job.t_start > 600).order_by(Job.t_end.desc()).limit(50) # TODO
 
 @job_table_pages.route("/table")
 def jobs() -> Response:
@@ -62,13 +62,7 @@ def jobs() -> Response:
 	opt_tags = extract_tag("opt_tags")
 	no_tags = extract_tag("no_tags")
 
-	sensors = ["avg_cpu_user", "avg_cpu_flops", "avg_cpu_perf_l1d_repl", "avg_llc_miss", "avg_mem_load", "avg_mem_store"
-		, "avg_ib_rcv_data", "avg_ib_xmit_data"
-		, "avg_ib_rcv_data2", "avg_ib_xmit_data2"
-		, "avg_loadavg", "avg_gpu_load"]
-
 	return render_template("job_table.html"
 		, jobs=construct_filtered_query(t_from, t_to, req_tags, opt_tags, no_tags).all()
-		, sensors=sensors
 		, app_config=current_app.app_config
 		, get_color=partial(get_color, thresholds=current_app.app_config.monitoring["thresholds"]))

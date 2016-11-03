@@ -1,18 +1,16 @@
-import importlib
-
 from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func, Float
 
 from core.job.models import Job
-from core.monitoring.constants import SENSOR_MAP
-from core.monitoring.models import JobPerformance
+from core.monitoring.constants import SENSOR_LIST
+from core.monitoring.models import JobPerformance, SENSOR_CLASS_MAP
 
 def update_performance(db: SQLAlchemy, job: Job) -> JobPerformance:
 	data = {}
 
-	for sensor in SENSOR_MAP.values():
-		sensor_class = getattr(importlib.import_module("core.monitoring.models"), "Sensor_" + sensor)
+	for sensor in SENSOR_LIST:
+		sensor_class = SENSOR_CLASS_MAP[sensor]
 
 		offset = current_app.app_config.general["aggregation_interval"]
 
