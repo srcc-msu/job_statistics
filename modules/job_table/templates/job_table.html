@@ -75,7 +75,12 @@
 					</a>
 				</td>
 
-				<td class="table_text"> {{ job.account }} </td>
+				<td class="table_text">
+					<a href="/job_table/table?accounts={{job.account}}" class="table_text">
+						{{ job.account }}
+					</a>
+				</td>
+
 				<td class="table_text"> {{ job.t_start | ts2datetime }} </td>
 				<td class="table_text"> {{ job.t_end | ts2datetime }} </td>
 				<td class="table_text"> {{ job.state }} </td>
