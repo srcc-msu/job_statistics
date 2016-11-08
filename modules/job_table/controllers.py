@@ -50,6 +50,7 @@ def apply_general_filters(query: BaseQuery, accounts: str, limit) -> BaseQuery:
 	if accounts is not None:
 		accounts = accounts.split(",")
 		query = query.filter(Job.account.in_(accounts))
+		return query.order_by(Job.t_end.desc()).limit(limit*10) # TODO: remember?
 
 	return query.order_by(Job.t_end.desc()).limit(limit)
 
