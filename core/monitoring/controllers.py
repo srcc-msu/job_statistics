@@ -18,7 +18,7 @@ def update_performance(db: SQLAlchemy, job: Job) -> JobPerformance:
 
 		query = db.session.query(
 				func.min(sensor_class.min).cast(Float).label("min")
-				, func.min(sensor_class.max).cast(Float).label("max")
+				, func.max(sensor_class.max).cast(Float).label("max")
 				, func.avg(sensor_class.avg).cast(Float).label("avg"))\
 			.filter(sensor_class.time > job.t_start + offset)\
 			.filter(sensor_class.time < job.t_end - offset)\

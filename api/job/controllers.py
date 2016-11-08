@@ -90,7 +90,7 @@ def job_sensor(sensor: str, record_id: int) -> Response:
 	query = global_db.session.query(
 		sensor_class.time
 			, func.min(sensor_class.min).cast(Float).label("min")
-			, func.min(sensor_class.max).cast(Float).label("max")
+			, func.max(sensor_class.max).cast(Float).label("max")
 			, func.avg(sensor_class.min).cast(Float).label("avg_min")
 			, func.avg(sensor_class.max).cast(Float).label("avg_max")
 			, func.avg(sensor_class.avg).cast(Float).label("avg"))\

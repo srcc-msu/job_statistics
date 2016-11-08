@@ -115,37 +115,19 @@
 
 			<td valign="top">
 				<table border="1" cellpadding="5">
-					{% for key in monitoring["avg"].keys()|sort %}
+					<tr><th></th><th>avg</th><th>max</th><th>min</th></tr>
+					{% for key in app_config.monitoring.SENSOR_LIST %}
 						<tr>
 							<td> {{ key }} </td>
 							<td style="background-color: {{ get_color(key, monitoring['avg'][key]) }} ">
 								{{ monitoring["avg"][key]| float2  }}
 							</td>
-						</tr>
-					{% endfor %}
-				</table>
-			</td>
-
-			<td valign="top">
-				<table border="1" cellpadding="5">
-					{% for key in monitoring["max"].keys()|sort %}
-						<tr>
-							<td> {{ key }} </td>
 							<td style="background-color: {{ get_color(key, monitoring['max'][key]) }} ">
 								{{ monitoring["max"][key]| float2  }}
 							</td>
-						</tr>
-					{% endfor %}
-				</table>
-			</td>
-
-			<td valign="top">
-				<table border="1" cellpadding="5">
-					{% for key in monitoring["min"].keys()|sort %}
-						<tr>
-							<td> {{ key }} </td>
 							<td style="background-color: {{ get_color(key, monitoring['min'][key]) }} ">
-								{{ monitoring["min"][key] | float2 }} </td>
+								{{ monitoring["min"][key]| float2  }}
+							</td>
 						</tr>
 					{% endfor %}
 				</table>
