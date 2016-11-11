@@ -7,6 +7,7 @@ from core.job.controllers import add
 from core.job.models import Job
 from core.monitoring.models import JobPerformance
 from core.tag.models import JobTag, Tag
+from core.job.helpers import id2hash, hash2id
 from modules.autotag.models import AutoTag
 
 class TestSuit(unittest.TestCase):
@@ -200,6 +201,13 @@ class TestJd(TestSuit):
 
 		assert "200" in rv.status
 		assert b"[]" in rv.data
+
+	def test_hashing(self):
+		for id in [10, 1234, 9432, 25271]:
+			hash = id2hash(id)
+			print(id, hash, hash2id(hash))
+
+			assert hash2id(hash) == id
 
 class TestJobTag(TestSuit):
 	test_job = None

@@ -213,3 +213,24 @@ class LomSlurmConverter(DBMSConverter):
 			, "priority": int(raw[13])}
 
 		return result
+
+def reverse(n: int):
+	return int(str(n)[::-1])
+
+def id2hash(n: int, shift = 1):
+	alphabet = '0123456789abcdefghijklmnopqrstuvwxyz'
+	base = 36
+
+	result = ""
+
+	n = reverse((n << shift) + 1)
+
+	while n:
+		result += alphabet[n % base]
+		n = int(n / base)
+
+	return result[::-1]
+
+def hash2id(hash: str, shift = 1):
+	n = int(hash, 36)
+	return reverse(n) >> shift
