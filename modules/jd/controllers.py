@@ -25,7 +25,23 @@ def jd(job_id: int, task_id: int) -> Response:
 	tag = JobTag.query.get(job.id)
 	performance = JobPerformance.query.get(job.id)
 
-	return render_template("jd.html"
+	return render_template("jd.html", anon=False
+		, job=job.to_dict(), tags=tag.to_dict(), monitoring=performance.to_dict()
+		, derivative=current_app.app_config.monitoring["calculate_derivative"](performance.to_dict())
+		, app_config=current_app.app_config
+		, get_color=partial(get_color, thresholds=current_app.app_config.monitoring["thresholds"]))
+
+@jd_pages.route("/share/<int:job_id>/<int:task_id>")
+def anon_jd(job_id: int, task_id: int) -> Response:
+	try:
+		job = Job.get_by_id(job_id, task_id)
+	except LookupError:
+		abort(404)
+
+	tag = JobTag.query.get(job.id)
+	performance = JobPerformance.query.get(job.id)
+
+	return render_template("jd.html", anon=True
 		, job=job.to_dict(), tags=tag.to_dict(), monitoring=performance.to_dict()
 		, derivative=current_app.app_config.monitoring["calculate_derivative"](performance.to_dict())
 		, app_config=current_app.app_config

@@ -48,9 +48,13 @@
 					<tr>
 						<td>account</td>
 						<td>
-							<a href="/job_table/table?accounts={{job.account}}" class="table_text">
+							{% if not anon %}
+								<a href="/job_table/table?accounts={{job.account}}" class="table_text">
+									{{ job.account }}
+								</a>
+							{% else %}
 								{{ job.account }}
-							</a>
+							{% endif %}
 						</td>
 					</tr>
 					<tr>
@@ -109,7 +113,11 @@
 
 				</table>
 
-				<ul id="jd_tags"></ul>
+				{% if not anon %}
+					<ul id="jd_tags"></ul>
+
+					<a href="/jd/share/{{job.job_id}}/{{job.task_id}}">share</a>
+				{% endif %}
 
 			</td>
 
