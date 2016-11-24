@@ -60,6 +60,9 @@ class SlurmConverter(DBMSConverter):
 		# 01-12:21:12
 		result = 0
 
+		if "unlimited" in slurm_interval.lower():
+			return result
+
 		check_day = slurm_interval.split("-") # extract day
 
 		if len(check_day) == 2:
@@ -181,6 +184,8 @@ class LomSlurmConverter(DBMSConverter):
 				return "hdd6"
 			elif "node6" in nodelist:
 				return "gpu"
+			elif "node7" in nodelist:
+				return "smp"
 			else:
 				return "unknown"
 		else:
