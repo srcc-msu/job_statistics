@@ -15,7 +15,7 @@
 		$(document).ready(function()
 		{
 			$("#add").click(function(){
-				$.post("/api/tag/tags/" + $("#label").val(),
+				$.post("/api/tag/" + $("#label").val(),
 				{
 					description: $("#description").val(),
 				},

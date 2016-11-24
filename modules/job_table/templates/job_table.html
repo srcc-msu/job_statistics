@@ -61,13 +61,11 @@
 			{% for sensor in app_config.monitoring["DISPLAY_SENSOR_LIST"] %}
 				<th> {{ sensor | replace("avg_", "") }} </th>
 			{% endfor %}
-
-			<th>tags</th>
 		</tr>
 	</thead>
 
 	<tbody>
-		{% for job, tag, performance in jobs %}
+		{% for job, _, performance in jobs %}
 			<tr>
 				<td class="task_state_{{job.state}}">
 					<a href="/jd/{{job.job_id}}" class="table_text">
@@ -94,9 +92,6 @@
 						{{ performance[sensor] | float2 }}
 					</td>
 				{% endfor %}
-
-				<td class="table_text"> {{ tag.tags }} </td>
-
 			</tr>
 		{% endfor %}
 	</tbody>

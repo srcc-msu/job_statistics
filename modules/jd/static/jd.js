@@ -169,16 +169,16 @@ function InitTags(id)
                         return false;
                     $.ajax({
                         type: "POST",
-                        url: "/api/tags/assign",
-                        data: { job_id : id, tag : ui.tagLabel },
+                        url: "/api/job/" + id + "/tag/" + ui.tagLabel,
+                        data: { action: "add"},
                     });
                 },
 
                 afterTagRemoved: function(event, ui) {
                     $.ajax({
                         type: "POST",
-                        url: "/api/tags/withdraw",
-                        data: { job_id : id, tag : ui.tagLabel},
+                        url: "/api/job/" + id + "/tag/" + ui.tagLabel,
+                        data: { action: "delete"},
                     });
                 },
 
