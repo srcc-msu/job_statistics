@@ -311,6 +311,26 @@ class TestAutoTag(TestSuit):
 		assert "200" in rv.status
 		assert b"t_end" in rv.data
 
+	def test_create(self):
+		rv = TestSuit.client.post("/api/autotag/", data={"label": "test2", "condition": "true"})
+		print(rv.status, rv.data)
+
+		assert AutoTag.query.get(eval(rv.data)["id"]) != None
+
+		assert "200" in rv.status
+		assert b"test2" in rv.data
+
+	def test_delete(self):
+		rv = TestSuit.client.post("/api/autotag/", data={"label": "test2", "condition": "true"})
+		print(rv.status, rv.data)
+
+		id = eval(rv.data)["id"]
+
+		rv = TestSuit.client.post("/api/autotag/" + str(id), data={"action": "delete"})
+
+		assert "200" in rv.status
+		assert AutoTag.query.get(id) == None
+
 	def test_job_update(self):
 		rv = TestSuit.client.post("/autotag/job/1")
 		print(rv.status, rv.data)

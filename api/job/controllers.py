@@ -152,3 +152,13 @@ def add_job_tag(job: Job, tag: str) -> Response:
 
 	job_tag = JobTag.query.get(job.id)
 	job_tag.add(tag)
+
+# autotags
+
+@job_api_pages.route("/<int:record_id>/autotag", methods=["POST"])
+def __apply_autotags(record_id: int) -> Response:
+	job = Job.query.get(record_id)
+
+	apply_autotags(job)
+
+	return job_tags(record_id)

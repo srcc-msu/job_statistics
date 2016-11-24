@@ -10,8 +10,7 @@ class AutoTag(global_db.Model):
 	id = global_db.Column(global_db.Integer, primary_key=True, index=True)  # inner entry id
 
 	fk_tag_id = global_db.Column("fk_tag_id", global_db.Integer
-		, global_db.ForeignKey("tag.id")
-		, primary_key=True)
+		, global_db.ForeignKey("tag.id"))
 
 	condition = global_db.Column(global_db.Text)
 

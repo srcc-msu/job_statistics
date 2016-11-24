@@ -11,9 +11,40 @@
 <body>
 	<script type="text/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
 
+	<script type="text/javascript">
+		$(document).ready(function()
+		{
+			$("#add").click(function(){
+				$.post("/api/autotag/",
+				{
+					label: $("#label").val(),
+					condition: $("#condition").val(),
+				},
+				function(data, status){
+					location.reload();
+				});
+			});
+		});
+	</script>
+
+	<form id="query_form">
+		<p>
+			label<br/>
+			<textarea id="label" name="label" cols="40" rows="1"></textarea>
+		</p>
+
+		<p>
+			condition<br/>
+			<textarea id="condition" name="condition" cols="40" rows="1"></textarea>
+		</p>
+
+		<input id="add" type="button" value="add"/>
+	</form>
+
 	<table border="1">
 		<thead>
 			<tr>
+				<th>id</th>
 				<th>tag label</th>
 				<th>autotag condition</th>
 			</tr>
@@ -22,6 +53,7 @@
 		<tbody>
 			{% for tag, autotag in data %}
 				<tr>
+					<td> {{ autotag.id}} </td>
 					<td> {{ tag.label }} </td>
 					<td> {{ autotag.condition }} </td>
 				</tr>
