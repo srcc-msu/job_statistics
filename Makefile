@@ -1,5 +1,5 @@
 hint:
-	@echo "virtualenv -p /usr/bin/python3.5 venv"
+	@echo "python3.5 -m venv venv"
 	@echo "source venv/bin/activate"
 	@echo "pip install -r requirements.txt"
 

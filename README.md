@@ -8,10 +8,8 @@ to show a general jobs statistics bu runtime, length, resources and so on.
 ## Requirements
 python3.5+
 
-virtualenv
-
 ## Installation
-`virtualenv -p /usr/bin/python3.5 venv`
+`python3.5 -m venv venv`
 
 `source venv/bin/activate`
 
@@ -30,7 +28,7 @@ for development:
 `python init.py -c dev --drop`
 
 for production:
-`python init.py -c dev --drop`
+`python init.py -c dev --prod`
 
 ## Testing
 `python test.py`
@@ -43,7 +41,7 @@ Running for development:
 `python run.py -c dev`
 
 Running for production:
-`python run.py -c dev`
+`python run.py -c prod`
 
 ## License
 Distributed under the MIT License - see the accompanying file LICENSE.
