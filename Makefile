@@ -2,12 +2,10 @@ hint:
 	@echo "python3.5 -m venv venv"
 	@echo "source venv/bin/activate"
 	@echo "pip install -r requirements.txt"
+	@echo "python init.py -c prod --drop"
 
 run:
-	python run.py -c dev
-
-init:
-	python init.py -c dev --drop
+	gunicorn --workers 4 --timeout 1800 --bind 0.0.0.0:5000 wsgi:app
 
 test:
 	python test.py
