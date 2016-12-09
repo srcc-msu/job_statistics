@@ -28,22 +28,77 @@
 	<script type="text/javascript">
 		$(document).ready(function()
 		{
+			$("#date_from").datepicker();
+			$("#date_to").datepicker();
+
 			$("#tasks_table").tablesorter();
 			InitTags();
+
 			set_current_page();
+
+			$('#query_stat').toggle('hide');
+
+			$('#hideshow').on('click', function(event)
+			{
+				$('#query_stat').toggle('show');
+        	});
 		});
 	</script>
 
 	<h1> {{ app_config.cluster.name }} task table</h1>
+
+	<p>From: <input type="text" id="date_from"></p>
+	<p>To: <input type="text" id="date_to"></p>
 
 	<form id="query_form">
 		<ul id="req_tags"></ul>
 		<ul id="opt_tags"></ul>
 		<ul id="no_tags"></ul>
 
-		<input id="query_button" type="button" value="query" onclick="update_current_page();"/>
+		<input id="query_button" type="button" value="Query" onclick="update_current_page();"/>
 	</form>
 
+	<p></p>
+	<input type='button' id='hideshow' value='Show stats'>
+
+	<div id="query_stat">
+		<table border="1">
+			<tr>
+				<th>Total cpu time (CPUh)</th>
+				<th>{{ query_stat.cpu_h }}</th>
+			</tr>
+
+			<tr>
+				<th>Total jobs</th>
+				<th>{{ query_stat.count }}</th>
+			</tr>
+
+			<tr>
+				<th>COMPLETED</th>
+				<th>{{ query_stat.COMPLETED }}</th>
+			</tr>
+
+			<tr>
+				<th>CANCELLED</th>
+				<th>{{ query_stat.CANCELLED }}</th>
+			</tr>
+
+			<tr>
+				<th>TIMEOUT</th>
+				<th>{{ query_stat.TIMEOUT }}</th>
+			</tr>
+
+			<tr>
+				<th>FAILED</th>
+				<th>{{ query_stat.FAILED }}</th>
+			</tr>
+
+			<tr>
+				<th>NODE_FAIL</th>
+				<th>{{ query_stat.NODE_FAIL }}</th>
+			</tr>
+		</table>
+	</div>
 
 <table id="tasks_table" class="tablesorter" border="1">
 	<thead>
@@ -95,4 +150,11 @@
 			</tr>
 		{% endfor %}
 	</tbody>
+
 </table>
+
+{% if prev_page %}
+<a href="{{ prev_page }}"><< Prev </a>
+{% endif %}
+
+<a href="{{ next_page }}">Next >> </a>

@@ -22,7 +22,7 @@ def app_log(string: str):
 	print(time.strftime('[%x %X]'), "app: " + string)
 
 def ts2datetime(ts: int) -> str:
-	return datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+	return datetime.datetime.fromtimestamp(float(ts)).strftime('%Y-%m-%d %H:%M:%S')
 
 def float2(float) -> str:
 	if float is None:

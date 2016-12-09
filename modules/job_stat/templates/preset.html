@@ -21,13 +21,10 @@
 <script type="text/javascript" src="/job_stat/static/preset.js"></script>
 
 <script type="text/javascript">
-
 		jQuery(document).ready(function() {
 			google.charts.load('current', {'packages':['corechart', 'bar']});
 			google.charts.setOnLoadCallback(DrawCharts);
 		});
-
-
 </script>
 
 <h1 style="color:green">General statistics of {{ app_config.cluster.name }}</h1>
