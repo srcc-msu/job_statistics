@@ -32,9 +32,8 @@
 			$("#date_to").datepicker();
 
 			$("#tasks_table").tablesorter();
-			InitTags();
-
-			set_current_page();
+			init_tags();
+			fill_form();
 
 			$('#query_stat').toggle('hide');
 
@@ -47,15 +46,20 @@
 
 	<h1> {{ app_config.cluster.name }} task table</h1>
 
-	<p>From: <input type="text" id="date_from"></p>
-	<p>To: <input type="text" id="date_to"></p>
-
 	<form id="query_form">
+		<p>
+			From: <input type="text" id="date_from">
+			To: <input type="text" id="date_to">
+		</p>
+
+		<p>
+			Accounts: <input type=text size=40 id=accounts name=accounts placeholder="account1,account2">
+		</p>
 		<ul id="req_tags"></ul>
 		<ul id="opt_tags"></ul>
 		<ul id="no_tags"></ul>
 
-		<input id="query_button" type="button" value="Query" onclick="update_current_page();"/>
+		<input id="query_button" type="button" value="Query" onclick="load_query();"/>
 	</form>
 
 	<p></p>
@@ -65,7 +69,7 @@
 		<table border="1">
 			<tr>
 				<th>Total cpu time (CPUh)</th>
-				<th>{{ query_stat.cpu_h }}</th>
+				<th>{{ query_stat.cpu_h | float2 }}</th>
 			</tr>
 
 			<tr>
