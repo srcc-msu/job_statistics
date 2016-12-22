@@ -29,6 +29,4 @@ def calculate_job_query_stat(query):
 	result["FAILED"] = sum((1 for job,perf,tag in jobs if job.state == "FAILED"))
 	result["NODE_FAIL"] = sum((1 for job,perf,tag in jobs if job.state == "NODE_FAIL"))
 
-	print(result)
-
 	return result
