@@ -45,7 +45,7 @@ def add_job() -> Response:
 		job = add_or_update(global_db, parsed_data)
 
 		if job.state != "RUNNING":
-			update_performance(current_app._get_current_object(), global_db, job)
+			update_performance(current_app._get_current_object(), global_db, job, True)
 			apply_autotags(job)
 
 		return jsonify({"id" : job.id})
@@ -72,7 +72,7 @@ def json_job_performance(record_id: int) -> Response:
 	elif request.method == 'POST':
 		job = Job.query.get_or_404(record_id)
 
-		update_performance(current_app._get_current_object(), global_db, job)
+		update_performance(current_app._get_current_object(), global_db, job, request.args.get("force") is not None)
 		apply_autotags(job)
 
 		return jsonify("update started")

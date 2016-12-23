@@ -23,7 +23,6 @@ class JobPerformance(global_db.Model):
 	def to_dict(self) -> dict:
 		result = {"min": {}, "max": {}, "avg": {}}
 
-
 		for sensor_name in SENSOR_LIST:
 			result["min"][sensor_name] = getattr(self, "min_" + sensor_name)
 			result["max"][sensor_name] = getattr(self, "max_" + sensor_name)
