@@ -97,7 +97,7 @@ def table(page) -> Response:
 
 	query = query.filter(Job.state != "RUNNING").filter(Job.t_end - Job.t_start > min_len)
 
-	query_stat = calculate_job_query_stat(query)
+	query_stat = calculate_job_query_stat(request.query_string, query)
 
 	show_query = query.order_by(Job.t_end.desc()).offset(page * PAGE_SIZE).limit(PAGE_SIZE)
 
