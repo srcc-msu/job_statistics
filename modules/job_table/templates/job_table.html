@@ -42,64 +42,81 @@
 				$('#query_stat').toggle('show');
         	});
 		});
+
+		function update_perf(id)
+		{
+			$.ajax({
+				type: "POST",
+				url: "/api/job/" + id + "/performance"
+			});
+		}
 	</script>
 
 	<h1> {{ app_config.cluster.name }} task table</h1>
 
-	<form id="query_form">
-		<p>
-			From: <input type="text" id="date_from">
-			To: <input type="text" id="date_to">
-		</p>
+	<form id="query_form" style="display: inline-block;">
+		<table>
+			<tr>
+				<td>From:</td>
+				<td><input type="text" id="date_from"></td>
+				<td rowspan="2">
+					<input id="query_button" type="button" value="Query" onclick="load_query();"/>
+				</td>
+			</tr>
+			<tr>
+				<td>To:</td>
+				<td><input type="text" id="date_to"></td>
+			</tr>
+			<tr>
+				<td>Accounts: </td>
+				<td colspan="2">
+					<input type=text size=40 id=accounts name=accounts placeholder="account1,account2">
+				</td>
+			</tr>
+		</table>
 
-		<p>
-			Accounts: <input type=text size=40 id=accounts name=accounts placeholder="account1,account2">
-		</p>
 		<ul id="req_tags"></ul>
 		<ul id="opt_tags"></ul>
 		<ul id="no_tags"></ul>
-
-		<input id="query_button" type="button" value="Query" onclick="load_query();"/>
 	</form>
 
-	<p></p>
-	<input type='button' id='hideshow' value='Show stats'>
+	<div style="display: inline-block; vertical-align:top; float:right;">
+		<p>Statistics for shown stats(short tasks are ignored):</p>
 
-	<div id="query_stat">
-		<table border="1">
+		<table border="1" style="text-align: center;">
 			<tr>
-				<th>Total cpu time (CPUh)</th>
-				<th>{{ query_stat.cpu_h | float2 }}</th>
+				<td>Total cpu time (CPUh)</td>
+				<td>{{ query_stat.cpu_h | float2 }}</td>
 			</tr>
 
 			<tr>
-				<th>Total jobs</th>
-				<th>{{ query_stat.count }}</th>
+				<td>Total jobs</td>
+				<td>{{ query_stat.count }}</td>
 			</tr>
 
 			<tr>
-				<th>COMPLETED</th>
-				<th>{{ query_stat.COMPLETED }}</th>
+				<td>COMPLETED</td>
+				<td>{{ query_stat.COMPLETED }}</td>
 			</tr>
 
 			<tr>
-				<th>CANCELLED</th>
-				<th>{{ query_stat.CANCELLED }}</th>
+				<td>CANCELLED</td>
+				<td>{{ query_stat.CANCELLED }}</td>
 			</tr>
 
 			<tr>
-				<th>TIMEOUT</th>
-				<th>{{ query_stat.TIMEOUT }}</th>
+				<td>TIMEOUT</td>
+				<td>{{ query_stat.TIMEOUT }}</td>
 			</tr>
 
 			<tr>
-				<th>FAILED</th>
-				<th>{{ query_stat.FAILED }}</th>
+				<td>FAILED</td>
+				<td>{{ query_stat.FAILED }}</td>
 			</tr>
 
 			<tr>
-				<th>NODE_FAIL</th>
-				<th>{{ query_stat.NODE_FAIL }}</th>
+				<td>NODE_FAIL</td>
+				<td>{{ query_stat.NODE_FAIL }}</td>
 			</tr>
 		</table>
 	</div>
@@ -151,6 +168,12 @@
 						{{ performance[sensor] | float2 }}
 					</td>
 				{% endfor %}
+
+				{% if performance["avg_cpu_user"] is none %}
+					<td>
+						<button id="update" onclick="update_perf({{job.id}});">Update</button>
+					</td>
+				{% endif %}
 			</tr>
 		{% endfor %}
 	</tbody>
