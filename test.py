@@ -66,7 +66,7 @@ class GeneralTestSuit(TestSuit):
 		assert b"General settings" in rv.data
 
 	def test_table(self):
-		rv = TestSuit.client.get("/job_table/table")
+		rv = TestSuit.client.get("/job_table/table", follow_redirects=True)
 		print(rv.status, rv.data)
 
 		assert "200" in rv.status
@@ -332,10 +332,11 @@ class TestAutoTag(TestSuit):
 		assert AutoTag.query.get(id) == None
 
 	def test_job_update(self):
-		rv = TestSuit.client.post("/autotag/job/1")
+		rv = TestSuit.client.post("/api/job/1/autotag")
 		print(rv.status, rv.data)
 
-		assert "202" in rv.status
+		assert "200" in rv.status
+		assert b"test2" in rv.data
 
 if __name__ == "__main__":
 	unittest.main(verbosity=2)

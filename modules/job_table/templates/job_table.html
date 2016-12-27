@@ -81,7 +81,7 @@
 	</form>
 
 	<div style="display: inline-block; vertical-align:top; float:right;">
-		<p>Statistics for shown stats(short tasks are ignored):</p>
+		<p>Statistics for shown tasks:</p>
 
 		<table border="1" style="text-align: center;">
 			<tr>
@@ -169,11 +169,17 @@
 					</td>
 				{% endfor %}
 
-				{% if performance["avg_cpu_user"] is none %}
-					<td>
-						<button id="update" onclick="update_perf({{job.id}});">Update</button>
-					</td>
-				{% endif %}
+				<td>
+					{% if performance["avg_cpu_user"] is none %}
+
+						{% if job.t_end - job.t_start > app_config.general.aggregation_interval * 3 %}
+							<button id="update" onclick="update_perf({{job.id}});">Update</button>
+						{% else %}
+							<p>too short</p>
+						{% endif %}
+
+					{% endif %}
+				</td>
 			</tr>
 		{% endfor %}
 	</tbody>

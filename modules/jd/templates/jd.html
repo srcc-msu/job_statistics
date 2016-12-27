@@ -156,8 +156,8 @@
 	</table>
 
 	<p>
-		<span style="color: red; font-size: x-large; ">Keep in mind {{app_config.general.aggregation_interval}}-seconds approximation: average data and graphs for small tasks may be very
-			inaccurate.</span>
+		<span style="color: red; font-size: x-large; ">Keep in mind {{app_config.general.aggregation_interval}}-seconds
+			approximation: average data and graphs for small tasks may be very inaccurate.</span>
 	</p>
 
 	<h2>Big tasks may require up to half minute to load, be patient.</h2>
@@ -165,7 +165,9 @@
 	<h3>General information: <input type="button" value="Click to show details" onclick="ToggleInfo();"></h3>
 
 	<div class="info"><p>
-		All processor counters (CPU user load, CPU flops, l1 miss, l3 miss, mem_load, mem_store) are gathered from each core by monitoring agents. Then processor counters from all cores are mixed together to calculate minimum, maximum and average value within every 300 seconds interval.<br />
+		All processor counters (CPU user load, CPU flops, l1 miss, l3 miss, mem_load, mem_store) are gathered
+		from each core by monitoring agents. Then processor counters from all cores are mixed together to calculate
+		minimum, maximum and average value within every 300 seconds interval.<br />
 
 		Visual graphics are calculated as follows:
 		'min' graphs - Minimum accross all minimal values from all nodes for the interval<br />

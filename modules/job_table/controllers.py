@@ -93,9 +93,7 @@ def table(page) -> Response:
 	query = construct_general_query(accounts, data["date_from"], data["date_to"])
 	query = construct_filtered_query(query, req_tags, opt_tags, no_tags)
 
-	min_len = current_app.app_config.general["aggregation_interval"] * 3
-
-	query = query.filter(Job.state != "RUNNING").filter(Job.t_end - Job.t_start > min_len)
+	query = query.filter(Job.state != "RUNNING")
 
 	query_stat = calculate_job_query_stat(request.query_string, query)
 
