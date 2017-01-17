@@ -1,6 +1,7 @@
-import http.client
+import threading
 
-from flask import Blueprint, Response, jsonify, render_template, request
+from flask import Blueprint, Response, render_template, request, Flask, current_app
+import time
 
 from application.database import global_db
 from modules.autotag.models import AutoTag
@@ -29,3 +30,22 @@ def apply_autotags(job: Job):
 def autotag_list() -> Response:
 	data = global_db.session.query(Tag, AutoTag).join(AutoTag).all()
 	return render_template("autotag_list.html", data=data)
+
+def __apply_since(app: Flask, since: int):
+	with app.app_context():
+		jobs = Job.query.filter(Job.t_end > since).all()
+
+		for job in jobs:
+			apply_autotags(job)
+
+		print("updated {0} since {1}".format(len(jobs), since))
+
+@autotag_pages.route("/apply", methods=["POST"])
+def apply_since() -> Response:
+	since = int(request.args.get("since", int(time.time()) - 60*60)) # last hour by default
+
+	thread = threading.Thread(target=__apply_since, args=(current_app._get_current_object(), since))
+	thread.daemon = True
+	thread.start()
+
+	return "ok"

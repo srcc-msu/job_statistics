@@ -44,4 +44,4 @@ class Sensor(global_db.Model):
 SENSOR_CLASS_MAP = {}
 
 for name in SENSOR_LIST:
-	SENSOR_CLASS_MAP[name] = type(name, (Sensor,),{"__tablename__": "sensor_" + name})
+	SENSOR_CLASS_MAP[name] = type(name, (Sensor,), {"__tablename__": "sensor_" + name})

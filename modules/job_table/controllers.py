@@ -65,11 +65,11 @@ def table(page) -> Response:
 	reload = False
 
 	if "date_to" not in data or data["date_to"] == 0:
-		data["date_to"] = int(time.time())
+		data["date_to"] = int((int(time.time()) + 86400) / 86400) * 86400
 		reload = True
 
 	if "date_from" not in data or data["date_from"] == 0:
-		data["date_from"] = data["date_to"] - 86400 * 3
+		data["date_from"] = int((data["date_to"] - 86400 * 3) / 86400) * 86400
 		reload = True
 
 	if reload:
