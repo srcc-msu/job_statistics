@@ -61,6 +61,7 @@ def table(page) -> Response:
 	PAGE_SIZE = 50
 
 	data = request.args.to_dict()
+	accounts = data.get("accounts", "")
 
 	reload = False
 
@@ -69,13 +70,15 @@ def table(page) -> Response:
 		reload = True
 
 	if "date_from" not in data or data["date_from"] == 0:
-		data["date_from"] = int((data["date_to"] - 86400 * 3) / 86400) * 86400
+		if len(accounts) == 0:
+			data["date_from"] = int((data["date_to"] - 86400 * 3) / 86400) * 86400
+		else:
+			data["date_from"] = int((data["date_to"] - 86400 * 30) / 86400) * 86400
+
 		reload = True
 
 	if reload:
 		return flask.redirect(request.path + "?" + urllib.parse.urlencode(data))
-
-	accounts = data.get("accounts", "")
 
 	def extract_tag(data: dict, name: str):
 		tags = data.get(name)
