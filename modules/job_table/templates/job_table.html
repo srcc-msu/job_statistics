@@ -28,8 +28,22 @@
 	<script type="text/javascript">
 		$(document).ready(function()
 		{
-			$("#date_from").datepicker();
-			$("#date_to").datepicker();
+			$("#date_from").datepicker({
+				altField: "#date_from_ts",
+				altFormat: "@",
+				defaultDate: "-365"
+			});
+			$("#date_to").datepicker({
+				altField: "#date_to_ts",
+				altFormat: "@",
+				defaultDate: "-1"
+			});
+
+//			var day_ago = new Date(); day_ago.setDate(day_ago.getDate() - 1);
+			var week_ago = new Date(); week_ago.setDate(week_ago.getDate() - 7);
+
+			$("#date_from").datepicker('setDate', week_ago);
+			$("#date_to").datepicker('setDate', new Date());
 
 			$("#tasks_table").tablesorter();
 			init_tags();
@@ -54,18 +68,24 @@
 
 	<h1> {{ app_config.cluster.name }} task table</h1>
 
-	<form id="query_form" style="display: inline-block;">
+	<form id="query_form" style="display: inline-block;"  method="post">
 		<table>
 			<tr>
 				<td>From:</td>
-				<td><input type="text" id="date_from"></td>
+				<td>
+					<input type="text" id="date_from"></div>
+					<input type="hidden" id="date_from_ts" name="date_from"/>
+				</td>
 				<td rowspan="2">
-					<input id="query_button" type="button" value="Query" onclick="load_query();"/>
+					<button id="query_button" type="submit">Query</button>
 				</td>
 			</tr>
 			<tr>
 				<td>To:</td>
-				<td><input type="text" id="date_to"></td>
+				<td>
+					<input type="text" id="date_to"></div>
+					<input type="hidden" id="date_to_ts" name="date_to"/>
+				</td>
 			</tr>
 			<tr>
 				<td>Accounts: </td>
@@ -164,7 +184,7 @@
 				<td class="table_text"> {{ job.partition }} </td>
 
 				{% for sensor in app_config.monitoring.DISPLAY_SENSOR_LIST %}
-					<td  style="background-color: {{ get_color(sensor, performance[sensor]) }}" class="sensor_text" >
+					<td style="background-color: {{ get_color(sensor, performance[sensor]) }}" class="sensor_text" >
 						{{ performance[sensor] | float2 }}
 					</td>
 				{% endfor %}

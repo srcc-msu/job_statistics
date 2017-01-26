@@ -6,25 +6,6 @@ function getParameterByName(name) {
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
-function load_query()
-{
-	var date_from = $("#date_from").datepicker('getDate') / 1000;
-	var date_to = $("#date_to").datepicker('getDate') / 1000;
-
-	var accounts = $("#accounts").val();
-
-	var req_tags = $("#req_tags").tagit("assignedTags").join(";");
-	var opt_tags = $("#opt_tags").tagit("assignedTags").join(";");
-	var no_tags = $("#no_tags").tagit("assignedTags").join(";");
-
-	window.location.href = location.protocol + '//' + location.host + "/job_table/table"
-        + "?date_from=" + date_from + "&date_to=" + date_to
-        + "&accounts=" + accounts
-        + "&req_tags=" + req_tags
-        + "&opt_tags=" + opt_tags
-        + "&no_tags=" + no_tags;
-}
-
 function fill_form()
 {
 	var date_from = getParameterByName("date_from");
@@ -50,7 +31,7 @@ function fill_form()
     for(var j = 0; j < filters.length; j++)
     {
         var tag_holder = filters[j];
-        var data = getParameterByName(tag_holder).split(";");
+        var data = getParameterByName(tag_holder).split(",");
 
         for(var i = 0; i < data.length; i++)
         {
@@ -78,13 +59,15 @@ function init_tags()
                 availableTags : tags,
                 showAutocompleteOnFocus : true,
                 placeholderText : "All of",
+                singleField: true,
+				fieldName: "req_tags",
 
                 beforeTagAdded: function(event, ui) {
                     if(tags.indexOf(ui.tagLabel) == -1)
                     {
                         return false;
                     }
-                },
+                }
             });
 
             $("#opt_tags").tagit({
@@ -92,6 +75,8 @@ function init_tags()
                 availableTags : tags,
                 showAutocompleteOnFocus : true,
                 placeholderText : "At least one of",
+                singleField: true,
+				fieldName: "opt_tags",
 
                 beforeTagAdded: function(event, ui) {
                     if(tags.indexOf(ui.tagLabel) == -1)
@@ -106,6 +91,8 @@ function init_tags()
                 availableTags : tags,
                 showAutocompleteOnFocus : true,
                 placeholderText : "None of",
+                singleField: true,
+				fieldName: "no_tags",
 
                 beforeTagAdded: function(event, ui) {
                     if(tags.indexOf(ui.tagLabel) == -1)

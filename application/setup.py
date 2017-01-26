@@ -123,7 +123,7 @@ def register_blueprints(app: Flask):
 		import api.autotag
 		import api.monitoring
 		import api.job_stat
-		import api.account
+		import api.job_table
 
 		app.register_blueprint(application.controllers.core_pages, url_prefix='')
 
@@ -134,7 +134,7 @@ def register_blueprints(app: Flask):
 		app.register_blueprint(modules.autotag.controllers.autotag_pages, url_prefix='/autotag')
 
 		app.register_blueprint(api.job.controllers.job_api_pages, url_prefix='/api/job')
-		app.register_blueprint(api.account.controllers.account_api_pages, url_prefix='/api/account')
+		app.register_blueprint(api.job_table.controllers.job_table_api_pages, url_prefix='/api/job_table')
 		app.register_blueprint(api.tag.controllers.tag_api_pages, url_prefix='/api/tag')
 		app.register_blueprint(api.autotag.controllers.autotag_api_pages, url_prefix='/api/autotag')
 		app.register_blueprint(api.monitoring.controllers.monitoring_api_pages, url_prefix='/api/monitoring')
