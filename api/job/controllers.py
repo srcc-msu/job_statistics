@@ -5,7 +5,7 @@ from flask import Blueprint, jsonify, Response, request, redirect, current_app
 from sqlalchemy import func, Float
 
 from application.database import global_db
-from core.job.controllers import add_or_update
+from core.job.controllers import update_existing, add_new
 from core.job.models import Job
 from core.job.helpers import LomSlurmConverter, SlurmConverter, SacctConverter
 from core.monitoring.controllers import update_performance
@@ -16,39 +16,45 @@ from core.tag.models import JobTag, Tag
 job_api_pages = Blueprint('job_api', __name__
 	, template_folder='templates')
 
-@job_api_pages.route("/", methods=["GET", "POST"])
+@job_api_pages.route("/", methods=["POST"])
 def add_job() -> Response:
-	if request.method == 'GET':
-		since = request.args["since"]
-		limit = request.args.get("limit", 100)
+	data = request.form["data"]
+	stage = request.form["stage"]
 
-		query = Job.query.filter(Job.t_submit > since).limit(limit)
+	try:
+		if request.form["format"].lower() == "slurm_db":
+			parsed_data = LomSlurmConverter().ParseConvert(data)
+		elif request.form["format"].lower() == "slurm_plugin":
+			parsed_data = SlurmConverter().ParseConvert(data)
+		elif request.form["format"].lower() == "sacct":
+			parsed_data = SacctConverter().ParseConvert(data)
+		else:
+			return jsonify({"data": "unsupported format", "result": "error"})
 
-		return jsonify(list(map(lambda x: x.to_dict(), query.all())))
-	elif request.method == 'POST':
-		data = request.form["data"]
+	except Exception as e:
+		traceback.print_exc(file=sys.stderr)
+		raise e
 
+
+	if stage == "BEFORE":
+		job = add_new(global_db, parsed_data)
+	elif stage == "AFTER":
+		job = update_existing(global_db, parsed_data)
+		update_performance(current_app, global_db, job, True)
+		apply_autotags(job)
+	elif stage == "ONLY_MISSING":
 		try:
-			if request.form["format"].lower() == "slurm_db":
-				parsed_data = LomSlurmConverter().ParseConvert(data)
-			elif request.form["format"].lower() == "slurm_plugin":
-				parsed_data = SlurmConverter().ParseConvert(data)
-			elif request.form["format"].lower() == "sacct":
-				parsed_data = SacctConverter().ParseConvert(data)
-			else:
-				return jsonify({"data": "unsupported format", "result": "error"})
-
-		except Exception as e:
-			traceback.print_exc(file=sys.stderr)
-			raise e
-
-		job = add_or_update(global_db, parsed_data)
-
-		if job.state != "RUNNING":
-			update_performance(current_app._get_current_object(), global_db, job, True)
+			job = add_new(global_db, parsed_data)
+		except ValueError:
+			return jsonify({"result": "skipping"})
+		else:
+			update_performance(current_app, global_db, job, True)
 			apply_autotags(job)
+	else:
+		raise RuntimeError({"result": "unsupported operation stage: " + stage})
 
-		return jsonify({"id" : job.id})
+
+	return jsonify({"id" : job.id})
 
 @job_api_pages.route("/<int:record_id>")
 def json_job(record_id: int) -> Response:

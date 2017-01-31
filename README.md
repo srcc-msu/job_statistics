@@ -6,7 +6,7 @@ to provide a detailed job report with monitoring data graphs,
 to show a general jobs statistics bu runtime, length, resources and so on.
 
 ## Requirements
-python3.5+
+python3.5+, postrgresql, postgresql-devel
 
 ## Installation
 `python3.5 -m venv venv`
@@ -28,7 +28,7 @@ for development:
 `python init.py -c dev --drop`
 
 for production:
-`python init.py -c dev --prod`
+`python init.py -c prod --drop`
 
 ## Testing
 `python test.py`

@@ -19,7 +19,7 @@ def add(db: SQLAlchemy, job: Job):
 	__add_perf(db, JobPerformance(job.id))
 	__add_tag(db, JobTag(job.id))
 
-def add_or_update(db: SQLAlchemy, job_info: dict) -> Job:
+def add_new(db: SQLAlchemy, job_info: dict) -> Job:
 	job_query = Job.query.filter(Job.job_id == job_info["job_id"]).filter(Job.task_id == job_info["task_id"])
 	job = job_query.scalar()
 
@@ -29,10 +29,16 @@ def add_or_update(db: SQLAlchemy, job_info: dict) -> Job:
 
 		return job
 	else:
-		if job.state == "RUNNING":
-			job_query.update(job_info)
-			db.session.commit()
+		raise ValueError("job already exists: id={}".format(job.id))
 
-			return job
-		else:
-			raise RuntimeError("job already exists")
+def update_existing(db: SQLAlchemy, job_info: dict) -> Job:
+	job_query = Job.query.filter(Job.job_id == job_info["job_id"]).filter(Job.task_id == job_info["task_id"])
+	job = job_query.scalar()
+
+	if job is None:
+		raise ValueError("job not found: id={}".format(job_info["job_id"]))
+	else:
+		job_query.update(job_info)
+		db.session.commit()
+
+		return job
