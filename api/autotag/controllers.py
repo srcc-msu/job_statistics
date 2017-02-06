@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, Response, request
-from helpers import crossdomain
+from application.helpers import crossdomain
 
 from modules.autotag.models import AutoTag
 from application.database import global_db

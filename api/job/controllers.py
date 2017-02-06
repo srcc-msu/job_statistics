@@ -10,7 +10,7 @@ from core.job.models import Job
 from core.job.helpers import LomSlurmConverter, SlurmConverter, SacctConverter
 from core.monitoring.controllers import update_performance
 from core.monitoring.models import JobPerformance, SENSOR_CLASS_MAP
-from helpers import crossdomain
+from application.helpers import crossdomain
 from modules.autotag.controllers import apply_autotags
 from core.tag.models import JobTag, Tag
 
@@ -41,7 +41,7 @@ def add_job() -> Response:
 		job = add_new(global_db, parsed_data)
 	elif stage == "AFTER":
 		job = update_existing(global_db, parsed_data)
-		update_performance(current_app, global_db, job, True)
+		update_performance(current_app._get_current_object(), global_db, job, True)
 		apply_autotags(job)
 	elif stage == "ONLY_MISSING":
 		try:
@@ -49,7 +49,7 @@ def add_job() -> Response:
 		except ValueError:
 			return jsonify({"result": "skipping"})
 		else:
-			update_performance(current_app, global_db, job, True)
+			update_performance(current_app._get_current_object(), global_db, job, True)
 			apply_autotags(job)
 	else:
 		raise RuntimeError({"result": "unsupported operation stage: " + stage})

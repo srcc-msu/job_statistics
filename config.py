@@ -11,12 +11,12 @@ class BaseConfig(object):
 class TestingConfig(BaseConfig):
 	TESTING = True
 	SQLALCHEMY_ECHO = False
-	SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://srcc:srcc@localhost/srcc_jd_test'
+	SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://***REMOVED***:***REMOVED***@localhost/***REMOVED***_jd_test'
 
 class DevelopmentConfig(BaseConfig):
 	DEBUG = True
 	SQLALCHEMY_ECHO = True
-	SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://srcc:srcc@localhost/srcc_jd_dev'
+	SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://***REMOVED***:***REMOVED***@localhost/***REMOVED***_jd_dev'
 
 class ProductionConfig(BaseConfig):
-	SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://srcc:srcc@localhost/srcc_jd_prod'
+	SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://***REMOVED***:***REMOVED***@localhost/***REMOVED***_jd_prod'

@@ -1,5 +1,5 @@
 from flask import Blueprint, Response, request
-from helpers import crossdomain
+from application.helpers import crossdomain
 
 from modules.job_stat.controllers import generate_query
 import application

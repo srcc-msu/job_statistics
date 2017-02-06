@@ -7,7 +7,7 @@ from sqlalchemy import or_
 
 from core.job.models import Job
 from core.tag.models import JobTag
-from helpers import crossdomain
+from application.helpers import crossdomain
 
 job_table_api_pages = Blueprint('job_table_api', __name__
 	, template_folder='templates')
