@@ -7,6 +7,7 @@ from sqlalchemy import or_
 
 from core.job.models import Job
 from core.tag.models import JobTag
+from helpers import crossdomain
 
 job_table_api_pages = Blueprint('job_table_api', __name__
 	, template_folder='templates')
@@ -94,6 +95,7 @@ def construct_full_table_query(query: BaseQuery, params: dict) -> BaseQuery:
 	return query
 
 @job_table_api_pages.route("/common")
+@crossdomain(origin='*')
 def json_jobs_by_account() -> Response:
 	data = construct_job_table_query(Job.query, request.args.to_dict()).all()
 

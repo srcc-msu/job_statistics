@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, Response, request
+from helpers import crossdomain
 
 from modules.autotag.models import AutoTag
 from application.database import global_db
@@ -8,6 +9,7 @@ autotag_api_pages = Blueprint('autotag_api', __name__
 	, template_folder='templates', static_folder='static')
 
 @autotag_api_pages.route("/")
+@crossdomain(origin='*')
 def show_all_tags() -> Response:
 	data = global_db.session.query(Tag, AutoTag).join(AutoTag).all()
 

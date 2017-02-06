@@ -2,11 +2,13 @@ from flask import Blueprint, jsonify, Response, request
 
 from core.tag.models import Tag
 from application.database import global_db
+from helpers import crossdomain
 
 tag_api_pages = Blueprint('tag_api', __name__
 	, template_folder='templates', static_folder='static')
 
 @tag_api_pages.route("/")
+@crossdomain(origin='*')
 def show_all_tags() -> Response:
 	tags = Tag.query.all()
 

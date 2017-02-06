@@ -10,6 +10,7 @@ from core.job.models import Job
 from core.job.helpers import LomSlurmConverter, SlurmConverter, SacctConverter
 from core.monitoring.controllers import update_performance
 from core.monitoring.models import JobPerformance, SENSOR_CLASS_MAP
+from helpers import crossdomain
 from modules.autotag.controllers import apply_autotags
 from core.tag.models import JobTag, Tag
 
@@ -57,10 +58,12 @@ def add_job() -> Response:
 	return jsonify({"id" : job.id})
 
 @job_api_pages.route("/<int:record_id>")
+@crossdomain(origin='*')
 def json_job(record_id: int) -> Response:
 	return redirect(request.base_url + "/info")
 
 @job_api_pages.route("/<int:record_id>/info")
+@crossdomain(origin='*')
 def json_job_info(record_id: int) -> Response:
 	data = Job.query.get_or_404(record_id)
 
@@ -69,6 +72,7 @@ def json_job_info(record_id: int) -> Response:
 # monitoring
 
 @job_api_pages.route("/<int:record_id>/performance", methods=["GET", "POST"])
+@crossdomain(origin='*')
 def json_job_performance(record_id: int) -> Response:
 	if request.method == 'GET':
 		_ = Job.query.get_or_404(record_id)
@@ -84,6 +88,7 @@ def json_job_performance(record_id: int) -> Response:
 		return jsonify("update started")
 
 @job_api_pages.route("/<int:record_id>/sensor/<string:sensor>")
+@crossdomain(origin='*')
 def job_sensor(sensor: str, record_id: int) -> Response:
 	job = Job.query.get(record_id)
 
@@ -123,6 +128,7 @@ def job_sensor(sensor: str, record_id: int) -> Response:
 # tags
 
 @job_api_pages.route("/<int:record_id>/tags")
+@crossdomain(origin='*')
 def job_tags(record_id: int) -> Response:
 	job =  Job.query.get_or_404(record_id)
 
