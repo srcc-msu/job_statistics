@@ -20,18 +20,30 @@ def preset():
 	return render_template("preset.html"
 		, app_config=current_app.app_config)
 
-def gen_base_query(t_from: int, t_to: int) -> BaseQuery:
+def gen_base_query(t_from: int, t_to: int, include: str) -> BaseQuery:
 	scoped_duration = sqlalchemy.func.LEAST(Job.t_end, t_to) - sqlalchemy.func.GREATEST(Job.t_start, t_from)
 
 	base_query = global_db.session \
 		.query(Job, JobStat, (Job.num_cores * sqlalchemy.func.GREATEST(scoped_duration, 0))
 			.label("cores_sec")) \
-		.join(JobStat) \
-		.filter(Job.t_end > t_from) \
+		.join(JobStat)
+
+	if include == "all":
+		return  base_query.filter(Job.t_end > t_from) \
 		.filter(Job.t_start < t_to) \
 		.subquery()
 
-	return base_query
+	elif include == "started":
+		return  base_query.filter(Job.t_start > t_from) \
+		.filter(Job.t_start < t_to) \
+		.subquery()
+
+	elif include == "completed":
+		return  base_query.filter(Job.t_end > t_from) \
+		.filter(Job.t_end < t_to) \
+		.subquery()
+
+	raise KeyError("wrong include value: " + include)
 
 def gen_what(base_query: BaseQuery, metric: str, aggregation_function: str, grouping: List[str]) -> BaseQuery:
 	params = []
@@ -78,7 +90,7 @@ def gen_group(base_query: BaseQuery, query: BaseQuery
 	return query
 
 def generate_query(url_args: dict, metric: str, aggregation_function: str) -> BaseQuery:
-	base_query = gen_base_query(url_args["t_from"], url_args["t_to"])
+	base_query = gen_base_query(url_args["t_from"], url_args["t_to"], url_args.get("include", "all"))
 
 	grouping = url_args.get("grouping")
 

@@ -180,7 +180,7 @@ function ShowCompleted(target, t_start, t_end)
 	var data = {
 		t_from: t_start
 		, t_to: t_end
-		, tasks: "t_end"
+		, include: "completed"
 	};
 
 	function avg_transform(data) { return (parseInt(data.split('\n')[1]) / ((t_end - t_start) / 86400)).toFixed(1); }
@@ -195,7 +195,7 @@ function ShowStarted(target, t_start, t_end)
 	var data = {
 		t_from: t_start
 		, t_to: t_end
-		, tasks: "t_start"
+		, include: "started"
 	};
 
 	function avg_transform(data) { return (parseInt(data.split('\n')[1]) / ((t_end - t_start) / 86400)).toFixed(1); }

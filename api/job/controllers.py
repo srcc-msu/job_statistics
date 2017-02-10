@@ -39,6 +39,8 @@ def add_job() -> Response:
 
 	if stage == "BEFORE":
 		job = add_new(global_db, parsed_data)
+	elif stage == "UPDATE_INFO":
+		job = update_existing(global_db, parsed_data)
 	elif stage == "AFTER":
 		job = update_existing(global_db, parsed_data)
 		update_performance(current_app._get_current_object(), global_db, job, True)
