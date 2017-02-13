@@ -1,4 +1,3 @@
-import threading
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func, Float
@@ -6,6 +5,7 @@ from sqlalchemy import func, Float
 from core.job.models import Job
 from core.monitoring.constants import SENSOR_LIST
 from core.monitoring.models import JobPerformance, SENSOR_CLASS_MAP
+from application.helpers import background
 
 def __update_performance(app: Flask, db: SQLAlchemy, job: Job, force: bool):
 	with app.app_context():
@@ -49,7 +49,4 @@ def __update_performance(app: Flask, db: SQLAlchemy, job: Job, force: bool):
 		db.session.commit()
 
 def update_performance(app: Flask, db: SQLAlchemy, job: Job, force: bool):
-	"""TODO: move to RQ"""
-	thread = threading.Thread(target=__update_performance, args=(app, db, job, force))
-	thread.daemon = True
-	thread.start()
+	background(__update_performance, (app, db, job, force))

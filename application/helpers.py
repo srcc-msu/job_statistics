@@ -1,12 +1,15 @@
 import csv
 import datetime
 import io
+import threading
+import traceback
 from typing import List
 import time
 
 from datetime import timedelta
 from flask import make_response, request, current_app
 from functools import update_wrapper
+import sys
 
 def gen_csv_response(header: List[dict], data: List[List]):
 	output = io.StringIO()
@@ -72,3 +75,25 @@ def crossdomain(origin=None, methods=None, headers=None,
 		f.provide_automatic_options = False
 		return update_wrapper(wrapped_function, f)
 	return decorator
+
+import queue
+
+def __background():
+	while True:
+		try:
+			function, params = __background.queue.get(block=True)
+			function(*params)
+		except Exception:
+			traceback.print_exc(file=sys.stderr)
+
+__background.queue = None
+
+def background(function, params):
+	if __background.queue is None:
+		__background.queue = queue.Queue()
+
+		thread = threading.Thread(target=__background)
+		thread.daemon = True
+		thread.start()
+
+	__background.queue.put((function, params), block=False)

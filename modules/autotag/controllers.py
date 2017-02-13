@@ -1,9 +1,8 @@
-import threading
-
 from flask import Blueprint, Response, render_template, request, Flask, current_app
 import time
 
 from application.database import global_db
+from application.helpers import background
 from modules.autotag.models import AutoTag
 from core.job.models import Job
 from core.monitoring.models import JobPerformance
@@ -44,8 +43,6 @@ def __apply_since(app: Flask, since: int):
 def apply_since() -> Response:
 	since = int(request.args.get("since", int(time.time()) - 60*60)) # last hour by default
 
-	thread = threading.Thread(target=__apply_since, args=(current_app._get_current_object(), since))
-	thread.daemon = True
-	thread.start()
+	background(__apply_since, (current_app._get_current_object(), since))
 
 	return "ok"
