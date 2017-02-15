@@ -34,6 +34,7 @@ def add_job() -> Response:
 
 	except Exception as e:
 		traceback.print_exc(file=sys.stderr)
+		print("ERROR LINE: ", data)
 		raise e
 
 

@@ -1,6 +1,8 @@
 import csv
 import datetime
 import io
+import multiprocessing
+import queue
 import threading
 import traceback
 from typing import List
@@ -76,13 +78,20 @@ def crossdomain(origin=None, methods=None, headers=None,
 		return update_wrapper(wrapped_function, f)
 	return decorator
 
-import queue
-
-def __background():
+def __background(timeout):
 	while True:
 		try:
 			function, params = __background.queue.get(block=True)
-			function(*params)
+			p = multiprocessing.Process(target=function, args=params)
+			p.start()
+			p.join(timeout)
+
+			if p.is_alive():
+				print("killing long background process, params: ", params)
+
+				p.terminate()
+				p.join()
+
 		except Exception:
 			traceback.print_exc(file=sys.stderr)
 
@@ -92,7 +101,7 @@ def background(function, params):
 	if __background.queue is None:
 		__background.queue = queue.Queue()
 
-		thread = threading.Thread(target=__background)
+		thread = threading.Thread(target=__background, args=(300,))
 		thread.daemon = True
 		thread.start()
 
