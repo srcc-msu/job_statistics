@@ -1,17 +1,12 @@
 import csv
 import datetime
 import io
-import multiprocessing
-import queue
 import threading
-import traceback
 from typing import List
-import time
 
 from datetime import timedelta
 from flask import make_response, request, current_app
 from functools import update_wrapper
-import sys
 
 def gen_csv_response(header: List[dict], data: List[List]):
 	output = io.StringIO()
@@ -78,31 +73,26 @@ def crossdomain(origin=None, methods=None, headers=None,
 		return update_wrapper(wrapped_function, f)
 	return decorator
 
-def __background(timeout):
-	while True:
-		try:
-			function, params = __background.queue.get(block=True)
-			p = multiprocessing.Process(target=function, args=params)
-			p.start()
-			p.join(timeout)
+import time
 
-			if p.is_alive():
-				print("killing long background process, params: ", params)
+def __bg_wrapper(function, params):
+	__bg_wrapper.bg_count += 1
+	print("{} started in {}, running: {}, params: {}".format(function.__name__, time.strftime("%Y-%m-%d %H:%M %s"), __bg_wrapper.bg_count, params))
 
-				p.terminate()
-				p.join()
+	start = time.time()
+	try:
+		function(*params)
+	except:
+		pass
+	end = time.time()
 
-		except Exception:
-			traceback.print_exc(file=sys.stderr)
+	__bg_wrapper.bg_count -= 1
+	print("{} finished in {:.2f} seconds, running: {}".format(function.__name__, end - start, __bg_wrapper.bg_count, params))
 
-__background.queue = None
+__bg_wrapper.bg_count = 0
 
 def background(function, params):
-	if __background.queue is None:
-		__background.queue = queue.Queue()
 
-		thread = threading.Thread(target=__background, args=(300,))
-		thread.daemon = True
-		thread.start()
-
-	__background.queue.put((function, params), block=False)
+	thread = threading.Thread(target=__bg_wrapper, args=(function, params,))
+	thread.daemon = True
+	thread.start()
