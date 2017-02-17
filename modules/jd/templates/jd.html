@@ -32,8 +32,7 @@
 
 		$(document).ready(function() {
 			FillTags({{ job.id }});
-
-		ApplyToggle();
+			ApplyToggle();
 		});
 	</script>
 
@@ -190,6 +189,7 @@
 				{{ app_config.monitoring.SENSOR_INFO[sensor][1] }}
 			</p>
 		</div>
+		<a href="/jd/{{job.job_id}}/{{job.task_id}}/heatmap/{{sensor}}">heatmap</a>
 	{% endfor %}
 </body>
 </html>

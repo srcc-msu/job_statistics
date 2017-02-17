@@ -1,0 +1,27 @@
+<script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
+<script type="text/javascript" src="https://code.highcharts.com/modules/data.js"></script>
+<script type="text/javascript" src="https://code.highcharts.com/modules/heatmap.js"></script>
+<script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
+
+<script type="text/javascript" src="/jd/static/heatmap.js"></script>
+
+<script type="text/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		draw_heatmap("container_min", "Min", {{max_value}}, {{data_min}});
+		draw_heatmap("container_max", "Max", {{max_value}}, {{data_max}});
+		draw_heatmap("container_avg", "Average", {{max_value}}, {{data_avg}});
+	});
+</script>
+
+<div id="container_min" style="height: 320px; width: 1000px; margin: 0 auto"></div>
+<div id="container_max" style="height: 320px; width: 1000px; margin: 0 auto"></div>
+<div id="container_avg" style="height: 320px; width: 1000px; margin: 0 auto"></div>
+
+<!-- Source: http://vikjavev.no/ver/highcharts-demos/heatmap.csv.php?year=2013 -->
+<pre id="csv" style="display: none">
+{% for entry in csv -%}
+	{{ entry }}
+{%- endfor %}
+</pre>
