@@ -9,9 +9,19 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		draw_heatmap("container_min", "Min", {{max_value}}, {{data_min}});
-		draw_heatmap("container_max", "Max", {{max_value}}, {{data_max}});
-		draw_heatmap("container_avg", "Average", {{max_value}}, {{data_avg}});
+		var min_data = [];
+		var max_data = [];
+		var avg_data = [];
+
+		{% for time, node_id, min_value, max_value, avg_value in display_data %}
+			min_data.push([{{time}}, {{node_id}}, {{min_value}}]);
+			max_data.push([{{time}}, {{node_id}}, {{max_value}}]);
+			avg_data.push([{{time}}, {{node_id}}, {{avg_value}}]);
+		{% endfor %}
+
+		draw_heatmap("container_min", min_data, "Min", {{data_max_value}}, {{data_step}});
+		draw_heatmap("container_max", max_data, "Max", {{data_max_value}}, {{data_step}});
+		draw_heatmap("container_avg", avg_data, "Average", {{data_max_value}}, {{data_step}});
 	});
 </script>
 
@@ -19,9 +29,3 @@
 <div id="container_max" style="height: 320px; width: 1000px; margin: 0 auto"></div>
 <div id="container_avg" style="height: 320px; width: 1000px; margin: 0 auto"></div>
 
-<!-- Source: http://vikjavev.no/ver/highcharts-demos/heatmap.csv.php?year=2013 -->
-<pre id="csv" style="display: none">
-{% for entry in csv -%}
-	{{ entry }}
-{%- endfor %}
-</pre>

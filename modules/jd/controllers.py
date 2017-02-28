@@ -56,15 +56,22 @@ def heatmap(job_id: int, task_id: int, sensor: str) -> Response:
 		.filter(sensor_class.node_id.in_(filter_nodelist))
 
 	data = query.all()
+	data_max_value = max(map(lambda x: max(x[2:]), data), default = 0)
 
 	nodes = sorted(list(set([line[1] for line in data])))
 
-	data_min = "[" +",".join(map(lambda line: "[{},{},{}]".format(line[0], nodes.index(line[1]), line[2]), data)) + "]"
-	data_max = "[" +",".join(map(lambda line: "[{},{},{}]".format(line[0], nodes.index(line[1]), line[3]), data)) + "]"
-	data_avg = "[" +",".join(map(lambda line: "[{},{},{}]".format(line[0], nodes.index(line[1]), line[4]), data)) + "]"
+	display_data = []
 
-	return render_template("heatmap.html", job=job.to_dict(), max_value = max(map(lambda x: max(x[2:]), data))
-		, data_min = data_min, data_max = data_max, data_avg = data_avg)
+	for entry in data:
+		time, node_id, min_value, max_value, avg_value = entry
+# convert node ids to local indexing: 0, 1, 2, ..
+		display_data.append((int(time) * 1000, nodes.index(node_id), min_value, max_value, avg_value))
+
+	return render_template("heatmap.html", job=job.to_dict()
+		, display_data = display_data
+		, data_max_value = data_max_value
+		, data_step = current_app.app_config.general["aggregation_interval"] * 1000
+		, max_value = data_max_value)
 
 @jd_pages.route("/share/<string:hash>")
 def anon_jd(hash: str) -> Response:

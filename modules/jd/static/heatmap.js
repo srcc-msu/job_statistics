@@ -71,7 +71,7 @@
 }(Highcharts));
 
 
-function draw_heatmap(id, header, max_value, data)
+function draw_heatmap(id, data, header, max_value, data_step)
 {
 	var start = new Date;
 
@@ -131,7 +131,7 @@ function draw_heatmap(id, header, max_value, data)
 
 		series: [{
 			nullColor: '#EFEFEF',
-			colsize: 1,
+			colsize: data_step,
 			tooltip: {
 				headerFormat: 'node-{point.y}: ',
 				pointFormat: '<b>{point.value}</b>'
