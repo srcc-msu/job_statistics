@@ -13,11 +13,13 @@ from core.monitoring.models import JobPerformance, SENSOR_CLASS_MAP
 from application.helpers import crossdomain
 from modules.autotag.controllers import apply_autotags
 from core.tag.models import JobTag, Tag
+from application.helpers import requires_auth
 
 job_api_pages = Blueprint('job_api', __name__
 	, template_folder='templates')
 
 @job_api_pages.route("/", methods=["POST"])
+@requires_auth
 def add_job() -> Response:
 	data = request.form["data"]
 	stage = request.form["stage"]
@@ -74,21 +76,23 @@ def json_job_info(record_id: int) -> Response:
 
 # monitoring
 
-@job_api_pages.route("/<int:record_id>/performance", methods=["GET", "POST"])
+@job_api_pages.route("/<int:record_id>/performance")
 @crossdomain(origin='*')
 def json_job_performance(record_id: int) -> Response:
-	if request.method == 'GET':
-		_ = Job.query.get_or_404(record_id)
-		data = JobPerformance.query.get(record_id)
+	_ = Job.query.get_or_404(record_id)
+	data = JobPerformance.query.get(record_id)
 
-		return jsonify(data.to_dict())
-	elif request.method == 'POST':
-		job = Job.query.get_or_404(record_id)
+	return jsonify(data.to_dict())
 
-		update_performance(current_app._get_current_object(), global_db, job, request.args.get("force") is not None)
-		apply_autotags(job)
+@job_api_pages.route("/<int:record_id>/performance", methods=["POST"])
+@requires_auth
+def update_job_performance(record_id: int) -> Response:
+	job = Job.query.get_or_404(record_id)
 
-		return jsonify("update started")
+	update_performance(current_app._get_current_object(), global_db, job, request.args.get("force") is not None)
+	apply_autotags(job)
+
+	return jsonify("update started")
 
 @job_api_pages.route("/<int:record_id>/sensor/<string:sensor>")
 @crossdomain(origin='*')
@@ -139,18 +143,26 @@ def job_tags(record_id: int) -> Response:
 
 	return jsonify(job_tag.to_dict())
 
-@job_api_pages.route("/<int:record_id>/tag/<string:tag>", methods=["GET", "POST"])
+@job_api_pages.route("/<int:record_id>/tag/<string:tag>")
+@crossdomain(origin='*')
 def access_job_tag(record_id: int, tag: str) -> Response:
 	"""GET = return tag stat, POST = create or delete and return tag stat"""
 	job =  Job.query.get_or_404(record_id)
 
-	if request.method == 'POST':
-		if request.form["action"].lower() == "add":
-			add_job_tag(job, tag)
-		elif request.form["action"].lower() == "delete":
-			delete_job_tag(job, tag)
-		else:
-			raise RuntimeError("unsupported tag operation: " + request.form["action"])
+	return jsonify({"tag": tag, "job": record_id, "exist": check_job_tag(job, tag)})
+
+@job_api_pages.route("/<int:record_id>/tag/<string:tag>", methods=["POST"])
+@requires_auth
+def update_job_tag(record_id: int, tag: str) -> Response:
+	"""GET = return tag stat, POST = create or delete and return tag stat"""
+	job =  Job.query.get_or_404(record_id)
+
+	if request.form["action"].lower() == "add":
+		add_job_tag(job, tag)
+	elif request.form["action"].lower() == "delete":
+		delete_job_tag(job, tag)
+	else:
+		raise RuntimeError("unsupported tag operation: " + request.form["action"])
 
 	return jsonify({"tag": tag, "job": record_id, "exist": check_job_tag(job, tag)})
 
@@ -171,6 +183,7 @@ def add_job_tag(job: Job, tag: str) -> Response:
 # autotags
 
 @job_api_pages.route("/<int:record_id>/autotag", methods=["POST"])
+@requires_auth
 def __apply_autotags(record_id: int) -> Response:
 	job = Job.query.get(record_id)
 

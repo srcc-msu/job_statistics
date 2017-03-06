@@ -9,15 +9,18 @@ from core.tag.models import JobTag
 from core.job.helpers import id2hash, hash2id
 from application.database import global_db
 from modules.job_table.helpers import get_color
+from application.helpers import requires_auth
 
 jd_pages = Blueprint('jd', __name__
 	, template_folder='templates', static_folder='static')
 
 @jd_pages.route("/<int:job_id>")
+@requires_auth
 def jd_redirect(job_id: int) -> Response:
 	return redirect(request.base_url + "/0")
 
 @jd_pages.route("/<int:job_id>/<int:task_id>")
+@requires_auth
 def jd(job_id: int, task_id: int) -> Response:
 	try:
 		job = Job.get_by_id(job_id, task_id)
@@ -34,6 +37,7 @@ def jd(job_id: int, task_id: int) -> Response:
 		, get_color=partial(get_color, thresholds=current_app.app_config.monitoring["thresholds"]))
 
 @jd_pages.route("/<int:job_id>/<int:task_id>/heatmap/<string:sensor>")
+@requires_auth
 def heatmap(job_id: int, task_id: int, sensor: str) -> Response:
 	try:
 		job = Job.get_by_id(job_id, task_id)
@@ -74,6 +78,7 @@ def heatmap(job_id: int, task_id: int, sensor: str) -> Response:
 		, max_value = data_max_value)
 
 @jd_pages.route("/share/<string:hash>")
+@requires_auth
 def anon_jd(hash: str) -> Response:
 	task_id = 0
 	job_id = hash2id(hash)

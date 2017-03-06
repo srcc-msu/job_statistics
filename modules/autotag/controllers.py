@@ -7,6 +7,7 @@ from modules.autotag.models import AutoTag
 from core.job.models import Job
 from core.monitoring.models import JobPerformance
 from core.tag.models import JobTag, Tag
+from application.helpers import requires_auth
 
 autotag_pages = Blueprint('autotag', __name__
 	, template_folder='templates/', static_folder='static')
@@ -26,6 +27,7 @@ def apply_autotags(job: Job):
 			pass
 
 @autotag_pages.route("/list")
+@requires_auth
 def autotag_list() -> Response:
 	data = global_db.session.query(Tag, AutoTag).join(AutoTag).all()
 	return render_template("autotag_list.html", data=data)
@@ -40,6 +42,7 @@ def __apply_since(app: Flask, since: int):
 		print("updated {0} since {1}".format(len(jobs), since))
 
 @autotag_pages.route("/apply", methods=["POST"])
+@requires_auth
 def apply_since() -> Response:
 	since = int(request.args.get("since", int(time.time()) - 60*60)) # last hour by default
 

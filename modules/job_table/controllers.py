@@ -11,18 +11,21 @@ from application.database import global_db
 from core.job.models import Job
 from core.tag.models import JobTag
 from core.monitoring.models import JobPerformance
+from application.helpers import requires_auth
 
 job_table_pages = Blueprint('job_table', __name__
 	, template_folder='templates', static_folder='static')
 
 
 @job_table_pages.route("/table/")
+@requires_auth
 def table_redirect():
 	query = "?" + request.query_string.decode("utf-8") if len(request.query_string) > 0 else ""
 
 	return flask.redirect(flask.url_for("job_table.table", page=0) + query)
 
 @job_table_pages.route("/table/page/<int:page>", methods=["GET", "POST"])
+@requires_auth
 def table(page: int) -> Response:
 	PAGE_SIZE = 50
 

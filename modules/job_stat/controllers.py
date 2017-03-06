@@ -7,15 +7,18 @@ from flask_sqlalchemy import BaseQuery
 from modules.job_stat.model import JobStat
 from core.job.models import Job
 from application.database import global_db
+from application.helpers import requires_auth
 
 job_stat_pages = Blueprint('job_stat', __name__
 	, template_folder='templates', static_folder='static')
 
 @job_stat_pages.route("/constructor")
+@requires_auth
 def constructor():
 	return render_template("constructor.html")
 
 @job_stat_pages.route("/preset")
+@requires_auth
 def preset():
 	return render_template("preset.html"
 		, app_config=current_app.app_config)

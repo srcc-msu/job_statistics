@@ -5,8 +5,8 @@ import threading
 from typing import List
 
 from datetime import timedelta
-from flask import make_response, request, current_app
-from functools import update_wrapper
+from flask import make_response, request, current_app, Response
+from functools import update_wrapper, wraps
 
 def gen_csv_response(header: List[dict], data: List[List]):
 	output = io.StringIO()
@@ -96,3 +96,28 @@ def background(function, params):
 	thread = threading.Thread(target=__bg_wrapper, args=(function, params,))
 	thread.daemon = True
 	thread.start()
+
+def check_auth(username, password):
+	"""This function is called to check if a username /
+	password combination is valid.
+	"""
+	return username == current_app.config.get("LOGIN") and password == current_app.config.get("PASSWORD")
+
+def authenticate():
+	"""Sends a 401 response that enables basic auth"""
+	return Response(
+	'Could not verify your access level for that URL.\n'
+	'You have to login with proper credentials', 401,
+	{'WWW-Authenticate': 'Basic realm="Login Required"'})
+
+def requires_auth(f):
+	@wraps(f)
+	def decorated(*args, **kwargs):
+		auth = request.authorization
+		if not auth:
+			return authenticate()
+		if not check_auth(auth.username, auth.password):
+			print("bad auth attempt: {0} {1}".format(auth.username, auth.password))
+			return authenticate()
+		return f(*args, **kwargs)
+	return decorated

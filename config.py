@@ -8,6 +8,9 @@ class BaseConfig(object):
 	HOST="0.0.0.0"
 	PORT=5000
 
+	LOGIN="***REMOVED***"
+	PASSWORD="***REMOVED***"
+
 class TestingConfig(BaseConfig):
 	TESTING = True
 	SQLALCHEMY_ECHO = False

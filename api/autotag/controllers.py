@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, Response, request
-from application.helpers import crossdomain
+from application.helpers import crossdomain, requires_auth
 
 from modules.autotag.models import AutoTag
 from application.database import global_db
@@ -16,6 +16,7 @@ def show_all_tags() -> Response:
 	return jsonify([{"label": tag.label, "condition": autotag.condition} for tag, autotag in data])
 
 @autotag_api_pages.route("/", methods=["POST"])
+@requires_auth
 def create_tag() -> Response:
 	label = request.form["label"]
 	condition = request.form["condition"]
@@ -29,6 +30,7 @@ def create_tag() -> Response:
 	return jsonify({"id": autotag.id, "label": label, "condition": condition})
 
 @autotag_api_pages.route("/<int:autotag_id>", methods=["POST"])
+@requires_auth
 def manage_tag(autotag_id: int) -> Response:
 	if request.form["action"].lower() == "delete":
 
