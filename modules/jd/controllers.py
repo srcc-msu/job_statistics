@@ -78,7 +78,6 @@ def heatmap(job_id: int, task_id: int, sensor: str) -> Response:
 		, max_value = data_max_value)
 
 @jd_pages.route("/share/<string:hash>")
-@requires_auth
 def anon_jd(hash: str) -> Response:
 	task_id = 0
 	job_id = hash2id(hash)
