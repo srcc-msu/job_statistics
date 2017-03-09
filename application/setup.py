@@ -67,16 +67,23 @@ def drop_job_stat(app):
 def setup_database(app: Flask, drop = False):
 	global_db.init_app(app)
 
+	import core.job.models
+	import core.monitoring.models
+	import core.tag.models
+
+	import modules.autotag.models
 	if drop:
 		with app.app_context():
-			import modules.autotag
-
 			drop_job_stat(app)
 			global_db.drop_all()
 			global_db.create_all()
 
 			drop_job_stat(app)
 			create_job_stat_view(app, "job_stat") # recreate it as view
+	else:
+		with app.app_context():
+			global_db.create_all()
+
 
 def create_app(config: str) -> Flask:
 	app = Flask(__name__, static_folder=None)
