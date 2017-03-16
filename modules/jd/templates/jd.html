@@ -90,6 +90,10 @@
 						<td> {{ job.t_end | ts2datetime }} ( {{ job.t_end }} ) </td>
 					</tr>
 					<tr>
+						<td>state</td>
+						<td> {{ job.state }} </td>
+					</tr>
+					<tr>
 						<td>duration (minutes)</td>
 						<td> {{ "{:.1f}".format((job.t_end - job.t_start) / 60) }} </td>
 					</tr>

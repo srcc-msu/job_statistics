@@ -30,7 +30,7 @@ function Shrink(input)
 
 	var factor = Math.floor(input.length / scale_factor);
 
-	for(var i = 0; i < input.length; i += factor)
+	for(var i = 0; i < input.length - factor; i += factor)
     {
         var tmp = input[i];
 

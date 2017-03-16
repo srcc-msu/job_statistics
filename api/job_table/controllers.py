@@ -42,7 +42,7 @@ def query_apply_common_filter(query: BaseQuery, accounts: List[str], partitions:
 
 def query_apply_date_filter(query: BaseQuery, date_from: Optional[int], date_to: Optional[int]) -> BaseQuery:
 	if date_from is not None:
-		query = query.filter(Job.t_start > date_from)
+		query = query.filter(Job.t_end > date_from)
 
 	if date_to is not None:
 		query = query.filter(Job.t_end < date_to)
