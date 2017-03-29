@@ -115,6 +115,8 @@ def load_cluster_config(path, app):
 	app_config.monitoring = runpy.run_path(path + "/monitoring.py")
 	app_config.cluster = runpy.run_path(path + "/cluster.py")
 
+	app_config.user_map = runpy.run_path(path + "/user_map.py")["user_map"]
+
 	app.app_config = app_config
 
 def register_blueprints(app: Flask):

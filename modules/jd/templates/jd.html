@@ -117,6 +117,12 @@
 				</table>
 
 				{% if not anon %}
+					{% if job.account in app_config.user_map %}
+						<h2><a href="http://users.parallel.ru/admin/users/{{app_config.user_map[job.account]}}"> User page </a></h2>
+					{% else %}
+						<h2>Error: user page not found</h2>
+					{% endif %}
+
 					<ul id="jd_tags"></ul>
 
 					<a href="/jd/share/{{id2hash(job.job_id)}}">share</a>
