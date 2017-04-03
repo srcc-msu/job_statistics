@@ -200,7 +200,11 @@
 				{{ app_config.monitoring.SENSOR_INFO[sensor][1] }}
 			</p>
 		</div>
-		<a href="/jd/{{job.job_id}}/{{job.task_id}}/heatmap/{{sensor}}">heatmap</a>
+		{% if not anon %}
+			<a href="/jd/{{job.job_id}}/{{job.task_id}}/heatmap/{{sensor}}">heatmap</a>
+		{% else %}
+			<a href="/jd/share/{{hash}}/heatmap/{{sensor}}">heatmap</a>
+		{% endif %}
 	{% endfor %}
 </body>
 </html>

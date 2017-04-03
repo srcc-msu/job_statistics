@@ -77,6 +77,13 @@ def heatmap(job_id: int, task_id: int, sensor: str) -> Response:
 		, data_step = current_app.app_config.general["aggregation_interval"] * 1000
 		, max_value = data_max_value)
 
+@jd_pages.route("/share/<string:hash>/heatmap/<string:sensor>")
+def anon_heatmap(hash: str, sensor: str) -> Response:
+	task_id = 0
+	job_id = hash2id(hash)
+
+	return heatmap(job_id, task_id, sensor)
+
 @jd_pages.route("/share/<string:hash>")
 def anon_jd(hash: str) -> Response:
 	task_id = 0
@@ -90,7 +97,7 @@ def anon_jd(hash: str) -> Response:
 	tag = JobTag.query.get(job.id)
 	performance = JobPerformance.query.get(job.id)
 
-	return render_template("jd.html", anon=True
+	return render_template("jd.html", anon=True, hash=hash
 		, job=job.to_dict(), tags=tag.to_dict(), monitoring=performance.to_dict()
 		, derivative=current_app.app_config.monitoring["calculate_derivative"](performance.to_dict())
 		, app_config=current_app.app_config
