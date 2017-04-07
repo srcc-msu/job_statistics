@@ -239,3 +239,21 @@ def id2hash(n: int, shift = 1):
 def hash2id(hash: str, shift = 1):
 	n = int(hash, 36)
 	return reverse(n) >> shift
+
+def username2id(username: str):
+	result = 0
+
+	for i in  username:
+		result *= 255
+		result += ord(i)
+
+	return result
+
+def id2username(id: int):
+	result = ""
+
+	while id > 0:
+		result += chr(id % 255)
+		id //= 255
+
+	return result[::-1]

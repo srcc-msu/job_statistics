@@ -6,7 +6,7 @@ from werkzeug.exceptions import abort
 from core.job.models import Job
 from core.monitoring.models import JobPerformance, SENSOR_CLASS_MAP
 from core.tag.models import JobTag
-from core.job.helpers import id2hash, hash2id
+from core.job.helpers import id2hash, hash2id, username2id
 from application.database import global_db
 from modules.job_table.helpers import get_color
 from application.helpers import requires_auth
@@ -30,7 +30,7 @@ def jd(job_id: int, task_id: int) -> Response:
 	tag = JobTag.query.get(job.id)
 	performance = JobPerformance.query.get(job.id)
 
-	return render_template("jd.html", anon=False, id2hash=id2hash
+	return render_template("jd.html", anon=False, id2hash=id2hash, username2id=username2id
 		, job=job.to_dict(), tags=tag.to_dict(), monitoring=performance.to_dict()
 		, derivative=current_app.app_config.monitoring["calculate_derivative"](performance.to_dict())
 		, app_config=current_app.app_config
