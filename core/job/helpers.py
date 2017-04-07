@@ -232,7 +232,7 @@ def id2hash(n: int, shift = 1):
 
 	while n:
 		result += alphabet[n % base]
-		n = int(n / base)
+		n = n // base
 
 	return result[::-1]
 
