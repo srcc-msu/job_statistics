@@ -1,0 +1,28 @@
+{% extends "jd.html.template" %}
+
+{% block AccountLink %}
+	<a href="/job_table/table?accounts={{job.account}}" class="table_text">
+		{{ job.account }}
+	</a>
+{% endblock %}
+
+{% block AdditionalUserInfo %}
+	{% if job.account in app_config.user_map %}
+		<h2><a href="http://users.parallel.ru/admin/users/{{app_config.user_map[job.account]}}"> User page </a></h2>
+	{% else %}
+		<h2>Error: user page not found</h2>
+	{% endif %}
+
+	<ul id="jd_tags"></ul>
+
+	<p>
+		<a href="/jd/share/{{id2hash(job.job_id)}}">share this task</a>
+	</p>
+	<p>
+		<a href="/job_table/share/{{id2hash(username2id(job.account))}}">share all user's tasks</a>
+	</p>
+{% endblock %}
+
+{% block HeatmapLink %}
+	<a href="/jd/{{job.job_id}}/{{job.task_id}}/heatmap/{{sensor}}">heatmap</a>
+{% endblock %}

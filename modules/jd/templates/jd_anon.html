@@ -1,0 +1,12 @@
+{% extends "jd.html.template" %}
+
+{% block AccountLink %}
+	{{ job.account }}
+{% endblock %}
+
+{% block AdditionalUserInfo %}
+{% endblock %}
+
+{% block HeatmapLink %}
+	<a href="/jd/share/{{hash}}/heatmap/{{sensor}}">heatmap</a>
+{% endblock %}
