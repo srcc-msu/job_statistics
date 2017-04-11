@@ -22,14 +22,31 @@
 			$("#date_to").datepicker('setDate', new Date(new Date().getTime() + 24 * 60 * 60 * 1000));
 
 			$("#tasks_table").tablesorter();
-
+			init_tags();
 			fill_form();
+
+			$('#query_stat').toggle('hide');
+
+			$('#hideshow').on('click', function(event)
+			{
+				$('#query_stat').toggle('show');
+			});
 		});
+
+		function update_perf(id)
+		{
+			$.ajax({
+				type: "POST",
+				url: "/api/job/" + id + "/performance"
+			});
+		}
+
 	</script>
 {% endblock %}
 
 {% block QueryForm %}
-	<form id="query_form" style=""  method="post">
+<div style="margin: 10px; float:left">
+	<form id="query_form" style="display: inline-block;"  method="post">
 		<table>
 			<tr>
 				<td>From:</td>
@@ -48,13 +65,24 @@
 					<input type="hidden" id="date_to_ts" name="date_to"/>
 				</td>
 			</tr>
+			<tr>
+				<td>Accounts: </td>
+				<td colspan="2">
+					<input type=text size=40 id=accounts name=accounts placeholder="account1,account2">
+				</td>
+			</tr>
 		</table>
+
+		<ul id="req_tags"></ul>
+		<ul id="opt_tags"></ul>
+		<ul id="no_tags"></ul>
 	</form>
+</div>
 {% endblock %}
 
 {% block JobLink %}
 	<td class="task_state_{{job.state}}">
-		<a href="/jd/share/{{id2hash(job.job_id)}}" class="table_text">
+		<a href="/jd/{{job.job_id}}" class="table_text">
 			{{ job.job_id }}
 		</a>
 	</td>
@@ -62,10 +90,22 @@
 
 {% block AccountLink %}
 	<td class="table_text">
-		{{ job.account }}
+		<a href="/job_table/table?accounts={{job.account}}" class="table_text">
+			{{ job.account }}
+		</a>
 	</td>
 {% endblock %}
 
 {% block ServiceColumn %}
+	<td class="table_text">
+		{% if performance["avg_cpu_user"] is none %}
 
+			{% if job.t_end - job.t_start > app_config.general.aggregation_interval * 3 %}
+				<button id="update" onclick="update_perf({{job.id}});">Update</button>
+			{% else %}
+				<p>too short</p>
+			{% endif %}
+
+		{% endif %}
+	</td>
 {% endblock %}

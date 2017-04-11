@@ -25,61 +25,13 @@ def table_redirect():
 
 	return flask.redirect(flask.url_for("job_table.table", page=0) + query)
 
-@job_table_pages.route("/table/page/<int:page>", methods=["GET", "POST"])
-@requires_auth
-def table(page: int) -> Response:
-	PAGE_SIZE = 50
-
-	if request.method == "POST":
-		data = request.form.to_dict()
-
-		try:
-			data["date_from"] = int(int(data["date_from"]) / 1000)
-		except (KeyError, ValueError):
-			pass
-
-		try:
-			data["date_to"] = int(int(data["date_to"]) / 1000)
-		except (KeyError, ValueError):
-			pass
-
-		return flask.redirect(request.path + "?" + urllib.parse.urlencode(data))
-
-	elif request.method == "GET":
-		data = request.args.to_dict()
-
-		if "date_from" not in data:
-			data["date_from"] = int(time.time()) - 86400 * 7;
-			return flask.redirect(request.path + "?" + urllib.parse.urlencode(data))
-
-		query = global_db.session.query(Job, JobTag, JobPerformance).join(JobTag).join(JobPerformance)
-
-		query = construct_full_table_query(query, data)
-
-		query = query.filter(Job.state != "RUNNING")
-
-		query_stat = calculate_job_query_stat(request.query_string, query)
-
-		show_query = query.order_by(Job.t_end.desc()).offset(page * PAGE_SIZE).limit(PAGE_SIZE)
-
-		query_url = "?" + request.query_string.decode("utf-8") if len(request.query_string) > 0 else ""
-
-		return render_template("job_table.html"
-			, jobs=show_query.all()
-			, query_stat=query_stat
-			, prev_page = flask.url_for("job_table.table", page = page-1) + query_url if page > 0 else None
-			, next_page = flask.url_for("job_table.table", page = page+1) + query_url
-			, app_config=current_app.app_config
-			, get_color=partial(get_color, thresholds=current_app.app_config.monitoring["thresholds"]))
-
 @job_table_pages.route("/share/<string:hash>")
 def anon_table_redirect(hash):
 	query = "?" + request.query_string.decode("utf-8") if len(request.query_string) > 0 else ""
 
 	return flask.redirect(flask.url_for("job_table.anon_table", hash=hash, page=0) + query)
 
-@job_table_pages.route("/share/<string:hash>/<int:page>", methods=["GET", "POST"])
-def anon_table(hash: str, page: int) -> Response:
+def __show_table(template: str, page: int, prev_page_link: str, next_page_link, only_account: str = None) -> Response:
 	PAGE_SIZE = 50
 
 	if request.method == "POST":
@@ -104,7 +56,8 @@ def anon_table(hash: str, page: int) -> Response:
 			data["date_from"] = int(time.time()) - 86400 * 7;
 			return flask.redirect(request.path + "?" + urllib.parse.urlencode(data))
 
-		data["accounts"] = id2username(hash2id(hash))
+		if only_account is not None:
+			data["accounts"] = only_account
 
 		query = global_db.session.query(Job, JobTag, JobPerformance).join(JobTag).join(JobPerformance)
 
@@ -116,13 +69,29 @@ def anon_table(hash: str, page: int) -> Response:
 
 		show_query = query.order_by(Job.t_end.desc()).offset(page * PAGE_SIZE).limit(PAGE_SIZE)
 
-		query_url = "?" + request.query_string.decode("utf-8") if len(request.query_string) > 0 else ""
-
-		return render_template("job_table_anon.html"
+		return render_template(template
 			, jobs=show_query.all()
 			, query_stat=query_stat
-			, prev_page = flask.url_for("job_table.anon_table", hash=hash, page = page-1) + query_url if page > 0 else None
-			, next_page = flask.url_for("job_table.anon_table", hash=hash, page = page+1) + query_url
+			, prev_page_link = prev_page_link
+			, next_page_link = next_page_link
 			, app_config=current_app.app_config
 			, get_color=partial(get_color, thresholds=current_app.app_config.monitoring["thresholds"])
 			, id2hash=id2hash)
+
+@job_table_pages.route("/table/page/<int:page>", methods=["GET", "POST"])
+@requires_auth
+def table(page: int) -> Response:
+	query_url = "?" + request.query_string.decode("utf-8") if len(request.query_string) > 0 else ""
+	prev_page_link = flask.url_for("job_table.table", page = page-1) + query_url if page > 0 else None
+	next_page_link = flask.url_for("job_table.table", page = page+1) + query_url
+
+	return __show_table("job_table.html", page, prev_page_link, next_page_link)
+
+@job_table_pages.route("/share/<string:hash>/<int:page>", methods=["GET", "POST"])
+def anon_table(hash: str, page: int) -> Response:
+	query_url = "?" + request.query_string.decode("utf-8") if len(request.query_string) > 0 else ""
+	prev_page_link = flask.url_for("job_table.anon_table", hash=hash, page = page-1) + query_url if page > 0 else None
+	next_page_link = flask.url_for("job_table.anon_table", hash=hash, page = page+1) + query_url
+
+	return __show_table("job_table_anon.html", page, prev_page_link, next_page_link
+		, id2username(hash2id(hash)))

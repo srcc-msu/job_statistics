@@ -1,0 +1,132 @@
+<!doctype html>
+
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title> {{ app_config.cluster.name }} tasks table</title>
+
+	<link rel="stylesheet" type="text/css" href="/job_table/static/job_table.css">
+
+	<link rel="stylesheet" type="text/css" href="/static/jquery/jquery.tagit.css">
+	<link rel="stylesheet" type="text/css" href="/static/jquery/jquery-ui-1.11.4.css">
+
+	<link rel="stylesheet" type="text/css" href="/static/tablesorter/blue/style.css">
+</head>
+
+<body>
+
+	<script type="text/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="/static/jquery/jquery-ui-1.11.4.min.js"></script>
+
+	<script type="text/javascript" src="/static/tablesorter/jquery.tablesorter.min.js"></script>
+
+	<script type="text/javascript" src="/static/jquery/tag-it.min.js"></script>
+
+	<script type="text/javascript" src="/job_table/static/job_table.js"></script>
+
+	{% block Initialization %}{% endblock %}
+
+	<h1> {{ app_config.cluster.name }} task table</h1>
+
+	<div style="">
+		{% block QueryForm %}{% endblock %}
+
+		<div style="display:inline-block; margin: 10px">
+			<p>Statistics for shown tasks:</p>
+
+			<table border="1">
+				<tr>
+					<td>Total cpu time (CPUh)</td>
+					<td>{{ query_stat.cpu_h | float2 }}</td>
+				</tr>
+
+				<tr>
+					<td>Total jobs</td>
+					<td>{{ query_stat.count }}</td>
+				</tr>
+
+				<tr>
+					<td>COMPLETED</td>
+					<td>{{ query_stat.COMPLETED }}</td>
+				</tr>
+
+				<tr>
+					<td>CANCELLED</td>
+					<td>{{ query_stat.CANCELLED }}</td>
+				</tr>
+
+				<tr>
+					<td>TIMEOUT</td>
+					<td>{{ query_stat.TIMEOUT }}</td>
+				</tr>
+
+				<tr>
+					<td>FAILED</td>
+					<td>{{ query_stat.FAILED }}</td>
+				</tr>
+
+				<tr>
+					<td>NODE_FAIL</td>
+					<td>{{ query_stat.NODE_FAIL }}</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	<table id="tasks_table" class="tablesorter" border="1">
+		<thead>
+			<tr>
+				<th>id</th>
+				<th>account</th>
+				<th>t_start</th>
+				<th>t_end</th>
+				<th>state</th>
+				<th>cores_hours</th>
+				<th>num_cores</th>
+				<th>duration</th>
+				<th>partition</th>
+
+				{% for sensor in app_config.monitoring["DISPLAY_SENSOR_LIST"] %}
+					<th> {{ sensor | replace("avg_", "") }} </th>
+				{% endfor %}
+			</tr>
+		</thead>
+
+		<tbody>
+			{% for job, _, performance in jobs %}
+				<tr>
+					{% block JobLink scoped %}{% endblock %}
+
+					{% block AccountLink scoped %}{% endblock %}
+
+					<td class="table_text"> {{ job.t_start | ts2datetime }} </td>
+					<td class="table_text"> {{ job.t_end | ts2datetime }} </td>
+					<td class="table_text"> {{ job.state }} </td>
+					<td class="table_text"> {{ ((job.t_end - job.t_start) * job.num_cores / 3600) | float2 }} </td>
+					<td class="table_text"> {{ job.num_cores }} </td>
+					<td class="table_text"> {{ ((job.t_end - job.t_start) / 60) | float2 }} </td>
+					<td class="table_text"> {{ job.partition }} </td>
+
+					{% for sensor in app_config.monitoring.DISPLAY_SENSOR_LIST %}
+						<td style="background-color: {{ get_color(sensor, performance[sensor]) }}" class="sensor_text" >
+							{{ performance[sensor] | float2 }}
+						</td>
+					{% endfor %}
+
+					{% block ServiceColumn scoped %}{% endblock %}
+				</tr>
+			{% endfor %}
+		</tbody>
+
+	</table>
+
+	{% if prev_page_link %}
+		<a href="{{ prev_page_link }}"><< Prev </a>
+	{% else %}
+		<< Prev
+	{% endif %}
+
+	<a href="{{ next_page_link }}">Next >> </a>
+</body>
+</html>
