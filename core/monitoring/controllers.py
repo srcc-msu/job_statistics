@@ -19,9 +19,9 @@ def __update_performance(app: Flask, db: SQLAlchemy, job: Job, force: bool):
 
 		for sensor in SENSOR_LIST:
 			if force \
-				or current_perf["min"].get(sensor, None) == None \
-				or current_perf["max"].get(sensor, None) == None \
-				or current_perf["avg"].get(sensor, None) == None:
+				or current_perf["min"].get(sensor, None) is None \
+				or current_perf["max"].get(sensor, None) is None \
+				or current_perf["avg"].get(sensor, None) is None:
 				pass
 			else:
 				continue

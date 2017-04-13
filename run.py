@@ -3,7 +3,7 @@ from optparse import OptionParser
 from application.helpers import app_log
 from application.setup import create_app, setup_database, register_blueprints, load_cluster_config
 
-def run(config):
+def run(config: str):
 	app = create_app(config)
 	load_cluster_config("cluster_config/", app)
 

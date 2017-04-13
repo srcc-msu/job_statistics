@@ -385,7 +385,7 @@ class TestAutoTag(TestSuit):
 			, headers = TestSuit.auth_headers)
 		print(rv.status, rv.data)
 
-		assert AutoTag.query.get(eval(rv.data)["id"]) != None
+		assert AutoTag.query.get(eval(rv.data)["id"]) is not None
 
 		assert "200" in rv.status
 		assert b"test2" in rv.data
@@ -402,7 +402,7 @@ class TestAutoTag(TestSuit):
 			, data={"action": "delete"}, headers = TestSuit.auth_headers)
 
 		assert "200" in rv.status
-		assert AutoTag.query.get(id) == None
+		assert AutoTag.query.get(id) is None
 
 	def test_job_update(self):
 		rv = TestSuit.client.post("/api/job/1/autotag"

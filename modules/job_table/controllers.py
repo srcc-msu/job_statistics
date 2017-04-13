@@ -53,7 +53,7 @@ def __show_table(template: str, page: int, prev_page_link: str, next_page_link, 
 		data = request.args.to_dict()
 
 		if "date_from" not in data:
-			data["date_from"] = int(time.time()) - 86400 * 7;
+			data["date_from"] = int(time.time()) - 86400 * 7
 			return flask.redirect(request.path + "?" + urllib.parse.urlencode(data))
 
 		if only_account is not None:
@@ -85,7 +85,7 @@ def table(page: int) -> Response:
 	prev_page_link = flask.url_for("job_table.table", page = page-1) + query_url if page > 0 else None
 	next_page_link = flask.url_for("job_table.table", page = page+1) + query_url
 
-	return __show_table("job_table.html", page, prev_page_link, next_page_link)
+	return __show_table("job_table_full.html", page, prev_page_link, next_page_link)
 
 @job_table_pages.route("/share/<string:hash>/<int:page>", methods=["GET", "POST"])
 def anon_table(hash: str, page: int) -> Response:

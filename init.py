@@ -1,5 +1,4 @@
 from optparse import OptionParser
-import sys
 
 from application.helpers import app_log
 from application.setup import create_app, setup_database, load_cluster_config

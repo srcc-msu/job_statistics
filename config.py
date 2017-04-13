@@ -8,18 +8,18 @@ class BaseConfig(object):
 	HOST="0.0.0.0"
 	PORT=5000
 
-	LOGIN="***REMOVED***"
-	PASSWORD="***REMOVED***"
+	LOGIN="user"
+	PASSWORD="password"
 
 class TestingConfig(BaseConfig):
 	TESTING = True
 	SQLALCHEMY_ECHO = False
-	SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://***REMOVED***:***REMOVED***@localhost/***REMOVED***_jd_test'
+	SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://user:password@localhost/jd_testing'
 
 class DevelopmentConfig(BaseConfig):
 	DEBUG = True
 	SQLALCHEMY_ECHO = True
-	SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://***REMOVED***:***REMOVED***@localhost/***REMOVED***_jd_dev'
+	SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://user:password@localhost/jd_development'
 
 class ProductionConfig(BaseConfig):
-	SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://***REMOVED***:***REMOVED***@localhost/***REMOVED***_jd_prod'
+	SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://user:password@localhost/jd_production'

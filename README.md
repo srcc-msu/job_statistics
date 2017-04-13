@@ -19,7 +19,7 @@ later use `source venv/bin/activate` every time you want to work with the projec
 
 ## Setup
 If you want to use a default config, you must create postgresql user "user"
-with password "password" and with access to databases: testing, development, production.
+with password "password" and with access to databases: jd_testing, jd_development, jd_production.
 Or use your custom settings and edit `config.py`
 
 One time setup to create all tables:
