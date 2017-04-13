@@ -23,7 +23,10 @@
 <script type="text/javascript">
 		jQuery(document).ready(function() {
 			google.charts.load('current', {'packages':['corechart', 'bar']});
-			google.charts.setOnLoadCallback(DrawCharts);
+			google.charts.setOnLoadCallback(
+				function() {
+					DrawCharts({{ app_config.cluster.num_cores }}, {{ app_config.general.timezone }} * 60 * 60);
+				});
 		});
 </script>
 
@@ -35,7 +38,7 @@
 		<th><p class="text_day_ago">yesterday</p></th>
 		<th><p class="text_week_ago">for last week</p></th>
 		<th><p class="text_month_ago">for last month</p></th>
-		<th><p class="text_year_ago">since 1 Jan 2016</p></th>
+		<th><p class="text_year_ago">since 1 Jan</p></th>
 	</tr>
 
 	<tr>

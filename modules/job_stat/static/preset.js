@@ -1,6 +1,6 @@
-function DrawCharts()
+function DrawCharts(num_cores, timezone_offset)
 {
-	var midnight = (Date.now() - (Date.now()) % (86400 * 1000)) / 1000 - 3*60*60; // TODO: ?? timezone offset
+	var midnight = (Date.now() - (Date.now()) % (86400 * 1000)) / 1000 + timezone_offset;
 	var last_day = midnight - 60 * 60 * 24 * 1;
 	var last_week = midnight - 60 * 60 * 24 * 7;
 	var last_month = midnight - 60 * 60 * 24 * 30;
@@ -13,10 +13,10 @@ function DrawCharts()
 
 	DrawUsersCount("#users_by_day", last_week, midnight);
 
-	ShowUsage("#task_total_cpu_1", last_day, midnight);
-	ShowUsage("#task_total_cpu_7", last_week, midnight);
-	ShowUsage("#task_total_cpu_30", last_month, midnight);
-	ShowUsage("#task_total_cpu_365", since_jan1, midnight);
+	ShowUsage("#task_total_cpu_1", last_day, midnight, num_cores);
+	ShowUsage("#task_total_cpu_7", last_week, midnight, num_cores);
+	ShowUsage("#task_total_cpu_30", last_month, midnight, num_cores);
+	ShowUsage("#task_total_cpu_365", since_jan1, midnight, num_cores);
 
 	ShowCompleted("completed_1", last_day, midnight);
 	ShowCompleted("completed_7", last_week, midnight);
@@ -114,7 +114,7 @@ function AjaxTextWrapper(api, data, target, transform_function)
 	});
 }
 
-function ShowUsage(target, t_from, t_to)
+function ShowUsage(target, t_from, t_to, num_cores)
 {
 	var data = {
 		t_from: t_from
@@ -124,10 +124,9 @@ function ShowUsage(target, t_from, t_to)
 
 	function transform(data)
 	{
-		var lom_cores = 1472 * 14;
-		var lom_cores_sec = (parseInt(data.split('\n')[1])) / (t_to - t_from) / lom_cores;
+		var cores_sec = (parseInt(data.split('\n')[1])) / (t_to - t_from) / num_cores;
 
-		return (lom_cores_sec * 100).toFixed(1) + "%";
+		return (cores_sec * 100).toFixed(1) + "%";
 	}
 
 	AjaxTextWrapper("/api/job_stat/cores_sec/sum", data, target, transform);

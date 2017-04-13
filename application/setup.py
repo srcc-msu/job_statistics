@@ -10,7 +10,6 @@ def create_job_stat_view(app, name):
 	connection.execute("""
 		CREATE VIEW {0} AS
 		SELECT id as fk_job_id,
-			'lomonosov'::text AS CLUSTER,
 			TEXTCAT(to_char(to_timestamp(t_submit), 'HH24'), 'h') AS submit_hour,
 			to_char(to_timestamp(t_submit), 'dy') AS submit_dow,
 			to_char(date_trunc('day', to_timestamp(t_submit)), 'YYYY-MM-DD') AS submit_day,

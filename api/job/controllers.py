@@ -101,7 +101,7 @@ def job_sensor(sensor: str, record_id: int) -> Response:
 
 	sensor_class = SENSOR_CLASS_MAP[sensor]
 
-	offset = current_app.app_config.general["aggregation_interval"]
+	offset = current_app.app_config.monitoring["aggregation_interval"]
 
 	filter_nodelist = list(map(current_app.app_config.cluster["node2int"], job.expand_nodelist()))
 

@@ -9,7 +9,7 @@ from application.helpers import background
 
 def __update_performance(app: Flask, db: SQLAlchemy, job: Job, force: bool):
 	with app.app_context():
-		offset = app.app_config.general["aggregation_interval"]
+		offset = app.app_config.monitoring["aggregation_interval"]
 		filter_nodelist = list(map(app.app_config.cluster["node2int"], job.expand_nodelist()))
 
 		data = {}

@@ -54,7 +54,6 @@
 
 	function GetGeneralParams()
 	{
-		var cluster = GetSelected("cluster", '#general_params')[0];
 		var partition = GetSelected("partition", '#general_params')[0];
 
 		var account = GetSelected("account", '#general_params')[0];
@@ -69,7 +68,6 @@
 			, t_to : $("#date_to").datepicker('getDate') / 1000
 		};
 
-		if(cluster   != "all") data.cluster   = cluster;
 		if(partition != "all") data.partition = partition;
 		if(account   != "all") data.account   = account;
 		if(state     != "all") data.state     = state;
@@ -183,17 +181,12 @@
 			</td>
 		</tr>
 		<tr>
-			<td>Cluster</td>
 			<td>Partition</td>
 			<td>Account</td>
 			<td>State</td>
 			<td>Time interval</td>
 		</tr>
 		<tr>
-			<td>
-				<input type="radio" name="cluster" value="all" checked>All<br>
-				<input type="radio" name="cluster" value="lomonosov">Lomonosov<br>
-			</td>
 			<td>
 				<input type="radio" name="partition" value="all" checked>All<br>
 				<input type="radio" name="partition" value="regular4">regular4<br>
@@ -241,7 +234,6 @@
 		</tr>
 		<tr>
 			<td>
-				<input type="checkbox" name="grouping" value="cluster">by cluster<br>
 				<input type="checkbox" name="grouping" value="partition">by partition<br>
 				<input type="checkbox" name="grouping" value="account">by account<br>
 				<input type="checkbox" name="grouping" value="state">by state<br>

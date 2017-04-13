@@ -68,7 +68,7 @@ def heatmap(job_id: int, task_id: int, sensor: str) -> Response:
 
 	filter_nodelist = list(map(current_app.app_config.cluster["node2int"], job.expand_nodelist()))
 
-	offset = current_app.app_config.general["aggregation_interval"]
+	offset = current_app.app_config.monitoring["aggregation_interval"]
 
 	query = global_db.session.query(sensor_class.time
 			, sensor_class.node_id
@@ -94,7 +94,7 @@ def heatmap(job_id: int, task_id: int, sensor: str) -> Response:
 	return render_template("heatmap.html", job=job.to_dict()
 		, display_data = display_data
 		, data_max_value = data_max_value
-		, data_step = current_app.app_config.general["aggregation_interval"] * 1000
+		, data_step = current_app.app_config.monitoring["aggregation_interval"] * 1000
 		, max_value = data_max_value)
 
 @jd_pages.route("/share/<string:hash>/heatmap/<string:sensor>")

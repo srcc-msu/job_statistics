@@ -100,7 +100,7 @@
 	<td class="table_text">
 		{% if performance["avg_cpu_user"] is none %}
 
-			{% if job.t_end - job.t_start > app_config.general.aggregation_interval * 3 %}
+			{% if job.t_end - job.t_start > app_config.monitoring.aggregation_interval * 3 %}
 				<button id="update" onclick="update_perf({{job.id}});">Update</button>
 			{% else %}
 				<p>too short</p>

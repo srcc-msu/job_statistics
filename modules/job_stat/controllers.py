@@ -75,10 +75,8 @@ def gen_what(base_query: BaseQuery, metric: str, aggregation_function: str, grou
 
 	return query
 
-def gen_where(base_query: BaseQuery, query: BaseQuery
-		, cluster: Optional[str], partition: Optional[str]
+def gen_where(base_query: BaseQuery, query: BaseQuery, partition: Optional[str]
 		, account: Optional[str], state: Optional[str]) -> BaseQuery:
-	if cluster is not None: query = query.filter(base_query.c.cluster == cluster)
 	if partition is not None: query = query.filter(base_query.c.partition == partition)
 	if account is not None: query = query.filter(base_query.c.account == account)
 	if state is not None: query = query.filter(base_query.c.state == state)
@@ -104,12 +102,11 @@ def generate_query(url_args: dict, metric: str, aggregation_function: str) -> Ba
 
 	query = gen_what(base_query, metric, aggregation_function, grouping)
 
-	cluster = url_args.get("cluster")
 	partition = url_args.get("partition")
 	account = url_args.get("account")
 	state = url_args.get("state")
 
-	query = gen_where(base_query, query, cluster, partition, account, state)
+	query = gen_where(base_query, query, partition, account, state)
 	query = gen_group(base_query, query, grouping)
 
 	return query.order_by(sqlalchemy.desc(aggregation_function + "_" + metric))
