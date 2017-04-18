@@ -40,4 +40,5 @@ def get_running_stats(limit: int):
 def autotag_list() -> Response:
 	return render_template("running.html"
 		, stats=get_running_stats(60*60)
+		, app_config=current_app.app_config
 		, get_color=partial(get_color, thresholds=current_app.app_config.monitoring["thresholds"]))

@@ -21,6 +21,8 @@
 		});
 	</script>
 
+	<h1> {{ app_config.cluster.name }} running tasks</h1>
+
 	<table id="tasks_table" class="tablesorter" border="1">
 		<thead>
 			<tr>
@@ -66,7 +68,11 @@
 					</td>
 
 					<td class="table_text" >
-						<font color="red">{{ comment }}</font>
+					{% if "HANG" in comment %}
+						<font color="#ff0000" style="font-size: 200%"><b>{{ comment }}</b></font>
+					{% else %}
+						{{ comment }}
+					{% endif %}
 					</td>
 				</tr>
 			{% endfor %}
