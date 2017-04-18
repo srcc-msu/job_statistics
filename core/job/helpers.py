@@ -87,7 +87,7 @@ class SlurmConverter(DBMSConverter):
 			, "account": raw["UserId"].split("(")[0]
 			, "t_submit": self.SlurmTime2TS(raw["SubmitTime"])
 			, "t_start": self.SlurmTime2TS(raw["StartTime"])
-			, "t_end": self.SlurmTime2TS(raw["EndTime"])
+			, "t_end": 0
 			, "timelimit": self.SlurmInterval2TS(raw["TimeLimit"])
 			, "command": raw["Command"]
 			, "workdir": raw["WorkDir"]
@@ -99,6 +99,11 @@ class SlurmConverter(DBMSConverter):
 
 		if "CANCEL" in result["state"]:
 			result["state"] = "CANCELLED"
+
+		if "Unknown" in raw["EndTime"]:
+			result["t_end"] = result["t_start"] + result["timelimit"]
+		else:
+			result["t_end"] = SlurmConverter.SlurmTime2TS(raw["EndTime"])
 
 		return result
 
@@ -116,7 +121,7 @@ class SacctConverter(DBMSConverter):
 			, "account": raw[2]
 			, "t_submit": SlurmConverter.SlurmTime2TS(raw[3])
 			, "t_start": SlurmConverter.SlurmTime2TS(raw[4])
-			, "t_end": SlurmConverter.SlurmTime2TS(raw[5])
+			, "t_end": 0
 			, "timelimit": SlurmConverter.SlurmInterval2TS(raw[6])
 			, "command": ""
 			, "workdir": ""
@@ -129,6 +134,10 @@ class SacctConverter(DBMSConverter):
 		if "CANCEL" in result["state"]:
 			result["state"] = "CANCELLED"
 
+		if "Unknown" in raw[5]:
+			result["t_end"] = result["t_start"] + result["timelimit"]
+		else:
+			result["t_end"] = SlurmConverter.SlurmTime2TS(raw[5])
 
 		return result
 
