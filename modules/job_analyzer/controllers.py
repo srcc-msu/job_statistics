@@ -28,8 +28,10 @@ def get_running_stats(limit: int):
 			try:
 				if int(cpu_stat[2]) < 10 and int(la_stat[2]) < 0.9:
 					results.insert(0, (job, cpu_stat, la_stat, "HANGED?!"))
+				else:
+					results.append((job, cpu_stat, la_stat, ""))
 			except TypeError:
-				results.append((job, cpu_stat, la_stat, ""))
+				results.append((job, cpu_stat, la_stat, "no data"))
 
 	return results
 
