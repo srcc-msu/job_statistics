@@ -97,6 +97,9 @@ class SlurmConverter(DBMSConverter):
 			, "num_cores": int(raw["NumCPUs"])
 			, "nodelist": raw["NodeList"]}
 
+		if "CANCEL" in result["state"]:
+			result["state"] = "CANCELLED"
+
 		return result
 
 class SacctConverter(DBMSConverter):
@@ -122,6 +125,10 @@ class SacctConverter(DBMSConverter):
 			, "num_nodes": int(raw[9])
 			, "num_cores": int(raw[10])
 			, "nodelist": raw[11]}
+
+		if "CANCEL" in result["state"]:
+			result["state"] = "CANCELLED"
+
 
 		return result
 
