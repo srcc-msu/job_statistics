@@ -126,6 +126,7 @@ def register_blueprints(app: Flask):
 		import modules.jd
 		import modules.tag
 		import modules.autotag
+		import modules.job_analyzer
 		import api.job
 		import api.tag
 		import api.autotag
@@ -140,6 +141,7 @@ def register_blueprints(app: Flask):
 		app.register_blueprint(modules.jd.controllers.jd_pages, url_prefix='/jd')
 		app.register_blueprint(modules.tag.controllers.tag_pages, url_prefix='/tag')
 		app.register_blueprint(modules.autotag.controllers.autotag_pages, url_prefix='/autotag')
+		app.register_blueprint(modules.job_analyzer.controllers.job_analyzer_pages, url_prefix='/analyzer')
 
 		app.register_blueprint(api.job.controllers.job_api_pages, url_prefix='/api/job')
 		app.register_blueprint(api.job_table.controllers.job_table_api_pages, url_prefix='/api/job_table')

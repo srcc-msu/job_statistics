@@ -1,0 +1,76 @@
+<!doctype html>
+
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Running tasks</title>
+
+	<link rel="stylesheet" type="text/css" href="/static/tablesorter/blue/style.css">
+	<link rel="stylesheet" type="text/css" href="/job_table/static/job_table.css">
+</head>
+
+<body>
+	<script type="text/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="/static/tablesorter/jquery.tablesorter.min.js"></script>
+
+	<script type="text/javascript">
+		$(document).ready(function()
+		{
+			$("#tasks_table").tablesorter();
+		});
+	</script>
+
+	<table id="tasks_table" class="tablesorter" border="1">
+		<thead>
+			<tr>
+				<th>id</th>
+				<th>account</th>
+				<th>partition</th>
+				<th>t_start</th>
+				<th>num_cores</th>
+
+				<th>avg cpu_user</th>
+				<th>avg loadavg</th>
+
+				<th>comment</th>
+
+			</tr>
+		</thead>
+
+		<tbody>
+			{% for job, cpu_stats, la_stats, comment in stats %}
+				<tr>
+					<td class="task_state_{{job.state}}">
+						<a href="/jd/{{job.job_id}}" class="table_text">
+							{{ job.job_id }}
+						</a>
+					</td>
+
+					<td class="table_text">
+						<a href="/job_table/table?accounts={{job.account}}" class="table_text">
+							{{ job.account }}
+						</a>
+					</td>
+
+					<td class="table_text"> {{ job.partition }} </td>
+					<td class="table_text"> {{ job.t_start | ts2datetime }} </td>
+					<td class="table_text"> {{ job.num_cores }} </td>
+
+					<td style="background-color: {{ get_color('cpu_user', cpu_stats[2]) }}" class="sensor_text" >
+						{{ cpu_stats[2] | float2 }}
+					</td>
+
+					<td style="background-color: {{ get_color('cpu_user', cpu_stats[2]) }}" class="sensor_text" >
+						{{ la_stats[2] | float2 }}
+					</td>
+
+					<td class="table_text" >
+						<font color="red">{{ comment }}</font>
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+
+	</table>
+</body>

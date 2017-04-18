@@ -7,6 +7,20 @@ from core.monitoring.constants import SENSOR_LIST
 from core.monitoring.models import JobPerformance, SENSOR_CLASS_MAP
 from application.helpers import background
 
+def get_sensor_stats(db: SQLAlchemy, sensor: str, nodelist: str, t_from : int, t_to: int):
+	sensor_class = SENSOR_CLASS_MAP[sensor]
+
+	sensor_query = db.session.query(
+			func.min(sensor_class.min).cast(Float).label("min")
+			, func.max(sensor_class.max).cast(Float).label("max")
+			, func.avg(sensor_class.avg).cast(Float).label("avg"))\
+		.filter(sensor_class.time > t_from)\
+		.filter(sensor_class.time < t_to)\
+		.filter(sensor_class.node_id.in_(nodelist))\
+
+	return sensor_query.one()
+
+
 def __update_performance(app: Flask, db: SQLAlchemy, job: Job, force: bool):
 	with app.app_context():
 		offset = app.app_config.monitoring["aggregation_interval"]
@@ -26,17 +40,7 @@ def __update_performance(app: Flask, db: SQLAlchemy, job: Job, force: bool):
 			else:
 				continue
 
-			sensor_class = SENSOR_CLASS_MAP[sensor]
-
-			sensor_query = db.session.query(
-					func.min(sensor_class.min).cast(Float).label("min")
-					, func.max(sensor_class.max).cast(Float).label("max")
-					, func.avg(sensor_class.avg).cast(Float).label("avg"))\
-				.filter(sensor_class.time > job.t_start + offset)\
-				.filter(sensor_class.time < job.t_end - offset)\
-				.filter(sensor_class.node_id.in_(filter_nodelist))\
-
-			min, max, avg = sensor_query.one()
+			min, max, avg = get_sensor_stats(db, sensor, filter_nodelist, job.t_start + offset, job.t_end - offset)
 
 			data["min_" + sensor] = min
 			data["max_" + sensor] = max
