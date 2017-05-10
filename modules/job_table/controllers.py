@@ -95,3 +95,43 @@ def anon_table(hash: str, page: int) -> Response:
 
 	return __show_table("job_table_anon.html", page, prev_page_link, next_page_link
 		, id2username(hash2id(hash)))
+
+@job_table_pages.route("/timeline", methods=["GET", "POST"])
+@requires_auth
+def timeline() -> Response:
+	if request.method == "POST":
+		data = request.form.to_dict()
+
+		try:
+			data["date_from"] = int(int(data["date_from"]) / 1000)
+		except (KeyError, ValueError):
+			pass
+
+		try:
+			data["date_to"] = int(int(data["date_to"]) / 1000)
+		except (KeyError, ValueError):
+			pass
+
+		return flask.redirect(request.path + "?" + urllib.parse.urlencode(data))
+
+	elif request.method == "GET":
+		data = request.args.to_dict()
+
+		if "date_from" not in data:
+			data["date_from"] = int(time.time()) - 86400 * 7
+			return flask.redirect(request.path + "?" + urllib.parse.urlencode(data))
+
+		query = global_db.session.query(Job, JobTag, JobPerformance).join(JobTag).join(JobPerformance)
+
+		query = construct_full_table_query(query, data)
+
+		query = query.filter(Job.state != "RUNNING")
+
+		query_stat = calculate_job_query_stat(request.query_string, query)
+
+		show_query = query.order_by(Job.t_end.desc())
+
+		return render_template("timeline.html"
+			, jobs=show_query.all()
+			, query_stat=query_stat
+			, app_config=current_app.app_config)
