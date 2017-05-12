@@ -26,7 +26,7 @@ def get_running_stats(limit: int):
 			la_stat =  get_sensor_stats(global_db, "loadavg", nodelist, timestamp - limit + offset, timestamp)
 
 			try:
-				if int(cpu_stat[2]) < 10 and int(la_stat[2]) < 0.9:
+				if int(cpu_stat[2]) < 10 and float(la_stat[2]) < 0.9:
 					results.insert(0, (job, cpu_stat, la_stat, "HANGED?!"))
 				else:
 					results.append((job, cpu_stat, la_stat, ""))
