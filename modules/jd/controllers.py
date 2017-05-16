@@ -91,7 +91,7 @@ def heatmap(job_id: int, task_id: int, sensor: str) -> Response:
 # convert node ids to local indexing: 0, 1, 2, ..
 		display_data.append((int(time) * 1000, nodes.index(node_id), min_value, max_value, avg_value))
 
-	return render_template("heatmap.html", job=job.to_dict()
+	return render_template("heatmap.html", job=job.to_dict(), sensor=sensor
 		, display_data = display_data
 		, data_max_value = data_max_value
 		, data_step = current_app.app_config.monitoring["aggregation_interval"] * 1000

@@ -80,7 +80,7 @@
 					{% for job, _, performance in jobs %}
 						 ["{{ job.account }}"
 							, "{{ job.num_nodes }}"
-							, "JobId: {{job.job_id}}   " + "Account: {{job.account}}   " + "Duration: {{ "{:.1f}".format((job.t_end - job.t_start) / 3600) }} hours</br>"
+							, "JobId: {{job.job_id}}   " + "Start: {{job.t_start | ts2datetime}}   " + "Duration: {{ "{:.1f}".format((job.t_end - job.t_start) / 3600) }} hours"
 							, new Date({{ job.t_start }} * 1000), new Date({{ job.t_end }} * 1000)],
 					{% endfor %}
 				]);
