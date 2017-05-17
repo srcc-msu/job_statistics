@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 
-	<title> {{ app_config.cluster.name }} running tasks table</title>
+	<title> {{ app_config.cluster.name }} queued tasks table</title>
 
 	<link rel="stylesheet" type="text/css" href="/job_table/static/job_table.css">
 
@@ -73,15 +73,15 @@
 				dataTable.addColumn({ type: 'string', id: 'account' });
 				dataTable.addColumn({ type: 'string', id: 'num_nodes' });
 				dataTable.addColumn({ type: 'string', role: 'tooltip' });
+				dataTable.addColumn({ type: 'date', id: 't_submit' });
 				dataTable.addColumn({ type: 'date', id: 't_start' });
-				dataTable.addColumn({ type: 'date', id: 't_end' });
 
 				dataTable.addRows([
 					{% for job, _, performance in jobs %}
 						 ["{{ job.account }}"
 							, "{{ job.num_nodes }}"
-							, "JobId: {{job.job_id}}   " + "Start: {{job.t_start | ts2datetime}}   " + "Duration: {{ "{:.1f}".format((job.t_end - job.t_start) / 3600) }} hours"
-							, new Date({{ job.t_start }} * 1000), new Date({{ job.t_end }} * 1000)],
+							, "JobId: {{job.job_id}}   " + "Submit: {{job.t_submit | ts2datetime}}   " + "Duration: {{ "{:.1f}".format((job.t_start - job.t_submit) / 3600) }} hours"
+							, new Date({{ job.t_submit }} * 1000), new Date({{ job.t_start }} * 1000)],
 					{% endfor %}
 				]);
 
