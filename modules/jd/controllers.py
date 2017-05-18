@@ -56,9 +56,7 @@ def anon_jd(hash: str) -> Response:
 		, get_color=partial(get_color, thresholds=current_app.app_config.monitoring["thresholds"]))
 
 
-@jd_pages.route("/<int:job_id>/<int:task_id>/heatmap/<string:sensor>")
-@requires_auth
-def heatmap(job_id: int, task_id: int, sensor: str) -> Response:
+def __heatmap(job_id: int, task_id: int, sensor: str):
 	try:
 		job = Job.get_by_id(job_id, task_id)
 	except LookupError:
@@ -97,10 +95,15 @@ def heatmap(job_id: int, task_id: int, sensor: str) -> Response:
 		, data_step = current_app.app_config.monitoring["aggregation_interval"] * 1000
 		, max_value = data_max_value)
 
+@jd_pages.route("/<int:job_id>/<int:task_id>/heatmap/<string:sensor>")
+@requires_auth
+def heatmap(job_id: int, task_id: int, sensor: str) -> Response:
+	return __heatmap(job_id, task_id, sensor)
+
 @jd_pages.route("/share/<string:hash>/heatmap/<string:sensor>")
 def anon_heatmap(hash: str, sensor: str) -> Response:
 	task_id = 0
 	job_id = hash2id(hash)
 
-	return heatmap(job_id, task_id, sensor)
+	return __heatmap(job_id, task_id, sensor)
 
