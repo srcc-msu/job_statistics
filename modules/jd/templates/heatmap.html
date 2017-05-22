@@ -9,15 +9,23 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		var min_data = [];
-		var max_data = [];
-		var avg_data = [];
+		var min_data = [
+			{% for time, node_id, min_value, max_value, avg_value in display_data %}
+				[{{time}}, {{node_id}}, {{min_value}}],
+			{% endfor %}
+		];
 
-		{% for time, node_id, min_value, max_value, avg_value in display_data %}
-			min_data.push([{{time}}, {{node_id}}, {{min_value}}]);
-			max_data.push([{{time}}, {{node_id}}, {{max_value}}]);
-			avg_data.push([{{time}}, {{node_id}}, {{avg_value}}]);
-		{% endfor %}
+		var max_data = [
+			{% for time, node_id, min_value, max_value, avg_value in display_data %}
+				[{{time}}, {{node_id}}, {{max_value}}],
+			{% endfor %}
+		];
+
+		var avg_data = [
+			{% for time, node_id, min_value, max_value, avg_value in display_data %}
+				[{{time}}, {{node_id}}, {{avg_value}}],
+			{% endfor %}
+		];
 
 		draw_heatmap("container_min", min_data, "Min", {{data_max_value}}, {{data_step}});
 		draw_heatmap("container_max", max_data, "Max", {{data_max_value}}, {{data_step}});
