@@ -94,9 +94,31 @@ def update_job_performance(record_id: int) -> Response:
 
 	return jsonify("update started")
 
+def shrinked(data, shrink_threshold):
+	result = []
+
+	factor = len(data) // shrink_threshold
+
+	chunks = (data[x:x+factor] for x in range(0, len(data), factor))
+	for chunk in chunks:
+		l = len(chunk)
+
+		result.append({
+			"time": chunk[0][0]
+			, "min" : min((x[1] for x in chunk))
+			, "max" : max((x[2] for x in chunk))
+			, "avg_min" : sum((x[3] for x in chunk)) / l
+			, "avg_max" : sum((x[4] for x in chunk)) / l
+			, "avg" : sum((x[1] for x in chunk)) / l
+		})
+
+	return result
+
 @job_api_pages.route("/<int:record_id>/sensor/<string:sensor>")
 @crossdomain(origin='*')
 def job_sensor(sensor: str, record_id: int) -> Response:
+	SHRINK_THRESHOLD = 500
+
 	job = Job.query.get(record_id)
 
 	sensor_class = SENSOR_CLASS_MAP[sensor]
@@ -118,19 +140,24 @@ def job_sensor(sensor: str, record_id: int) -> Response:
 		.group_by(sensor_class.time)\
 		.order_by(sensor_class.time)
 
-	result = []
+	data = query.all()
 
-	for entry in query.all():
-		result.append({
-			"time": entry[0]
-			, "min" : entry[1]
-			, "max" : entry[2]
-			, "avg_min" : entry[3]
-			, "avg_max" : entry[4]
-			, "avg" : entry[5]
-		})
+	if len(data) < SHRINK_THRESHOLD:
+		result = []
 
-	return jsonify(result)
+		for entry in data:
+			result.append({
+				"time": entry[0]
+				, "min" : entry[1]
+				, "max" : entry[2]
+				, "avg_min" : entry[3]
+				, "avg_max" : entry[4]
+				, "avg" : entry[5]
+			})
+		return jsonify(result)
+
+	else:
+		return jsonify(shrinked(data, SHRINK_THRESHOLD))
 
 # tags
 

@@ -19,45 +19,9 @@ function ConvertForMultiLine(input)
     return data;
 }
 
-function Shrink(input)
-{
-	var scale_factor = 500;
-
-	if(input.length < scale_factor)
-		return input;
-
-	var new_data = [];
-
-	var factor = Math.floor(input.length / scale_factor);
-
-	for(var i = 0; i < input.length - factor; i += factor)
-    {
-        var tmp = input[i];
-
-		for(var j = 1; j < factor; j++)
-		{
-			if(input[i+j][1] < tmp[1]) tmp[1] = input[i+j][1];
-			if(input[i+j][2] > tmp[2]) tmp[2] = input[i+j][2];
-
-			tmp[3] += input[i+j][3];
-			tmp[4] += input[i+j][4];
-			tmp[5] += input[i+j][5];
-		}
-
-		tmp[3] /= factor;
-		tmp[4] /= factor;
-		tmp[5] /= factor;
-
-        new_data.push(tmp);
-    }
-
-    return new_data;
-}
-
 function LoadOne(name, task_id){
     jQuery.get("/api/job/" + task_id + "/sensor/" + name, function(input) {
-        var raw_data = ConvertForMultiLine(input);
-		var display_data = Shrink(raw_data);
+        var display_data = ConvertForMultiLine(input);
 
         var options = {
 //            title: name
