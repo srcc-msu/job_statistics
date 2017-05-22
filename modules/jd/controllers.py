@@ -16,7 +16,7 @@ jd_pages = Blueprint('jd', __name__
 
 @jd_pages.route("/<int:job_id>")
 @requires_auth
-def jd_redirect(_: int) -> Response:
+def jd_redirect(job_id: int) -> Response:
 	return redirect(request.base_url + "/0")
 
 @jd_pages.route("/<int:job_id>/<int:task_id>")
