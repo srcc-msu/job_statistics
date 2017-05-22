@@ -106,7 +106,7 @@ def get_job_table_query(filter):
 
 @job_table_pages.route("/table/page/<int:page>", methods=["POST"])
 @requires_auth
-def post_table(_: int) -> Response:
+def post_table(page: int) -> Response:
 	return job_table_common_post()
 
 @job_table_pages.route("/table/page/<int:page>", methods=["GET"])
@@ -134,7 +134,7 @@ def get_table(page: int) -> Response:
 		, get_color=partial(get_color, thresholds=current_app.app_config.monitoring["thresholds"]))
 
 @job_table_pages.route("/share/<string:hash>/<int:page>", methods=["POST"])
-def post_anon_table(_: int) -> Response:
+def post_anon_table(hash: str, page: int) -> Response:
 	return job_table_common_post()
 
 @job_table_pages.route("/share/<string:hash>/<int:page>", methods=["GET"])
