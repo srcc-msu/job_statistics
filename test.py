@@ -79,13 +79,28 @@ class GeneralTestSuit(TestSuit):
 		assert b"General settings" in rv.data
 
 	def test_table(self):
-		rv = TestSuit.client.get("/job_table/table" # bug with redirect and headers?
-			, follow_redirects=True
+		rv = TestSuit.client.get("/job_table/table/page/0" # bug with redirect and headers?
 			, headers = TestSuit.auth_headers)
 		print(rv.status, rv.data)
 
 		assert "200" in rv.status
 		assert b"task table" in rv.data
+
+	def test_timeline(self):
+		rv = TestSuit.client.get("/job_table/timeline" # bug with redirect and headers?
+			, headers = TestSuit.auth_headers)
+		print(rv.status, rv.data)
+
+		assert "200" in rv.status
+		assert b"running tasks" in rv.data
+
+	def test_queue_timeline(self):
+		rv = TestSuit.client.get("/job_table/queue_timeline" # bug with redirect and headers?
+			, headers = TestSuit.auth_headers)
+		print(rv.status, rv.data)
+
+		assert "200" in rv.status
+		assert b"queued task" in rv.data
 
 class TestJob(TestSuit):
 	test_job = None

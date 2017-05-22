@@ -1,7 +1,5 @@
-from functools import lru_cache
 from typing import Optional
 from numbers import Number
-from flask_sqlalchemy import BaseQuery
 
 def get_color(name: str, value: Optional[Number], thresholds) -> Optional[str]:
 	name = name.replace("avg_", "").replace("min_", "").replace("max_", "") #TODO: fix?
@@ -18,21 +16,18 @@ def get_color(name: str, value: Optional[Number], thresholds) -> Optional[str]:
 
 	return None
 
-def calculate_job_query_stat(query_string: str, query: BaseQuery):
-	@lru_cache(maxsize=32)
-	def get_cached(query_string):
-		jobs = list(query.all())
+def extract_string_list(request: dict, field_name: str):
+	result = request.get(field_name, "")
 
-		result = {}
+	if len(result) == 0:
+		return []
 
-		result["cpu_h"] = sum(((job.t_end-job.t_start) * job.num_cores / 3600 for job,perf,tag in jobs))
-		result["count"] = len(jobs)
-		result["COMPLETED"] = sum((1 for job,perf,tag in jobs if job.state == "COMPLETED" or job.state == "COMPLETING"))
-		result["CANCELLED"] = sum((1 for job,perf,tag in jobs if job.state == "CANCELLED"))
-		result["TIMEOUT"] = sum((1 for job,perf,tag in jobs if job.state == "TIMEOUT"))
-		result["FAILED"] = sum((1 for job,perf,tag in jobs if job.state == "FAILED"))
-		result["NODE_FAIL"] = sum((1 for job,perf,tag in jobs if job.state == "NODE_FAIL"))
+	return result.split(",")
 
-		return result
+def extract_number(request: dict, field_name: str, default = None):
+	result = request.get(field_name)
 
-	return get_cached(query_string)
+	try:
+		return int(result)
+	except (ValueError, TypeError):
+		return default

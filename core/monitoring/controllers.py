@@ -1,3 +1,4 @@
+from typing import List
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func, Float
@@ -7,7 +8,7 @@ from core.monitoring.constants import SENSOR_LIST
 from core.monitoring.models import JobPerformance, SENSOR_CLASS_MAP
 from application.helpers import background
 
-def get_sensor_stats(db: SQLAlchemy, sensor: str, nodelist: str, t_from : int, t_to: int):
+def get_sensor_stats(db: SQLAlchemy, sensor: str, nodelist: List[str], t_from : int, t_to: int):
 	sensor_class = SENSOR_CLASS_MAP[sensor]
 
 	sensor_query = db.session.query(

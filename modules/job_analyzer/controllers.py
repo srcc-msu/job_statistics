@@ -1,6 +1,7 @@
 from functools import partial
-from flask import Blueprint, Response, render_template, request, Flask, current_app
 import time
+
+from flask import Blueprint, Response, render_template, current_app
 
 from application.database import global_db
 from core.monitoring.controllers import get_sensor_stats

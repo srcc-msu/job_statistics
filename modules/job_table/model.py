@@ -12,22 +12,6 @@ from application.helpers import crossdomain
 job_table_api_pages = Blueprint('job_table_api', __name__
 	, template_folder='templates')
 
-def extract_string_list(request: dict, field_name: str):
-	result = request.get(field_name, "")
-
-	if len(result) == 0:
-		return []
-
-	return result.split(",")
-
-def extract_number(request: dict, field_name: str, default = None):
-	result = request.get(field_name)
-
-	try:
-		return int(result)
-	except (ValueError, TypeError):
-		return default
-
 def query_apply_common_filter(query: BaseQuery, accounts: List[str], partitions: List[str], states: List[str]) -> BaseQuery:
 	if len(accounts) > 0:
 		query = query.filter(Job.account.in_(accounts))
@@ -70,29 +54,37 @@ def query_apply_tags_filter(query: BaseQuery, req_tags: List[str], opt_tags: Lis
 
 	return query
 
-def construct_job_table_query(query: BaseQuery, params: dict) -> BaseQuery:
-	accounts = extract_string_list(params, "accounts")
-	partitions = extract_string_list(params, "partitions")
-	states = extract_string_list(params, "states")
-
-	date_from = extract_number(params, "date_from", None)
-	date_to = extract_number(params, "date_to", None)
-
-	query = query_apply_common_filter(query, accounts, partitions, states)
-	query = query_apply_date_filter(query, date_from, date_to)
+def construct_job_table_query(query: BaseQuery, filter: dict) -> BaseQuery:
+	query = query_apply_common_filter(query, filter["accounts"], filter["partitions"], filter["states"])
+	query = query_apply_date_filter(query, filter["date_from"], filter["date_to"])
 
 	return query
 
-def construct_full_table_query(query: BaseQuery, params: dict) -> BaseQuery:
-	query = construct_job_table_query(query, params)
+def construct_full_table_query(query: BaseQuery, filter: dict) -> BaseQuery:
+	query = construct_job_table_query(query, filter)
 
-	req_tags = extract_string_list(params, "req_tags")
-	opt_tags = extract_string_list(params, "opt_tags")
-	no_tags = extract_string_list(params, "no_tags")
-
-	query = query_apply_tags_filter(query, req_tags, opt_tags, no_tags)
+	query = query_apply_tags_filter(query, filter["req_tags"], filter["opt_tags"], filter["no_tags"])
 
 	return query
+
+from cachetools import cached, LRUCache
+from cachetools.keys import hashkey
+
+@cached(cache=LRUCache(32), key=lambda query_string, query: hashkey(query_string))
+def calculate_job_query_stat(query_string: str, query: BaseQuery):
+	jobs = list(query.all())
+
+	result = {}
+
+	result["cpu_h"] = sum(((job.t_end-job.t_start) * job.num_cores / 3600 for job,perf,tag in jobs))
+	result["count"] = len(jobs)
+	result["COMPLETED"] = sum((1 for job,perf,tag in jobs if job.state == "COMPLETED" or job.state == "COMPLETING"))
+	result["CANCELLED"] = sum((1 for job,perf,tag in jobs if job.state == "CANCELLED"))
+	result["TIMEOUT"] = sum((1 for job,perf,tag in jobs if job.state == "TIMEOUT"))
+	result["FAILED"] = sum((1 for job,perf,tag in jobs if job.state == "FAILED"))
+	result["NODE_FAIL"] = sum((1 for job,perf,tag in jobs if job.state == "NODE_FAIL"))
+
+	return result
 
 @job_table_api_pages.route("/common")
 @crossdomain(origin='*')

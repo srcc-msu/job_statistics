@@ -83,8 +83,7 @@ def gen_where(base_query: BaseQuery, query: BaseQuery, partition: Optional[str]
 
 	return query
 
-def gen_group(base_query: BaseQuery, query: BaseQuery
-		, grouping: List[str]) -> BaseQuery:
+def gen_group(base_query: BaseQuery, query: BaseQuery, grouping: List[str]) -> BaseQuery:
 	for group in grouping:
 		query = query.group_by(group)
 
