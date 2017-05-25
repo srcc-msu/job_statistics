@@ -142,8 +142,8 @@ def get_anon_table(hash: str, page: int) -> Response:
 	PAGE_SIZE = 50
 
 	query_url = "?" + request.query_string.decode("utf-8") if len(request.query_string) > 0 else ""
-	prev_page_link = flask.url_for("job_table.get_anon_table", page = page-1) + query_url if page > 0 else None
-	next_page_link = flask.url_for("job_table.get_anon_table", page = page+1) + query_url
+	prev_page_link = flask.url_for("job_table.get_anon_table", hash = hash, page = page-1) + query_url if page > 0 else None
+	next_page_link = flask.url_for("job_table.get_anon_table", hash = hash, page = page+1) + query_url
 
 	filter = get_job_table_filter()
 	filter["accounts"] = id2username(hash2id(hash))
