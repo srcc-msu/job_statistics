@@ -146,7 +146,7 @@ def get_anon_table(hash: str, page: int) -> Response:
 	next_page_link = flask.url_for("job_table.get_anon_table", hash = hash, page = page+1) + query_url
 
 	filter = get_job_table_filter()
-	filter["accounts"] = id2username(hash2id(hash))
+	filter["accounts"] = [id2username(hash2id(hash))]
 
 	query = get_job_table_query(filter)
 
