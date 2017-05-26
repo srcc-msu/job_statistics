@@ -109,7 +109,7 @@ def shrinked(data, shrink_threshold):
 			, "max" : max((x[2] for x in chunk))
 			, "avg_min" : sum((x[3] for x in chunk)) / l
 			, "avg_max" : sum((x[4] for x in chunk)) / l
-			, "avg" : sum((x[1] for x in chunk)) / l
+			, "avg" : sum((x[5] for x in chunk)) / l
 		})
 
 	return result
