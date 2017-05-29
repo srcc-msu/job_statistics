@@ -394,6 +394,14 @@ class TestAutoTag(TestSuit):
 		assert "200" in rv.status
 		assert b"t_end" in rv.data
 
+	def test_api_list(self):
+		rv = TestSuit.client.get("/api/autotag/"
+			, headers = TestSuit.auth_headers)
+		print(rv.status, rv.data)
+
+		assert "200" in rv.status
+		assert b"test2" in rv.data
+
 	def test_create(self):
 		rv = TestSuit.client.post("/api/autotag/"
 			, data={"label": "test2", "condition": "true"}

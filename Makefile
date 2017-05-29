@@ -12,4 +12,4 @@ test:
 
 coverage:
 	coverage run test.py
-	coverage report -m --include=./*
+	coverage report -m --omit=venv/* --skip-covered
