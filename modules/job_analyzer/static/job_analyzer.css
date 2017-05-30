@@ -1,0 +1,11 @@
+.hanged {
+	background-color: #FF8080 !important;
+	font-size: 200% !important;
+}
+
+.ok {
+}
+
+.no_data {
+	background-color: #DDDDDD !important;
+}

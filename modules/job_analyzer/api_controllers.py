@@ -16,16 +16,4 @@ job_analyzer_api_pages = Blueprint('job_analyzer_api', __name__
 @requires_auth
 def running_stats() -> Response:
 	interval = int(request.args.get("interval", 60*60)) # last hour by default
-
-	data = get_running_stats(interval)
-
-	result = []
-
-	for job, cpu_stats, la_stats, comment in data:
-		result.append({
-			"job": job.to_dict()
-			, "cpu": cpu_stats
-			, "la": la_stats
-		})
-
-	return jsonify(result)
+	return jsonify(get_running_stats(interval))

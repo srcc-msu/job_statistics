@@ -6,6 +6,8 @@
 
 	<title>Running tasks</title>
 
+	<link rel="stylesheet" type="text/css" href="/analyzer/static/job_analyzer.css">
+
 	<link rel="stylesheet" type="text/css" href="/static/tablesorter/blue/style.css">
 	<link rel="stylesheet" type="text/css" href="/job_table/static/job_table.css">
 </head>
@@ -41,38 +43,34 @@
 		</thead>
 
 		<tbody>
-			{% for job, cpu_stats, la_stats, comment in stats %}
+			{% for entry in stats %}
 				<tr>
-					<td class="task_state_{{job.state}}">
-						<a href="/jd/{{job.job_id}}" class="table_text">
-							{{ job.job_id }}
+					<td class="task_state_{{entry['job']['state']}}">
+						<a href="/jd/{{entry['job']['job_id']}}" class="table_text">
+							{{ entry['job']['job_id']}}
 						</a>
 					</td>
 
 					<td class="table_text">
-						<a href="/job_table/table?accounts={{job.account}}" class="table_text">
-							{{ job.account }}
+						<a href="/job_table/table?accounts={{entry['job']['account']}}" class="table_text">
+							{{ entry['job']['account']}}
 						</a>
 					</td>
 
-					<td class="table_text"> {{ job.partition }} </td>
-					<td class="table_text"> {{ job.t_start | ts2datetime }} </td>
-					<td class="table_text"> {{ job.num_cores }} </td>
+					<td class="table_text"> {{ entry['job']['partition']}} </td>
+					<td class="table_text"> {{ entry['job']['t_start']| ts2datetime }} </td>
+					<td class="table_text"> {{ entry['job']['num_cores']}} </td>
 
-					<td style="background-color: {{ get_color('cpu_user', cpu_stats['avg']) }}" class="sensor_text" >
-						{{ cpu_stats["avg"] | float2 }}
+					<td style="background-color: {{ get_color('cpu_user', entry['stats']['cpu']['avg']) }}" class="sensor_text " >
+						{{ entry['stats']['cpu']["avg"] | float2 }}
 					</td>
 
-					<td style="background-color: {{ get_color('loadavg', la_stats['avg']) }}" class="sensor_text" >
-						{{ la_stats["avg"] | float2 }}
+					<td style="background-color: {{ get_color('loadavg', entry['stats']['la']['avg']) }}" class="sensor_text" >
+						{{ entry['stats']['la']['avg'] | float2 }}
 					</td>
 
 					<td class="table_text" >
-					{% if "HANG" in comment %}
-						<font color="#ff0000" style="font-size: 200%"><b>{{ comment }}</b></font>
-					{% else %}
-						{{ comment }}
-					{% endif %}
+						<span class="{{ entry['class'] }}">{{ entry['class'] }}</span>
 					</td>
 				</tr>
 			{% endfor %}
