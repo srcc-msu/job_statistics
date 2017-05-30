@@ -109,6 +109,14 @@ class GeneralTestSuit(TestSuit):
 		assert "200" in rv.status
 		assert b"running" in rv.data
 
+	def test_api_analyzer_running(self):
+		rv = TestSuit.client.get("/api/analyzer/running"
+			, headers = TestSuit.auth_headers)
+		print(rv.status, rv.data)
+
+		assert "200" in rv.status
+		assert b"[" in rv.data
+
 class TestJob(TestSuit):
 	test_job = None
 

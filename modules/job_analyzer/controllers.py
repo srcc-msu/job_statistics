@@ -1,7 +1,7 @@
 from functools import partial
 import time
 
-from flask import Blueprint, Response, render_template, current_app
+from flask import Blueprint, Response, render_template, current_app, request
 
 from core.job.models import Job
 from application.helpers import requires_auth
@@ -37,8 +37,10 @@ def get_running_stats(limit: int):
 
 @job_analyzer_pages.route("/running")
 @requires_auth
-def autotag_list() -> Response:
+def running_stats() -> Response:
+	interval = int(request.args.get("interval", 60*60)) # last hour by default
+
 	return render_template("running.html"
-		, stats=get_running_stats(60*60)
+		, stats=get_running_stats(interval)
 		, app_config=current_app.app_config
 		, get_color=partial(get_color, thresholds=current_app.app_config.monitoring["thresholds"]))
