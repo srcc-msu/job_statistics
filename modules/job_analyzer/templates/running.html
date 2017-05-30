@@ -19,7 +19,9 @@
 	<script type="text/javascript">
 		$(document).ready(function()
 		{
-			$("#tasks_table").tablesorter();
+			$("#tasks_table").tablesorter({
+				sortList: [[6,0]]
+			});
 		});
 	</script>
 
@@ -69,9 +71,7 @@
 						{{ entry['stats']['la']['avg'] | float2 }}
 					</td>
 
-					<td class="table_text" >
-						<span class="{{ entry['class'] }}">{{ entry['class'] }}</span>
-					</td>
+					<td class="table_text {{ entry['class'] }}"> {{ entry['class'] }} </td>
 				</tr>
 			{% endfor %}
 		</tbody>
