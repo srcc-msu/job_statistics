@@ -66,11 +66,6 @@ def drop_job_stat(app):
 def setup_database(app: Flask, drop = False):
 	global_db.init_app(app)
 
-	import core.job.models
-	import core.monitoring.models
-	import core.tag.models
-
-	import modules.autotag.models
 	if drop:
 		with app.app_context():
 			drop_job_stat(app)
@@ -120,17 +115,16 @@ def load_cluster_config(path, app):
 def register_blueprints(app: Flask):
 	with app.app_context():
 		import application
+
+		import modules.core_api
+
 		import modules.job_table
 		import modules.job_stat
 		import modules.jd
 		import modules.tag
 		import modules.autotag
 		import modules.job_analyzer
-		import api.job
-		import api.tag
-		import api.autotag
-		import api.monitoring
-		import api.job_stat
+		import modules.job_import
 
 		app.register_blueprint(application.controllers.core_pages, url_prefix='')
 
@@ -141,10 +135,13 @@ def register_blueprints(app: Flask):
 		app.register_blueprint(modules.autotag.controllers.autotag_pages, url_prefix='/autotag')
 		app.register_blueprint(modules.job_analyzer.controllers.job_analyzer_pages, url_prefix='/analyzer')
 
-		app.register_blueprint(modules.job_table.api_controllers.job_table_api_pages, url_prefix='/api/job_table')
+		app.register_blueprint(modules.core_api.info_controllers.job_info_api_pages, url_prefix='/api/job')
+		app.register_blueprint(modules.core_api.tag_controllers.job_tag_api_pages, url_prefix='/api/job')
+		app.register_blueprint(modules.core_api.monitoring_controllers.job_monitoring_api_pages, url_prefix='/api/job')
 
-		app.register_blueprint(api.job.controllers.job_api_pages, url_prefix='/api/job')
-		app.register_blueprint(api.tag.controllers.tag_api_pages, url_prefix='/api/tag')
-		app.register_blueprint(api.autotag.controllers.autotag_api_pages, url_prefix='/api/autotag')
-		app.register_blueprint(api.monitoring.controllers.monitoring_api_pages, url_prefix='/api/monitoring')
-		app.register_blueprint(api.job_stat.controllers.job_stat_api_pages, url_prefix='/api/job_stat')
+		app.register_blueprint(modules.job_import.controllers.job_import_pages, url_prefix='/api/job')
+
+		app.register_blueprint(modules.job_table.api_controllers.job_table_api_pages, url_prefix='/api/job_table')
+		app.register_blueprint(modules.autotag.api_controllers.autotag_api_pages, url_prefix='/api/autotag')
+		app.register_blueprint(modules.job_stat.api_controllers.job_stat_api_pages, url_prefix='/api/job_stat')
+		app.register_blueprint(modules.tag.api_controllers.tag_api_pages, url_prefix='/api/tag')

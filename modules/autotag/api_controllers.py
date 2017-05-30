@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, Response, request
-from application.helpers import crossdomain, requires_auth
 
-from modules.autotag.models import AutoTag
+from application.helpers import crossdomain, requires_auth
+from core.job.models import Job
+from modules.autotag.models import AutoTag, apply_autotags
 from application.database import global_db
 from core.tag.models import Tag
 
@@ -43,3 +44,11 @@ def manage_tag(autotag_id: int) -> Response:
 	else:
 		raise RuntimeError("unsupported autotag operation: " + request.form["action"])
 
+@autotag_api_pages.route("/job/<int:record_id>/apply", methods=["POST"])
+@requires_auth
+def __apply_autotags(record_id: int) -> Response:
+	job = Job.query.get(record_id)
+
+	apply_autotags(job)
+
+	return "ok"

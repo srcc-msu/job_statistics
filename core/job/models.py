@@ -1,6 +1,8 @@
 import re
 from typing import List
 
+import sqlalchemy
+
 from application.database import global_db
 
 class Job(global_db.Model):
@@ -88,7 +90,10 @@ class Job(global_db.Model):
 
 	@staticmethod
 	def get_by_id(job_id: int, task_id: int):
-		return Job.query.filter(Job.job_id == job_id).filter(Job.task_id == task_id).one()
+		try:
+			return Job.query.filter(Job.job_id == job_id).filter(Job.task_id == task_id).one()
+		except sqlalchemy.orm.exc.NoResultFound as e:
+			raise LookupError("job not found") from e
 
 	@staticmethod
 	def __token2range(tokens: str) -> List[str]:
@@ -119,7 +124,7 @@ class Job(global_db.Model):
 
 		return result
 
-	def expand_nodelist(self) -> List[str]:
+	def expand_nodelist(self) -> List[str]: # TODO remove from here
 		tokens = self.nodelist
 		tokens = tokens.replace(",n", ".n")  # used to separate ',node' from 'node[1,3]'
 		tokens = tokens.split(".")

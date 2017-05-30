@@ -59,12 +59,12 @@
 					<td class="table_text"> {{ job.t_start | ts2datetime }} </td>
 					<td class="table_text"> {{ job.num_cores }} </td>
 
-					<td style="background-color: {{ get_color('cpu_user', cpu_stats[2]) }}" class="sensor_text" >
-						{{ cpu_stats[2] | float2 }}
+					<td style="background-color: {{ get_color('cpu_user', cpu_stats['avg']) }}" class="sensor_text" >
+						{{ cpu_stats["avg"] | float2 }}
 					</td>
 
-					<td style="background-color: {{ get_color('loadavg', la_stats[2]) }}" class="sensor_text" >
-						{{ la_stats[2] | float2 }}
+					<td style="background-color: {{ get_color('loadavg', la_stats['avg']) }}" class="sensor_text" >
+						{{ la_stats["avg"] | float2 }}
 					</td>
 
 					<td class="table_text" >

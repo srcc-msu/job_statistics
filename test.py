@@ -1,15 +1,14 @@
 import unittest
+import base64
 
 from application.database import global_db
 from application.setup import create_app, setup_database, register_blueprints, load_cluster_config
-
 from core.job.controllers import add
 from core.job.models import Job
 from core.monitoring.models import JobPerformance
 from core.tag.models import JobTag, Tag
-from core.job.helpers import id2hash, hash2id
+from core.job.helpers import id2hash, hash2id, username2id, id2username
 from modules.autotag.models import AutoTag
-import base64
 
 class TestSuit(unittest.TestCase):
 	client = None
@@ -87,7 +86,7 @@ class GeneralTestSuit(TestSuit):
 		assert b"task table" in rv.data
 
 	def test_timeline(self):
-		rv = TestSuit.client.get("/job_table/timeline" # bug with redirect and headers?
+		rv = TestSuit.client.get("/job_table/timeline"
 			, headers = TestSuit.auth_headers)
 		print(rv.status, rv.data)
 
@@ -95,12 +94,20 @@ class GeneralTestSuit(TestSuit):
 		assert b"running tasks" in rv.data
 
 	def test_queue_timeline(self):
-		rv = TestSuit.client.get("/job_table/queue_timeline" # bug with redirect and headers?
+		rv = TestSuit.client.get("/job_table/queue_timeline"
 			, headers = TestSuit.auth_headers)
 		print(rv.status, rv.data)
 
 		assert "200" in rv.status
 		assert b"queued task" in rv.data
+
+	def test_analyzer_running(self):
+		rv = TestSuit.client.get("/analyzer/running"
+			, headers = TestSuit.auth_headers)
+		print(rv.status, rv.data)
+
+		assert "200" in rv.status
+		assert b"running" in rv.data
 
 class TestJob(TestSuit):
 	test_job = None
@@ -255,8 +262,8 @@ class TestJd(TestSuit):
 		TestSuit.setUpClass()
 
 		cls.test_job = Job(2, 2, "test", "account", 1, 2, 3, 4, 5, 6, "RUNNING", 1, "command", "./", "node1-001-01")
-
 		add(global_db, cls.test_job)
+
 
 	def test_info(self):
 		rv = TestSuit.client.get("/api/job/{0}/info".format(TestJd.test_job.id))
@@ -279,6 +286,23 @@ class TestJd(TestSuit):
 		assert "200" in rv.status
 		assert b"[]" in rv.data
 
+	def test_heatmap(self):
+		rv = TestSuit.client.get("/jd/{0}/{1}/heatmap/cpu_user".format(TestJd.test_job.job_id, TestJd.test_job.task_id)
+			, headers = TestSuit.auth_headers)
+
+		print(rv.status, rv.data)
+
+		assert "200" in rv.status
+		assert b"heatmap" in rv.data
+
+	def test_username_hashing(self):
+		for username in ["faf", "fdsfsv", "sags_432", "dvcbsxn4262fz_1234fdsf"]:
+
+			id = username2id(username)
+			print(id, username, id2username(id))
+
+			assert id2username(id) == username
+
 	def test_hashing(self):
 		for id in [10, 1234, 9432, 25271]:
 			hash = id2hash(id)
@@ -294,7 +318,6 @@ class TestJobTag(TestSuit):
 		TestSuit.setUpClass()
 
 		cls.test_job = Job(3, 3, "test", "account", 1, 2, 3, 4, 5, 6, "RUNNING", 1, "command", "./", "node1-001-01")
-
 		add(global_db, cls.test_job)
 
 	def test_job_tags(self):
@@ -310,7 +333,6 @@ class TestJobTag(TestSuit):
 
 		assert "200" in rv.status
 		assert b"false" in rv.data
-
 
 	def test_tag_complex(self):
 		def test_register_tag():
@@ -357,7 +379,6 @@ class TestJobStat(TestSuit):
 		TestSuit.setUpClass()
 
 		cls.test_job = Job(4, 4, "test", "account", 1, 2, 3, 4, 5, 6, "RUNNING", 1, "command", "./", "node1-001-01")
-
 		add(global_db, cls.test_job)
 
 	def test_avg(self):
@@ -375,7 +396,6 @@ class TestAutoTag(TestSuit):
 		TestSuit.setUpClass()
 
 		cls.test_job = Job(5, 5, "test", "account", 1, 2, 3, 4, 5, 6, "RUNNING", 1, "command", "./", "node1-001-01")
-
 		add(global_db, cls.test_job)
 
 		tag = Tag("test2", "test2")
@@ -428,12 +448,12 @@ class TestAutoTag(TestSuit):
 		assert AutoTag.query.get(id) is None
 
 	def test_job_update(self):
-		rv = TestSuit.client.post("/api/job/1/autotag"
+		rv = TestSuit.client.post("/api/autotag/job/1/apply"
 			, headers = TestSuit.auth_headers)
 		print(rv.status, rv.data)
 
 		assert "200" in rv.status
-		assert b"test2" in rv.data
+		assert b"ok" in rv.data
 
 if __name__ == "__main__":
 	unittest.main(verbosity=2)

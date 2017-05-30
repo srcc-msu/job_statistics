@@ -3,10 +3,9 @@ import time
 
 from flask import Blueprint, Response, render_template, current_app
 
-from application.database import global_db
-from core.monitoring.controllers import get_sensor_stats
 from core.job.models import Job
 from application.helpers import requires_auth
+from core.monitoring.models import SENSOR_CLASS_MAP
 from modules.job_table.helpers import get_color
 
 job_analyzer_pages = Blueprint('job_analyzer', __name__
@@ -23,11 +22,11 @@ def get_running_stats(limit: int):
 	for job in jobs:
 		nodelist = list(map(current_app.app_config.cluster["node2int"], job.expand_nodelist()))
 		if timestamp - job.t_start > limit:
-			cpu_stat = get_sensor_stats(global_db, "cpu_user", nodelist, timestamp - limit + offset, timestamp)
-			la_stat =  get_sensor_stats(global_db, "loadavg", nodelist, timestamp - limit + offset, timestamp)
+			cpu_stat = SENSOR_CLASS_MAP["cpu_user"].get_stats(nodelist, timestamp - limit + offset, timestamp)
+			la_stat =  SENSOR_CLASS_MAP["loadavg"].get_stats(nodelist, timestamp - limit + offset, timestamp)
 
 			try:
-				if int(cpu_stat[2]) < 10 and float(la_stat[2]) < 0.9:
+				if int(cpu_stat["avg"]) < 10 and float(la_stat["avg"]) < 0.9:
 					results.insert(0, (job, cpu_stat, la_stat, "HANGED?!"))
 				else:
 					results.append((job, cpu_stat, la_stat, ""))

@@ -1,6 +1,11 @@
-from application.database import global_db
+from typing import List
 
+from sqlalchemy import func, Float
+
+from application.database import global_db
+from core.job.models import Job
 from core.monitoring.constants import SENSOR_LIST
+from core.monitoring.helpers import nodelist2ids
 
 perf_columns = [
 	global_db.Column("fk_job_id", global_db.Integer
@@ -29,7 +34,21 @@ class JobPerformance(global_db.Model):
 			result["avg"][sensor_name] = getattr(self, "avg_" + sensor_name)
 
 		return result
-#
+
+	def update(self, offset: int):
+		job = Job.get(self.fk_job_id)
+
+		filter_nodelist = nodelist2ids(job.expand_nodelist())
+
+		for sensor in SENSOR_LIST:
+			stats = SENSOR_CLASS_MAP[sensor].get_stats(global_db, filter_nodelist, job.t_start + offset, job.t_end - offset)
+
+			self.__setattr__("min_" + sensor, stats["min"])
+			self.__setattr__("max_" + sensor, stats["max"])
+			self.__setattr__("avg_" + sensor, stats["avg"])
+
+		global_db.session.commit()
+
 
 class Sensor(global_db.Model):
 	__abstract__ = True
@@ -40,6 +59,23 @@ class Sensor(global_db.Model):
 	max = global_db.Column("max", global_db.Float)
 	avg = global_db.Column("avg", global_db.Float)
 
+	@classmethod
+	def get_stats(cls, nodelist: List[int], t_from : int, t_to: int):
+		sensor_query = global_db.session.query(
+				func.min(cls.min).cast(Float).label("min")
+				, func.max(cls.max).cast(Float).label("max")
+				, func.avg(cls.avg).cast(Float).label("avg"))\
+			.filter(cls.time > t_from)\
+			.filter(cls.time < t_to)\
+			.filter(cls.node_id.in_(nodelist))\
+
+		result = sensor_query.one()
+
+		return {
+			"min" : result[0]
+			, "max" : result[1]
+			, "avg" : result[2]
+		}
 
 SENSOR_CLASS_MAP = {}
 

@@ -1,4 +1,5 @@
 from flask import Blueprint, current_app, jsonify, render_template, Response
+
 from application.helpers import requires_auth
 
 core_pages = Blueprint('core', __name__

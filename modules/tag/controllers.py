@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, Response
-from application.helpers import requires_auth
 
+from application.helpers import requires_auth
 from core.tag.models import Tag
 
 tag_pages = Blueprint('tag', __name__

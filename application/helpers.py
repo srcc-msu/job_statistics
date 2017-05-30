@@ -3,10 +3,10 @@ import datetime
 import io
 import threading
 from typing import List
-
 from datetime import timedelta
-from flask import make_response, request, current_app, Response
 from functools import update_wrapper, wraps
+
+from flask import make_response, request, current_app, Response
 
 def gen_csv_response(header: List[dict], data: List[List]):
 	output = io.StringIO()
