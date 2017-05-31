@@ -48,8 +48,8 @@ class JobPerformance(global_db.Model):
 			self.__setattr__("max_" + sensor, stats["max"])
 			self.__setattr__("avg_" + sensor, stats["avg"])
 
+		global_db.session.add(self)
 		global_db.session.commit()
-
 
 class Sensor(global_db.Model):
 	__abstract__ = True

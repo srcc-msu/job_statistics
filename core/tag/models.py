@@ -24,6 +24,7 @@ class JobTag(global_db.Model):
 	def __set(self, tags: Iterable[str]):
 		self.tags = TAG_SEPARATOR + TAG_SEPARATOR.join(set(tags)) + TAG_SEPARATOR
 
+		global_db.session.add(self)
 		global_db.session.commit()
 
 	def get(self) -> List[str]:
