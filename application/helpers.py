@@ -2,11 +2,13 @@ import csv
 import datetime
 import io
 import threading
+import traceback
 from typing import List
 from datetime import timedelta
 from functools import update_wrapper, wraps
 
 from flask import make_response, request, current_app, Response
+import sys
 
 def gen_csv_response(header: List[dict], data: List[List]):
 	output = io.StringIO()
@@ -82,8 +84,10 @@ def __bg_wrapper(function, params):
 	start = time.time()
 	try:
 		function(*params)
-	except:
-		pass
+	except Exception as e:
+		traceback.print_exc(file=sys.stderr)
+		print("background task failed")
+
 	end = time.time()
 
 	__bg_wrapper.bg_count -= 1

@@ -16,8 +16,9 @@ job_import_pages = Blueprint('job_api', __name__
 	, template_folder='templates')
 
 def __update_performance(app: Flask, job: Job, job_performance: JobPerformance):
-	job_performance.update(app.app_config.monitoring["aggregation_interval"])
-	apply_autotags(job)
+	with app.app_context():
+		job_performance.update(app.app_config.monitoring["aggregation_interval"])
+		apply_autotags(job)
 
 def update_performance(job: Job):
 	job_performance = JobPerformance.query.get(job.id)
