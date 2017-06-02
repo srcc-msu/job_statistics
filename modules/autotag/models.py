@@ -32,8 +32,12 @@ def apply_autotags(job: Job):
 		condition = autotag.compile_condition()
 
 		try:
+			tag = Tag.query.get(autotag.fk_tag_id)
+
 			if condition(job, perf):
-				tag = Tag.query.get(autotag.fk_tag_id)
 				job_tag.add(tag.label)
+			else:
+				job_tag.delete(tag.label)
+
 		except:
 			pass
