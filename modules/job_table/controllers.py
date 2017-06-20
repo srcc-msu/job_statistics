@@ -19,18 +19,18 @@ job_table_pages = Blueprint('job_table', __name__
 	, template_folder='templates', static_folder='static')
 
 
-@job_table_pages.route("/table/")
+@job_table_pages.route("/table")
 @requires_auth
 def table_redirect():
 	query = "?" + request.query_string.decode("utf-8") if len(request.query_string) > 0 else ""
 
-	return flask.redirect(flask.url_for("job_table.get_table", page=0) + query)
+	return flask.redirect(flask.url_for("job_table.get_table", _external=True, page=0) + query)
 
 @job_table_pages.route("/share/<string:hash>")
 def anon_table_redirect(hash):
 	query = "?" + request.query_string.decode("utf-8") if len(request.query_string) > 0 else ""
 
-	return flask.redirect(flask.url_for("job_table.get_anon_table", hash=hash, page=0) + query)
+	return flask.redirect(flask.url_for("job_table.get_anon_table", _external=True, hash=hash, page=0) + query)
 
 def clean_user_request(data: dict) -> dict:
 	filter = {}
@@ -115,8 +115,8 @@ def get_table(page: int) -> Response:
 	PAGE_SIZE = 50
 
 	query_url = "?" + request.query_string.decode("utf-8") if len(request.query_string) > 0 else ""
-	prev_page_link = flask.url_for("job_table.get_table", page = page-1) + query_url if page > 0 else None
-	next_page_link = flask.url_for("job_table.get_table", page = page+1) + query_url
+	prev_page_link = flask.url_for("job_table.get_table", _external=True, page = page-1) + query_url if page > 0 else None
+	next_page_link = flask.url_for("job_table.get_table", _external=True, page = page+1) + query_url
 
 	filter = get_job_table_filter()
 	query = get_job_table_query(filter)
@@ -142,8 +142,8 @@ def get_anon_table(hash: str, page: int) -> Response:
 	PAGE_SIZE = 50
 
 	query_url = "?" + request.query_string.decode("utf-8") if len(request.query_string) > 0 else ""
-	prev_page_link = flask.url_for("job_table.get_anon_table", hash = hash, page = page-1) + query_url if page > 0 else None
-	next_page_link = flask.url_for("job_table.get_anon_table", hash = hash, page = page+1) + query_url
+	prev_page_link = flask.url_for("job_table.get_anon_table", _external=True, hash = hash, page = page-1) + query_url if page > 0 else None
+	next_page_link = flask.url_for("job_table.get_anon_table", _external=True, hash = hash, page = page+1) + query_url
 
 	filter = get_job_table_filter()
 	filter["accounts"] = [id2username(hash2id(hash))]

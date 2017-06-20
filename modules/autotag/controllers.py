@@ -22,10 +22,15 @@ def __apply_since(app: Flask, since: int):
 	with app.app_context():
 		jobs = Job.query.filter(Job.t_end > since).all()
 
+		print("start updating tags for {0} jobs".format(len(jobs)))
+
+		start = time.time()
 		for job in jobs:
 			apply_autotags(job)
 
-		print("updated {0} since {1}".format(len(jobs), since))
+		end = time.time()
+
+		print("updated {0} since {1} in {2:.2f} seconds".format(len(jobs), since, end - start))
 
 @autotag_pages.route("/apply", methods=["POST"])
 @requires_auth
