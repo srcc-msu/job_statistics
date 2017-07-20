@@ -15,7 +15,7 @@ job_stat_pages = Blueprint('job_stat', __name__
 @job_stat_pages.route("/constructor")
 @requires_auth
 def constructor():
-	return render_template("constructor.html")
+	return render_template("constructor.html", app_config=current_app.app_config)
 
 @job_stat_pages.route("/preset")
 @requires_auth

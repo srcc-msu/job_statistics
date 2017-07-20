@@ -27,7 +27,12 @@
 		google.charts.setOnLoadCallback(google_callback_wrapper);
 
 		function google_callback_wrapper() {
-			LoadData( {{ job.id }}, {{ app_config.monitoring.SENSOR_LIST | safe }});
+			LoadData( {{ job.id }}, {{ app_config.monitoring.GENERAL_SENSOR_LIST | safe }});
+
+			{% if job.partition in app_config.cluster.GPU_PARTITIONS %}
+				LoadData( {{ job.id }}, {{ app_config.monitoring.GPU_SENSOR_LIST | safe }});
+			{% endif %}
+
 		}
 
 		$(document).ready(function() {
@@ -176,7 +181,7 @@
 
 	<input type="button" value="show/hide all graphs" onclick="ToggleAll();">
 
-	{% for sensor in app_config.monitoring.SENSOR_LIST %}
+	{% for sensor in app_config.monitoring.GENERAL_SENSOR_LIST %}
 		<h1> {{ app_config.monitoring.SENSOR_INFO[sensor][0] }} </h1>
 		<div id="{{sensor}}" class="graph"></div>
 		<div class="info">
@@ -188,5 +193,22 @@
 		{% block HeatmapLink scoped %}{% endblock %}
 
 	{% endfor %}
+
+	{% if job.partition in app_config.cluster.GPU_PARTITIONS %}
+		{% for sensor in app_config.monitoring.GPU_SENSOR_LIST %}
+			<h1> {{ app_config.monitoring.SENSOR_INFO[sensor][0] }} </h1>
+			<div id="{{sensor}}" class="graph"></div>
+			<div class="info">
+				<p>
+					{{ app_config.monitoring.SENSOR_INFO[sensor][1] }}
+				</p>
+			</div>
+
+			{{ self.HeatmapLink() }}
+
+		{% endfor %}
+	{% endif %}
+
+
 </body>
 </html>

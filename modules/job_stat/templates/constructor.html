@@ -161,12 +161,12 @@
 
 	function FetchTasksCount()
 	{
-		Fetch("#tasks_count_result", "#tasks_count_graphic", "#tasks_count_params", "/api/job_stat/tasks_count");
+		Fetch("#tasks_count_result", "#tasks_count_graphic", "#tasks_count_params", "/api/job_stat/jobs");
 	}
 
 	function FetchUsersCount()
 	{
-		Fetch("#users_count_result", "#users_count_graphic", "#users_count_params", "/api/job_stat/users_count");
+		Fetch("#users_count_result", "#users_count_graphic", "#users_count_params", "/api/job_stat/accounts");
 	}
 </script>
 
@@ -189,12 +189,10 @@
 		<tr>
 			<td>
 				<input type="radio" name="partition" value="all" checked>All<br>
-				<input type="radio" name="partition" value="regular4">regular4<br>
-				<input type="radio" name="partition" value="reg4prio">reg4prio<br>
-				<input type="radio" name="partition" value="regular6">regular6<br>
-				<input type="radio" name="partition" value="hdd4">hdd4<br>
-				<input type="radio" name="partition" value="hdd6">hdd6<br>
-				<input type="radio" name="partition" value="gpu">gpu<br>
+
+				{% for partition in app_config.cluster.PARTITIONS %}
+					<input type="radio" name="partition" value="{{partition}}">{{partition}}<br>
+				{% endfor %}
 			</td>
 			<td>
 				<input type="radio" name="account" value="all" checked>All tasks<br>
@@ -204,12 +202,9 @@
 
 			<td>
 				<input type="radio" name="state" value="all" checked>All<br>
-				<input type="radio" name="state" value="COMPLETED">Completed<br>
-				<input type="radio" name="state" value="COMPLETING">Completing<br>
-				<input type="radio" name="state" value="NODE_FAIL">Node fail<br>
-				<input type="radio" name="state" value="TIMEOUT">Timeout<br>
-				<input type="radio" name="state" value="FAILED">Failed<br>
-				<input type="radio" name="state" value="CANCELED">Canceled<br>
+				{% for state in app_config.cluster.JOB_STATES %}
+					<input type="radio" name="state" value="{{state}}">{{state}}<br>
+				{% endfor %}
 			</td>
 
 			<td>

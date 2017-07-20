@@ -22,7 +22,7 @@ def assign_job_class(data: dict) -> str:
 		return "no_data"
 
 def get_running_stats(interval: int) -> List[dict]:
-	jobs = Job.query.filter(Job.state == "RUNNING").all()
+	jobs = Job.query.filter(Job.state.in_(current_app.app_config.cluster["ACTIVE_JOB_STATES"])).all()
 
 	results = []
 

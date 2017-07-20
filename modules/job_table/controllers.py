@@ -99,7 +99,7 @@ def get_job_table_query(filter):
 
 	query = construct_full_table_query(query, filter)
 
-	query = query.filter(Job.state != "RUNNING")
+	query = query.filter(Job.state.in_(current_app.app_config.cluster["FINISHED_JOB_STATES"]))
 
 	return query
 

@@ -42,13 +42,16 @@ thresholds = {
 	"cpu_soft_irq": (((50, 1e20), RED), ((10, 50), YELLOW), ((0, 10), GREEN)),
 }
 
-SENSOR_LIST = ["cpu_user", "loadavg", "memory_free"
-#	, "gpu_load", "gpu_mem_load", "gpu_mem_usage"
+GENERAL_SENSOR_LIST = ["cpu_user", "loadavg", "memory_free"
 	, "perf_counter1", "perf_counter2", "fixed_counter2"#, "fixed_counter3"
 	, "ib_rcv_data_mpi", "ib_xmit_data_mpi", "ib_rcv_pckts_mpi", "ib_xmit_pckts_mpi"
 	, "ib_rcv_data_fs", "ib_xmit_data_fs", "ib_rcv_pckts_fs", "ib_xmit_pckts_fs"
 	, "fixed_counter1", "perf_counter3", "perf_counter4"
 	, "cpu_nice", "cpu_system", "cpu_idle", "cpu_iowait", "cpu_irq", "cpu_soft_irq"]
+
+GPU_SENSOR_LIST = ["gpu_load", "gpu_mem_load", "gpu_mem_usage"]
+
+SENSOR_LIST = GENERAL_SENSOR_LIST + GPU_SENSOR_LIST
 
 DISPLAY_SENSOR_LIST = ["avg_cpu_user", "avg_loadavg", "avg_ib_rcv_data_mpi", "avg_ib_rcv_data_fs"]
 
