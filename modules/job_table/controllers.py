@@ -19,7 +19,7 @@ job_table_pages = Blueprint('job_table', __name__
 	, template_folder='templates', static_folder='static')
 
 
-@job_table_pages.route("/table")
+@job_table_pages.route("/table/")
 @requires_auth
 def table_redirect():
 	query = "?" + request.query_string.decode("utf-8") if len(request.query_string) > 0 else ""
