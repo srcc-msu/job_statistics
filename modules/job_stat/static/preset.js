@@ -59,7 +59,7 @@ function DrawCharts(num_cores, timezone_offset)
 	{
 		LoadTagStat(tags[i], tags[i] + "_1", last_day, midnight);
 		LoadTagStat(tags[i], tags[i] + "_7", last_week, midnight);
-		LoadTagStat(tags[i], tags[i] + "_30", last_month, midnight);
+//		LoadTagStat(tags[i], tags[i] + "_30", last_month, midnight);
 //		LoadTagStat(tags[i], tags[i] + "_365", since_jan1, midnight);
 	}
 
