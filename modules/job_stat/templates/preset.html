@@ -42,13 +42,6 @@
 	</tr>
 
 	<tr>
-		<td class="text_header">Task scheduling efficiency:</td>
-		<td class="text_day_ago"><span id="task_total_cpu_1"></span></td>
-		<td class="text_week_ago"><span id="task_total_cpu_7"></span></td>
-		<td class="text_month_ago"><span id="task_total_cpu_30"></span></td>
-		<td class="text_year_ago"><span id="task_total_cpu_365"></span></td>
-	</tr>
-	<tr>
 		<td class="text_header">Completed tasks per day:</td>
 		<td class="text_day_ago"><span id="avg_completed_1"></span></td>
 		<td class="text_week_ago"><span id="avg_completed_7"></span></td>
@@ -136,6 +129,43 @@
 
 	<div id="user_total_tasks"></div>
 </div>
+
+<h1 style="color:red">New statistics</h1>
+
+<table>
+	<tr>
+		<th></th>
+		<th><p class="text_day_ago">yesterday</p></th>
+		<th><p class="text_week_ago">for last week</p></th>
+		<th><p class="text_month_ago">for last month</p></th>
+		<th><p class="text_year_ago">since 1 Jan</p></th>
+	</tr>
+
+	<tr>
+		<td class="text_header">Task scheduling efficiency:</td>
+		<td class="text_day_ago"><span id="task_total_cpu_1"></span></td>
+		<td class="text_week_ago"><span id="task_total_cpu_7"></span></td>
+		<td class="text_month_ago"><span id="task_total_cpu_30"></span></td>
+		<td class="text_year_ago"><span id="task_total_cpu_365"></span></td>
+	</tr>
+
+	<tr>
+		<td class="text_header">Average CPU load:</td>
+		<td class="text_day_ago"><span id="task_stat_avg_cpu_user_1"></span></td>
+		<td class="text_week_ago"><span id="task_stat_avg_cpu_user_7"></span></td>
+		<td class="text_month_ago"><span id="task_stat_avg_cpu_user_30"></span></td>
+		<td class="text_year_ago"><span id="task_stat_avg_cpu_user_365"></span></td>
+	</tr>
+
+	<tr>
+		<td class="text_header">Average wait time(hours):</td>
+		<td class="text_day_ago"><span id="task_avg_waittime_1"></span></td>
+		<td class="text_week_ago"><span id="task_avg_waittime_7"></span></td>
+		<td class="text_month_ago"><span id="task_avg_waittime_30"></span></td>
+		<td class="text_year_ago"><span id="task_avg_waittime_365"></span></td>
+	</tr>
+
+</table>
 
 </body>
 </html>

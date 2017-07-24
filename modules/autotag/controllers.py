@@ -15,7 +15,7 @@ autotag_pages = Blueprint('autotag', __name__
 @autotag_pages.route("/list")
 @requires_auth
 def autotag_list() -> Response:
-	data = global_db.session.query(Tag, AutoTag).join(AutoTag).all()
+	data = global_db.session.query(Tag, AutoTag).join(AutoTag).order_by(Tag.id).all()
 	return render_template("autotag_list.html", data=data)
 
 def __apply_since(app: Flask, since: int):

@@ -42,6 +42,16 @@ function DrawCharts(num_cores, timezone_offset)
 	ShowUserCount("#total_user_count_7", last_week, midnight);
 	ShowUserCount("#total_user_count_30", last_month, midnight);
 	ShowUserCount("#total_user_count_365", since_jan1, midnight);
+
+	ShowAvgCPU("#task_stat_avg_cpu_user_1", last_day, midnight);
+	ShowAvgCPU("#task_stat_avg_cpu_user_7", last_week, midnight);
+	ShowAvgCPU("#task_stat_avg_cpu_user_30", last_month, midnight);
+	ShowAvgCPU("#task_stat_avg_cpu_user_365", since_jan1, midnight);
+
+	ShowAvgWaitTime("#task_avg_waittime_1", last_day, midnight);
+	ShowAvgWaitTime("#task_avg_waittime_7", last_week, midnight);
+	ShowAvgWaitTime("#task_avg_waittime_30", last_month, midnight);
+	ShowAvgWaitTime("#task_avg_waittime_365", since_jan1, midnight);
 }
 
 function AjaxDrawWrapper(api, data, target, sorted)
@@ -202,4 +212,23 @@ function ShowStarted(target, t_start, t_end)
 
 	AjaxTextWrapper("/api/job_stat/jobs/count", data, "#avg_" + target, avg_transform);
 	AjaxTextWrapper("/api/job_stat/jobs/count", data, "#total_" + target, total_transform);
+}
+
+function ShowAvgCPU(target, t_start, t_end)
+{
+}
+
+function ShowAvgWaitTime(target, t_from, t_to)
+{
+	var data = {
+		t_from: t_from
+		, t_to: t_to
+	};
+
+	function transform(data)
+	{
+			return (parseInt(data.split('\n')[1]) / 3600).toFixed(1);
+	}
+
+	AjaxTextWrapper("/api/job_stat/wait_time/avg", data, target, transform);
 }
