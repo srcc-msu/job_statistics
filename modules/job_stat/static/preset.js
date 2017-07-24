@@ -93,7 +93,7 @@ function LoadTagStat(tag, target, t_from, t_to)
 		return data.length;
 	}
 
-	AjaxTextWrapper("https://graphit.parallel.ru:5001/api/job_table/common", data, target, transform);
+	AjaxTextWrapper("/api/job_table/common", data, target, transform);
 }
 
 function DrawAvgWaitTime(target, t_start, t_end)
@@ -244,7 +244,7 @@ function ShowStarted(target, t_start, t_end)
 	AjaxTextWrapper("/api/job_stat/jobs/count", data, "#total_" + target, total_transform);
 }
 
-function ShowAvgCPU(target, t_from, t_to)
+function ShowAvgWaitTime(target, t_from, t_to)
 {
 	var data = {
 		t_from: t_from
@@ -260,7 +260,7 @@ function ShowAvgCPU(target, t_from, t_to)
 
 }
 
-function ShowAvgWaitTime(target, t_from, t_to)
+function ShowAvgCPU(target, t_from, t_to)
 {
 	var data = {
 		t_from: t_from
