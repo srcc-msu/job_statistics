@@ -10,12 +10,12 @@ job_stat_api_pages = Blueprint('job_stat_api', __name__
 @job_stat_api_pages.route("/<string:metric>/<string:aggregation_function>")
 @crossdomain(origin='*')
 def get_metric(metric: str, aggregation_function: str) -> Response:
-	if metric not in ["cores", "run_time", "wait_time", "cores_sec", "accounts", "jobs"]:
-		raise RuntimeError("bad metric: " + metric)
 
 	if aggregation_function not in ["min", "max", "avg", "count", "sum"]:
 		raise RuntimeError("bad aggregation function: " + aggregation_function)
 
-	result = generate_query(request.args, metric, aggregation_function)
+	with_perf = "avg_" in metric or "min_" in metric or "max_" in metric
+
+	result = generate_query(request.args, metric, aggregation_function, with_perf=with_perf)
 
 	return application.helpers.gen_csv_response(result.column_descriptions, result.all())

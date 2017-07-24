@@ -52,6 +52,17 @@ function DrawCharts(num_cores, timezone_offset)
 	ShowAvgWaitTime("#task_avg_waittime_7", last_week, midnight);
 	ShowAvgWaitTime("#task_avg_waittime_30", last_month, midnight);
 	ShowAvgWaitTime("#task_avg_waittime_365", since_jan1, midnight);
+
+	var tags = ["cls_communicative_volume","cls_communicative_packets","cls_sc_appropriate","cls_not_communicative","cls_serial","cls_suspicious","cls_data_intensive","cls_gpu_pure","cls_gpu_hybrid_good"];
+
+	for(var i = 0; i < tags.length; i++)
+	{
+		LoadTagStat(tags[i], tags[i] + "_1", last_day, midnight);
+		LoadTagStat(tags[i], tags[i] + "_7", last_week, midnight);
+		LoadTagStat(tags[i], tags[i] + "_30", last_month, midnight);
+//		LoadTagStat(tags[i], tags[i] + "_365", since_jan1, midnight);
+	}
+
 }
 
 function AjaxDrawWrapper(api, data, target, sorted)
@@ -64,6 +75,25 @@ function AjaxDrawWrapper(api, data, target, sorted)
 		, error: function() {
 			$(target).val("Internal error"); }
 	});
+}
+
+function LoadTagStat(tag, target, t_from, t_to)
+{
+	var data = {
+		date_from: t_from
+		, date_to: t_to
+		, req_tags: tag
+		, accounts: ""
+		, states: ""
+		, partitions: ""
+	};
+
+	function transform(data)
+	{
+		return data.length;
+	}
+
+	AjaxTextWrapper("https://graphit.parallel.ru:5001/api/job_table/common", data, target, transform);
 }
 
 function DrawAvgWaitTime(target, t_start, t_end)
@@ -118,7 +148,7 @@ function AjaxTextWrapper(api, data, target, transform_function)
 		url: api
 		, data: data
 		, success: function(data) {
-			$(target).html(transform_function(data)); }
+			$(target).html(transform_function(data).toString()); }
 		, error: function() {
 			$(target).val("Internal error"); }
 	});
@@ -214,8 +244,20 @@ function ShowStarted(target, t_start, t_end)
 	AjaxTextWrapper("/api/job_stat/jobs/count", data, "#total_" + target, total_transform);
 }
 
-function ShowAvgCPU(target, t_start, t_end)
+function ShowAvgCPU(target, t_from, t_to)
 {
+	var data = {
+		t_from: t_from
+		, t_to: t_to
+	};
+
+	function transform(data)
+	{
+		return (parseInt(data.split('\n')[1]) / 3600).toFixed(1);
+	}
+
+	AjaxTextWrapper("/api/job_stat/wait_time/avg", data, target, transform);
+
 }
 
 function ShowAvgWaitTime(target, t_from, t_to)
@@ -227,8 +269,8 @@ function ShowAvgWaitTime(target, t_from, t_to)
 
 	function transform(data)
 	{
-			return (parseInt(data.split('\n')[1]) / 3600).toFixed(1);
+		return (parseInt(data.split('\n')[1])).toFixed(1);
 	}
 
-	AjaxTextWrapper("/api/job_stat/wait_time/avg", data, target, transform);
+	AjaxTextWrapper("/api/job_stat/avg_cpu_user/avg", data, target, transform);
 }

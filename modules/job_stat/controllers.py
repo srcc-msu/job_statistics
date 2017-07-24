@@ -3,6 +3,7 @@ from typing import Optional, List
 import sqlalchemy
 from flask import Blueprint, render_template, current_app
 from flask_sqlalchemy import BaseQuery
+from core.monitoring.models import JobPerformance
 
 from modules.job_stat.model import JobStat
 from core.job.models import Job
@@ -23,13 +24,16 @@ def preset():
 	return render_template("preset.html"
 		, app_config=current_app.app_config)
 
-def gen_base_query(t_from: int, t_to: int, include: str) -> BaseQuery:
+def gen_base_query(t_from: int, t_to: int, include: str, with_perf: bool) -> BaseQuery:
 	scoped_duration = sqlalchemy.func.LEAST(Job.t_end, t_to) - sqlalchemy.func.GREATEST(Job.t_start, t_from)
 
 	base_query = global_db.session \
 		.query(Job, JobStat, (Job.num_cores * sqlalchemy.func.GREATEST(scoped_duration, 0))
 			.label("cores_sec")) \
-		.join(JobStat)
+		.join(JobStat)\
+
+	if with_perf:
+		base_query = base_query.join(JobPerformance)
 
 	if include == "all":
 		return  base_query.filter(Job.t_end > t_from) \
@@ -59,14 +63,20 @@ def gen_what(base_query: BaseQuery, metric: str, aggregation_function: str, grou
 		, "sum" : sqlalchemy.func.SUM
 	}[aggregation_function]
 
-	params.append({
-		"cores" : function(base_query.c.num_cores).cast(sqlalchemy.Float)
-		, "run_time" : function(base_query.c.t_end - base_query.c.t_start).cast(sqlalchemy.Float)
-		, "wait_time" : function(base_query.c.t_start - base_query.c.t_submit).cast(sqlalchemy.Float)
-		, "cores_sec" : function(base_query.c.cores_sec).cast(sqlalchemy.Float)
-		, "jobs" : function(base_query.c.id.distinct()).cast(sqlalchemy.Float)
-		, "accounts" : function(base_query.c.account.distinct()).cast(sqlalchemy.Float)
-	}[metric].label("{0}_{1}".format(aggregation_function, metric)))
+	try:
+		params.append({
+			"cores" : function(base_query.c.num_cores).cast(sqlalchemy.Float)
+			, "run_time" : function(base_query.c.t_end - base_query.c.t_start).cast(sqlalchemy.Float)
+			, "wait_time" : function(base_query.c.t_start - base_query.c.t_submit).cast(sqlalchemy.Float)
+			, "cores_sec" : function(base_query.c.cores_sec).cast(sqlalchemy.Float)
+			, "jobs" : function(base_query.c.id.distinct()).cast(sqlalchemy.Float)
+			, "accounts" : function(base_query.c.account.distinct()).cast(sqlalchemy.Float)
+		}[metric].label("{0}_{1}".format(aggregation_function, metric)))
+	except KeyError:
+		try:
+			params.append(function(getattr(JobPerformance, metric)).cast(sqlalchemy.Float).label("{0}_{1}".format(aggregation_function, metric)))
+		except Exception as e:
+			print(e)
 
 	for group in grouping:
 		params.append(group)
@@ -89,8 +99,8 @@ def gen_group(base_query: BaseQuery, query: BaseQuery, grouping: List[str]) -> B
 
 	return query
 
-def generate_query(url_args: dict, metric: str, aggregation_function: str) -> BaseQuery:
-	base_query = gen_base_query(url_args["t_from"], url_args["t_to"], url_args.get("include", "all"))
+def generate_query(url_args: dict, metric: str, aggregation_function: str, with_perf = False) -> BaseQuery:
+	base_query = gen_base_query(url_args["t_from"], url_args["t_to"], url_args.get("include", "all"), with_perf)
 
 	grouping = url_args.get("grouping")
 
