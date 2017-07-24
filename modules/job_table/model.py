@@ -86,9 +86,3 @@ def calculate_job_query_stat(query_string: str, query: BaseQuery):
 
 	return result
 
-@job_table_api_pages.route("/common")
-@crossdomain(origin='*')
-def json_jobs_by_account() -> Response:
-	data = construct_job_table_query(Job.query, request.args.to_dict()).all()
-
-	return jsonify(list(map(lambda x: x.to_dict(), data)))
