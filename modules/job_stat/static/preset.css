@@ -25,3 +25,7 @@
 .text_header {
     font-size: 150%;
 }
+
+.stat_table_hint {
+	padding: 0 30px;
+}
