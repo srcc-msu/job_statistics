@@ -42,14 +42,14 @@
 	</tr>
 
 	<tr>
-		<td class="text_header">Completed tasks per day:</td>
+		<td class="text_header">Completed jobs per day</td>
 		<td class="text_day_ago"><span id="avg_completed_1"></span></td>
 		<td class="text_week_ago"><span id="avg_completed_7"></span></td>
 		<td class="text_month_ago"><span id="avg_completed_30"></span></td>
 		<td class="text_year_ago"><span id="avg_completed_365"></span></td>
 	</tr>
 	<tr>
-		<td class="text_header">Started tasks per day:</td>
+		<td class="text_header">Started jobs per day</td>
 		<td class="text_day_ago"><span id="avg_started_1"></span></td>
 		<td class="text_week_ago"><span id="avg_started_7"></span></td>
 		<td class="text_month_ago"><span id="avg_started_30"></span></td>
@@ -75,14 +75,7 @@
 	</tr>
 
 	<tr>
-		<td class="text_header">Total completed tasks:</td>
-		<td class="text_day_ago"><span id="total_completed_1"></span></td>
-		<td class="text_week_ago"><span id="total_completed_7"></span></td>
-		<td class="text_month_ago"><span id="total_completed_30"></span></td>
-		<td class="text_year_ago"><span id="total_completed_365"></span></td>
-	</tr>
-	<tr>
-		<td class="text_header">Total started tasks:</td>
+		<td class="text_header">Total started jobs</td>
 		<td class="text_day_ago"><span id="total_started_1"></span></td>
 		<td class="text_week_ago"><span id="total_started_7"></span></td>
 		<td class="text_month_ago"><span id="total_started_30"></span></td>
@@ -90,7 +83,7 @@
 	</tr>
 
 	<tr>
-		<td class="text_header">Total users:</td>
+		<td class="text_header">Total users</td>
 		<td class="text_day_ago"><span id="total_user_count_1"></span></td>
 		<td class="text_week_ago"><span id="total_user_count_7"></span></td>
 		<td class="text_month_ago"><span id="total_user_count_30"></span></td>
@@ -103,7 +96,7 @@
 <h1 style="color:green">Queues</h1>
 
 <div>
-	<h2>Average wait time in queues for started tasks</h2>
+	<h2>Average wait time in queues for started jobs</h2>
 
 	<div id="queue_avg_wait_time_by_day"></div>
 </div>
@@ -117,7 +110,7 @@
 <h1 style="color:green">User top</h1>
 
 <div style='height: 700px'>
-	<h2>Top 10 users by core*seconds time (single threaded tasks are treated as full node tasks) for last week</h2>
+	<h2>Top 10 users by core*seconds time (single threaded jobs are treated as full node jobs) for last week</h2>
 
 	<div>
 		<div id="user_total_work_time"></div>
@@ -125,7 +118,7 @@
 </div>
 
 <div style='height: 700px'>
-	<h2>Top 10 users by completed tasks for last week</h2>
+	<h2>Top 10 users by completed jobs for last week</h2>
 
 	<div id="user_total_tasks"></div>
 </div>
@@ -139,102 +132,124 @@
 		<th><p class="text_week_ago">for last week</p></th>
 		<th><p class="text_month_ago">for last month</p></th>
 		<th><p class="text_year_ago">since 1 Jan</p></th>
+		<th></th>
 	</tr>
 
 	<tr>
-		<td class="text_header">Task scheduling efficiency:</td>
+		<td class="text_header">Completed jobs</td>
+		<td class="text_day_ago"><span id="total_completed_1"></span></td>
+		<td class="text_week_ago"><span id="total_completed_7"></span></td>
+		<td class="text_month_ago"><span id="total_completed_30"></span></td>
+		<td class="text_year_ago"><span id="total_completed_365"></span></td>
+		<td>Total completed jobs count</td>
+	</tr>
+
+	<tr>
+		<td class="text_header">Task scheduling efficiency</td>
 		<td class="text_day_ago"><span id="task_total_cpu_1"></span></td>
 		<td class="text_week_ago"><span id="task_total_cpu_7"></span></td>
 		<td class="text_month_ago"><span id="task_total_cpu_30"></span></td>
 		<td class="text_year_ago"><span id="task_total_cpu_365"></span></td>
+		<td>ratio of maximum possible corehours to used corehours for interval</td>
 	</tr>
 
 	<tr>
-		<td class="text_header">Average CPU load:</td>
+		<td class="text_header">Average CPU load</td>
 		<td class="text_day_ago"><span id="task_stat_avg_cpu_user_1"></span></td>
 		<td class="text_week_ago"><span id="task_stat_avg_cpu_user_7"></span></td>
 		<td class="text_month_ago"><span id="task_stat_avg_cpu_user_30"></span></td>
 		<td class="text_year_ago"><span id="task_stat_avg_cpu_user_365"></span></td>
+		<td>average CPU User load for completed jobs</td>
 	</tr>
 
 	<tr>
-		<td class="text_header">Average wait time(hours):</td>
+		<td class="text_header">Average wait time(hours)</td>
 		<td class="text_day_ago"><span id="task_avg_waittime_1"></span></td>
 		<td class="text_week_ago"><span id="task_avg_waittime_7"></span></td>
 		<td class="text_month_ago"><span id="task_avg_waittime_30"></span></td>
 		<td class="text_year_ago"><span id="task_avg_waittime_365"></span></td>
+		<td>average wait time in queue</td>
 	</tr>
 
 	<tr>
-		<td class="text_header">Общительные (по объему данных):</td>
+		<td class="text_header">Communicative jobs(bytes per sec)</td>
 		<td class="text_day_ago"> <span id="cls_communicative_volume_1"></span></td>
 		<td class="text_week_ago"> <span id="cls_communicative_volume_7"></span></td>
 		<td class="text_month_ago"> <span id="cls_communicative_volume_30"></span></td>
 		<td class="text_year_ago"> <span id="cls_communicative_volume_365"></span></td>
+		<td>average data transfer in Bytes per second is above threshold</td>
 	</tr>
 
 	<tr>
-		<td class="text_header">Общительные (по числу пакетов):</td>
+		<td class="text_header">Communicative jobs(packets per sec)</td>
 		<td class="text_day_ago"> <span id="cls_communicative_packets_1"></span></td>
 		<td class="text_week_ago"> <span id="cls_communicative_packets_7"></span></td>
 		<td class="text_month_ago"> <span id="cls_communicative_packets_30"></span></td>
 		<td class="text_year_ago"> <span id="cls_communicative_packets_365"></span></td>
+		<td>average packets transfer per second is above threshold</td>
 	</tr>
 
 	<tr>
-		<td class="text_header">Правильные для СК:</td>
+		<td class="text_header">Appropriate for SC</td>
 		<td class="text_day_ago"> <span id="cls_sc_appropriate_1"></span></td>
 		<td class="text_week_ago"> <span id="cls_sc_appropriate_7"></span></td>
 		<td class="text_month_ago"> <span id="cls_sc_appropriate_30"></span></td>
 		<td class="text_year_ago"> <span id="cls_sc_appropriate_365"></span></td>
+		<td>LA approximately equals to number of cores and high IB usage</td>
 	</tr>
 
 	<tr>
-		<td class="text_header">Слишком не общительные:</td>
+		<td class="text_header">Not communicative</td>
 		<td class="text_day_ago"> <span id="cls_not_communicative_1"></span></td>
 		<td class="text_week_ago"> <span id="cls_not_communicative_7"></span></td>
 		<td class="text_month_ago"> <span id="cls_not_communicative_30"></span></td>
 		<td class="text_year_ago"> <span id="cls_not_communicative_365"></span></td>
+		<td>multinode task with low IB usage</td>
 	</tr>
 
 	<tr>
-		<td class="text_header">Последовательные:</td>
+		<td class="text_header">Serial</td>
 		<td class="text_day_ago"> <span id="cls_serial_1"></span></td>
 		<td class="text_week_ago"> <span id="cls_serial_7"></span></td>
 		<td class="text_month_ago"> <span id="cls_serial_30"></span></td>
 		<td class="text_year_ago"> <span id="cls_serial_365"></span></td>
+		<td>1-core jobs</td>
 	</tr>
 
 	<tr>
-		<td class="text_header">Подозрительные:</td>
+		<td class="text_header">Suspicious</td>
 		<td class="text_day_ago"> <span id="cls_suspicious_1"></span></td>
 		<td class="text_week_ago"> <span id="cls_suspicious_7"></span></td>
 		<td class="text_month_ago"> <span id="cls_suspicious_30"></span></td>
 		<td class="text_year_ago"> <span id="cls_suspicious_365"></span></td>
+		<td>LA < 0.9 and CPU user load below threshold</td>
 	</tr>
 
 	<tr>
-		<td class="text_header">Data intensive:</td>
+		<td class="text_header">Data intensive</td>
 		<td class="text_day_ago"> <span id="cls_data_intensive_1"></span></td>
 		<td class="text_week_ago"> <span id="cls_data_intensive_7"></span></td>
 		<td class="text_month_ago"> <span id="cls_data_intensive_30"></span></td>
 		<td class="text_year_ago"> <span id="cls_data_intensive_365"></span></td>
+		<td>memory reads or writes per second above threshold</td>
 	</tr>
 
 	<tr>
-		<td class="text_header">Чисто ГПУ задача:</td>
+		<td class="text_header">Pure GPU jobs</td>
 		<td class="text_day_ago"> <span id="cls_gpu_pure_1"></span></td>
 		<td class="text_week_ago"> <span id="cls_gpu_pure_7"></span></td>
 		<td class="text_month_ago"> <span id="cls_gpu_pure_30"></span></td>
 		<td class="text_year_ago"> <span id="cls_gpu_pure_365"></span></td>
+		<td>high GPU load and low CPU load</td>
 	</tr>
 
 	<tr>
-		<td class="text_header">Хорошо гибридная ГПУ задача:</td>
+		<td class="text_header">Good Hybrid GPU jobs</td>
 		<td class="text_day_ago"> <span id="cls_gpu_hybrid_good_1"></span></td>
 		<td class="text_week_ago"> <span id="cls_gpu_hybrid_good_7"></span></td>
 		<td class="text_month_ago"> <span id="cls_gpu_hybrid_good_30"></span></td>
 		<td class="text_year_ago"> <span id="cls_gpu_hybrid_good_365"></span></td>
+		<td>high CPU and GPU load</td>
 	</tr>
 </table>
 
