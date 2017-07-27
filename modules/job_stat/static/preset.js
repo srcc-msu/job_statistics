@@ -53,7 +53,7 @@ function DrawCharts(num_cores, timezone_offset)
 	ShowAvgWaitTime("#task_avg_waittime_30", last_month, midnight);
 	ShowAvgWaitTime("#task_avg_waittime_365", since_jan1, midnight);
 
-	var tags = ["cls_communicative_volume","cls_communicative_packets","cls_sc_appropriate","cls_not_communicative","cls_serial","cls_suspicious","cls_data_intensive","cls_gpu_pure","cls_gpu_hybrid_good"];
+	var tags = ["cls_communicative_volume","cls_communicative_packets","cls_sc_appropriate","cls_not_communicative","cls_serial","cls_single","cls_suspicious","cls_data_intensive","cls_gpu_pure","cls_gpu_hybrid_good"];
 
 	for(var i = 0; i < tags.length; i++)
 	{

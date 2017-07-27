@@ -71,7 +71,7 @@
 	</tr-->
 
 	<tr>
-		<td colspan=5><p></p>
+		<td colspan=5><p></p></td>
 	</tr>
 
 	<tr>
@@ -145,7 +145,7 @@
 	</tr>
 
 	<tr>
-		<td class="text_header">Task scheduling efficiency</td>
+		<td class="text_header">Task scheduling efficiency %</td>
 		<td class="text_day_ago"><span id="task_total_cpu_1"></span></td>
 		<td class="text_week_ago"><span id="task_total_cpu_7"></span></td>
 		<td class="text_month_ago"><span id="task_total_cpu_30"></span></td>
@@ -154,7 +154,7 @@
 	</tr>
 
 	<tr>
-		<td class="text_header">Average CPU load</td>
+		<td class="text_header">Average CPU load %</td>
 		<td class="text_day_ago"><span id="task_stat_avg_cpu_user_1"></span></td>
 		<td class="text_week_ago"><span id="task_stat_avg_cpu_user_7"></span></td>
 		<td class="text_month_ago"><span id="task_stat_avg_cpu_user_30"></span></td>
@@ -172,7 +172,11 @@
 	</tr>
 
 	<tr>
-		<td class="text_header">Communicative jobs(bytes per sec)</td>
+		<td colspan=6><p></p></td>
+	</tr>
+
+	<tr>
+		<td class="text_header">Communicative jobs(by bytes)</td>
 		<td class="text_day_ago"> <span id="cls_communicative_volume_1"></span></td>
 		<td class="text_week_ago"> <span id="cls_communicative_volume_7"></span></td>
 		<td class="text_month_ago"> <span id="cls_communicative_volume_30"></span></td>
@@ -181,7 +185,7 @@
 	</tr>
 
 	<tr>
-		<td class="text_header">Communicative jobs(packets per sec)</td>
+		<td class="text_header">Communicative jobs(by packets)</td>
 		<td class="text_day_ago"> <span id="cls_communicative_packets_1"></span></td>
 		<td class="text_week_ago"> <span id="cls_communicative_packets_7"></span></td>
 		<td class="text_month_ago"> <span id="cls_communicative_packets_30"></span></td>
@@ -214,6 +218,15 @@
 		<td class="text_month_ago"> <span id="cls_serial_30"></span></td>
 		<td class="text_year_ago"> <span id="cls_serial_365"></span></td>
 		<td class="stat_table_hint">1-core jobs</td>
+	</tr>
+
+	<tr>
+		<td class="text_header">Single</td>
+		<td class="text_day_ago"> <span id="cls_single_1"></span></td>
+		<td class="text_week_ago"> <span id="cls_single_7"></span></td>
+		<td class="text_month_ago"> <span id="cls_single_30"></span></td>
+		<td class="text_year_ago"> <span id="cls_single_365"></span></td>
+		<td class="stat_table_hint">1-node jobs</td>
 	</tr>
 
 	<tr>
