@@ -24,16 +24,14 @@ def preset():
 	return render_template("preset.html"
 		, app_config=current_app.app_config)
 
-def gen_base_query(t_from: int, t_to: int, include: str, with_perf: bool) -> BaseQuery:
+def gen_base_query(t_from: int, t_to: int, include: str) -> BaseQuery:
 	scoped_duration = sqlalchemy.func.LEAST(Job.t_end, t_to) - sqlalchemy.func.GREATEST(Job.t_start, t_from)
 
 	base_query = global_db.session \
-		.query(Job, JobStat, (Job.num_cores * sqlalchemy.func.GREATEST(scoped_duration, 0))
+		.query(Job, JobStat, JobPerformance, (Job.num_cores * sqlalchemy.func.GREATEST(scoped_duration, 0))
 			.label("cores_sec")) \
 		.join(JobStat)\
-
-	if with_perf:
-		base_query = base_query.join(JobPerformance)
+		.join(JobPerformance)
 
 	if include == "all":
 		return  base_query.filter(Job.t_end > t_from) \
@@ -74,7 +72,7 @@ def gen_what(base_query: BaseQuery, metric: str, aggregation_function: str, grou
 		}[metric].label("{0}_{1}".format(aggregation_function, metric)))
 	except KeyError:
 		try:
-			params.append(function(getattr(JobPerformance, metric)).cast(sqlalchemy.Float).label("{0}_{1}".format(aggregation_function, metric)))
+			params.append(function(getattr(base_query.c, metric)).cast(sqlalchemy.Float).label("{0}_{1}".format(aggregation_function, metric)))
 		except Exception as e:
 			print(e)
 
@@ -99,8 +97,8 @@ def gen_group(base_query: BaseQuery, query: BaseQuery, grouping: List[str]) -> B
 
 	return query
 
-def generate_query(url_args: dict, metric: str, aggregation_function: str, with_perf = False) -> BaseQuery:
-	base_query = gen_base_query(url_args["t_from"], url_args["t_to"], url_args.get("include", "all"), with_perf)
+def generate_query(url_args: dict, metric: str, aggregation_function: str) -> BaseQuery:
+	base_query = gen_base_query(url_args["t_from"], url_args["t_to"], url_args.get("include", "all"))
 
 	grouping = url_args.get("grouping")
 

@@ -14,8 +14,6 @@ def get_metric(metric: str, aggregation_function: str) -> Response:
 	if aggregation_function not in ["min", "max", "avg", "count", "sum"]:
 		raise RuntimeError("bad aggregation function: " + aggregation_function)
 
-	with_perf = "avg_" in metric or "min_" in metric or "max_" in metric
-
-	result = generate_query(request.args, metric, aggregation_function, with_perf=with_perf)
+	result = generate_query(request.args, metric, aggregation_function)
 
 	return application.helpers.gen_csv_response(result.column_descriptions, result.all())
