@@ -90,6 +90,8 @@ def calculate_job_query_stat(query_string: str, query: BaseQuery):
 	for sensor in sensors:
 		result["perf"]["avg"]["avg_" + sensor] = 0
 
+	if len(jobs) == 0:
+		return result
 
 	for job,tag,perf in jobs:
 		result["cpu_h"] += (job.t_end-job.t_start) * job.num_cores / 3600;
