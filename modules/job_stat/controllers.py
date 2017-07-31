@@ -3,8 +3,8 @@ from typing import Optional, List
 import sqlalchemy
 from flask import Blueprint, render_template, current_app
 from flask_sqlalchemy import BaseQuery
-from core.monitoring.models import JobPerformance
 
+from core.monitoring.models import JobPerformance
 from modules.job_stat.model import JobStat
 from core.job.models import Job
 from application.database import global_db

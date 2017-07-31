@@ -1,5 +1,4 @@
 from typing import List
-from flask import Flask
 
 from sqlalchemy import func, Float
 

@@ -1,6 +1,6 @@
 from optparse import OptionParser
-from application.database import global_db
 
+from application.database import global_db
 from application.helpers import app_log
 from application.setup import create_app, setup_database, register_blueprints, load_cluster_config
 from core.job.models import Job

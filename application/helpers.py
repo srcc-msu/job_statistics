@@ -6,9 +6,9 @@ import traceback
 from typing import List
 from datetime import timedelta
 from functools import update_wrapper, wraps
+import sys
 
 from flask import make_response, request, current_app, Response
-import sys
 
 def gen_csv_response(header: List[dict], data: List[List]):
 	output = io.StringIO()

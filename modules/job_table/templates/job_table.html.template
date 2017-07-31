@@ -46,32 +46,30 @@
 					<td>{{ query_stat.count }}</td>
 				</tr>
 
-				<tr>
-					<td>COMPLETED</td>
-					<td>{{ query_stat.COMPLETED }}</td>
-				</tr>
-
-				<tr>
-					<td>CANCELLED</td>
-					<td>{{ query_stat.CANCELLED }}</td>
-				</tr>
-
-				<tr>
-					<td>TIMEOUT</td>
-					<td>{{ query_stat.TIMEOUT }}</td>
-				</tr>
-
-				<tr>
-					<td>FAILED</td>
-					<td>{{ query_stat.FAILED }}</td>
-				</tr>
-
-				<tr>
-					<td>NODE_FAIL</td>
-					<td>{{ query_stat.NODE_FAIL }}</td>
-				</tr>
+				{% for state in app_config.cluster["FINISHED_JOB_STATES"] %}
+					<tr>
+						<td>{{ state }}</td>
+						<td>{{ query_stat.state[state] }}</td>
+					</tr>
+				{% endfor %}
 			</table>
 		</div>
+
+		<div style="display:inline-block; margin: 10px">
+			<p>Avg performance:</p>
+
+			<table border="1">
+				{% for sensor in app_config.monitoring["DISPLAY_SENSOR_LIST"] %}
+					<tr>
+						<td>Avg {{sensor}}</td>
+						<td style="background-color: {{ get_color(sensor, query_stat.perf.avg[sensor]) }}" class="sensor_text">
+							{{ query_stat.perf.avg[sensor] | float2 }}
+							</td>
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+
 	</div>
 
 	<table id="tasks_table" class="tablesorter" border="1">

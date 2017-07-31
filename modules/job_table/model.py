@@ -1,13 +1,13 @@
 from typing import List, Optional
+import sys
 
-from flask import jsonify, request
-from flask import Blueprint, Response
+from flask import current_app
+from flask import Blueprint
 from flask_sqlalchemy import BaseQuery
 from sqlalchemy import or_
 
 from core.job.models import Job
 from core.tag.models import JobTag
-from application.helpers import crossdomain
 
 job_table_api_pages = Blueprint('job_table_api', __name__
 	, template_folder='templates')
@@ -74,15 +74,40 @@ from cachetools.keys import hashkey
 def calculate_job_query_stat(query_string: str, query: BaseQuery):
 	jobs = list(query.all())
 
-	result = {}
+	result = {
+		"count" : len(jobs)
+		, "cpu_h" : 0
+		, "state" : {}
+		, "perf" : {"avg" : {}}
+	}
 
-	result["cpu_h"] = sum(((job.t_end-job.t_start) * job.num_cores / 3600 for job,perf,tag in jobs))
-	result["count"] = len(jobs)
-	result["COMPLETED"] = sum((1 for job,perf,tag in jobs if job.state == "COMPLETED" or job.state == "COMPLETING"))
-	result["CANCELLED"] = sum((1 for job,perf,tag in jobs if job.state == "CANCELLED"))
-	result["TIMEOUT"] = sum((1 for job,perf,tag in jobs if job.state == "TIMEOUT"))
-	result["FAILED"] = sum((1 for job,perf,tag in jobs if job.state == "FAILED"))
-	result["NODE_FAIL"] = sum((1 for job,perf,tag in jobs if job.state == "NODE_FAIL"))
+	states = current_app.app_config.cluster["JOB_STATES"]
+	sensors = current_app.app_config.monitoring["SENSOR_LIST"]
+
+	for state in states:
+		result["state"][state] = 0
+
+	for sensor in sensors:
+		result["perf"]["avg"]["avg_" + sensor] = 0
+
+
+	for job,tag,perf in jobs:
+		result["cpu_h"] += (job.t_end-job.t_start) * job.num_cores / 3600;
+
+		result["state"][job.state] += 1
+
+		for sensor in sensors:
+			try:
+				result["perf"]["avg"]["avg_" + sensor] += getattr(perf, "avg_" + sensor)
+			except:
+				pass
+
+#		except Exception as e:
+#			print("error calculating stat for {0}, skipped".format(job.id), file=sys.stderr)
+#			print(e)
+
+	for sensor in sensors:
+		result["perf"]["avg"]["avg_" + sensor] = result["perf"]["avg"].get("avg_" + sensor, 0) / len(jobs)
 
 	return result
 

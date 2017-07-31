@@ -150,27 +150,27 @@
 
 				<tr>
 					<td>COMPLETED</td>
-					<td>{{ query_stat.COMPLETED }}</td>
+					<td>{{ query_stat.state.COMPLETED }}</td>
 				</tr>
 
 				<tr>
 					<td>CANCELLED</td>
-					<td>{{ query_stat.CANCELLED }}</td>
+					<td>{{ query_stat.state.CANCELLED }}</td>
 				</tr>
 
 				<tr>
 					<td>TIMEOUT</td>
-					<td>{{ query_stat.TIMEOUT }}</td>
+					<td>{{ query_stat.state.TIMEOUT }}</td>
 				</tr>
 
 				<tr>
 					<td>FAILED</td>
-					<td>{{ query_stat.FAILED }}</td>
+					<td>{{ query_stat.state.FAILED }}</td>
 				</tr>
 
 				<tr>
 					<td>NODE_FAIL</td>
-					<td>{{ query_stat.NODE_FAIL }}</td>
+					<td>{{ query_stat.state.NODE_FAIL }}</td>
 				</tr>
 			</table>
 		</div>
