@@ -22,7 +22,7 @@ def __apply_since(app: Flask, since: int):
 	with app.app_context():
 		jobs = Job.query.filter(Job.t_end > since).all()
 
-		print("start updating tags for {0} jobs".format(len(jobs)))
+		app.logger.info("start updating tags for {0} jobs".format(len(jobs)))
 
 		start = time.time()
 		for job in jobs:
@@ -30,13 +30,13 @@ def __apply_since(app: Flask, since: int):
 
 		end = time.time()
 
-		print("updated {0} since {1} in {2:.2f} seconds".format(len(jobs), since, end - start))
+		app.logger.info("updated {0} since {1} in {2:.2f} seconds".format(len(jobs), since, end - start))
 
 @autotag_pages.route("/apply", methods=["POST"])
 @requires_auth
 def apply_since() -> Response:
 	since = int(request.args.get("since", int(time.time()) - 60*60)) # last hour by default
 
-	background(__apply_since, (current_app._get_current_object(), since))
+	background(__apply_since, (current_app._get_current_object(), since), current_app.logger)
 
 	return "ok"

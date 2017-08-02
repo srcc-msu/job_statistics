@@ -74,7 +74,8 @@ def gen_what(base_query: BaseQuery, metric: str, aggregation_function: str, grou
 		try:
 			params.append(function(getattr(base_query.c, metric)).cast(sqlalchemy.Float).label("{0}_{1}".format(aggregation_function, metric)))
 		except Exception as e:
-			print(e)
+			current_app.logger.exception("bad custom metric: " + metric)
+			raise e
 
 	for group in grouping:
 		params.append(group)

@@ -1,6 +1,5 @@
 from optparse import OptionParser
 
-from application.helpers import app_log
 from application.setup import create_app, setup_database, load_cluster_config
 
 if __name__ == '__main__':
@@ -15,10 +14,10 @@ if __name__ == '__main__':
 	load_cluster_config("cluster_config/", app)
 
 	if options.drop:
-		app_log("dropping and creating tables")
+		app.logger.info("dropping and creating tables")
 	else:
-		app_log("creating missing tables")
+		app.logger.info("creating missing tables")
 
 	setup_database(app, options.drop)
 
-	app_log("done")
+	app.logger.info("done")

@@ -2,11 +2,9 @@ import csv
 import datetime
 import io
 import threading
-import traceback
 from typing import List
 from datetime import timedelta
 from functools import update_wrapper, wraps
-import sys
 
 from flask import make_response, request, current_app, Response
 
@@ -21,9 +19,6 @@ def gen_csv_response(header: List[dict], data: List[List]):
 	result = make_response(output.getvalue())
 	result.headers["Content-type"] = "text" # TODO: text is easier for debugging - browsers will not try to save it
 	return result
-
-def app_log(string: str):
-	print(time.strftime('[%x %X]'), "app: " + string)
 
 def ts2datetime(ts: int) -> str:
 	return datetime.datetime.fromtimestamp(float(ts)).strftime('%Y-%m-%d %H:%M:%S')
@@ -77,27 +72,30 @@ def crossdomain(origin=None, methods=None, headers=None,
 
 import time
 
-def __bg_wrapper(function, params):
+def __bg_wrapper(function, params, logger):
 	__bg_wrapper.bg_count += 1
-	print("{} started in {}, running: {}, params: {}".format(function.__name__, time.strftime("%Y-%m-%d %H:%M %s"), __bg_wrapper.bg_count, params))
+
+	logger.info("{} started, running: {}, params: {}"
+		.format(function.__name__, __bg_wrapper.bg_count, params))
 
 	start = time.time()
+
 	try:
 		function(*params)
-	except Exception as e:
-		traceback.print_exc(file=sys.stderr)
-		print("background task failed")
+	except Exception:
+		logger.exception("background task failed")
 
 	end = time.time()
 
 	__bg_wrapper.bg_count -= 1
-	print("{} finished in {:.2f} seconds, running: {}".format(function.__name__, end - start, __bg_wrapper.bg_count, params))
+	logger.info("{} finished in {:.2f} seconds, running: {}"
+		.format(function.__name__, end - start, __bg_wrapper.bg_count, params))
 
 __bg_wrapper.bg_count = 0
 
-def background(function, params):
+def background(function, params, logger):
 
-	thread = threading.Thread(target=__bg_wrapper, args=(function, params,))
+	thread = threading.Thread(target=__bg_wrapper, args=(function, params, logger))
 	thread.daemon = True
 	thread.start()
 
@@ -121,7 +119,7 @@ def requires_auth(f):
 		if not auth:
 			return authenticate()
 		if not check_auth(auth.username, auth.password):
-			print("bad auth attempt: {0} {1}".format(auth.username, auth.password))
+			current_app.logger.warning("bad auth attempt: {0} {1}".format(auth.username, auth.password))
 			return authenticate()
 		return f(*args, **kwargs)
 	return decorated

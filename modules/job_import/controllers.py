@@ -1,6 +1,3 @@
-import traceback
-import sys
-
 from flask import Blueprint, jsonify, Response, request, current_app, Flask
 
 from application.database import global_db
@@ -22,7 +19,7 @@ def __update_performance(app: Flask, job: Job, job_performance: JobPerformance):
 
 def update_performance(job: Job):
 	job_performance = JobPerformance.query.get(job.id)
-	background(__update_performance, (current_app._get_current_object(), job, job_performance))
+	background(__update_performance, (current_app._get_current_object(), job, job_performance), current_app.logger)
 
 @job_import_pages.route("/<int:record_id>/performance", methods=["POST"])
 @requires_auth
@@ -50,8 +47,7 @@ def add_job() -> Response:
 			return jsonify({"data": "unsupported format", "result": "error"})
 
 	except Exception as e:
-		traceback.print_exc(file=sys.stderr)
-		print("ERROR LINE: ", data)
+		current_app.logger.exception("failed import attempt: " + data)
 		raise e
 
 	if stage == "BEFORE":

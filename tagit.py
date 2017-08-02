@@ -1,7 +1,6 @@
 from optparse import OptionParser
 
 from application.database import global_db
-from application.helpers import app_log
 from application.setup import create_app, setup_database, register_blueprints, load_cluster_config
 from core.job.models import Job
 from core.monitoring.models import JobPerformance
@@ -12,10 +11,10 @@ def run(config: str):
 	app = create_app(config)
 	load_cluster_config("cluster_config/", app)
 
-	app_log("loading db")
+	app.logger.info("loading db")
 	setup_database(app, False)
 
-	app_log("loading blueprints")
+	app.logger.info("loading blueprints")
 	register_blueprints(app)
 
 	return app

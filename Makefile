@@ -5,7 +5,7 @@ hint:
 	@echo "python init.py -c prod --drop"
 
 run:
-	gunicorn --workers 4 --timeout 120 --bind 0.0.0.0:5000 wsgi:app 2>&1 | tee app.log
+	gunicorn --workers 4 --timeout 120 --bind 0.0.0.0:5000 wsgi:app >app.log 2>&1
 
 test:
 	python test.py

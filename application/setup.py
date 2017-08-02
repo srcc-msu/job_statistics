@@ -1,9 +1,11 @@
+import logging
+from logging.handlers import RotatingFileHandler
 import runpy
 
 from flask import Flask
 
 from application.database import global_db
-from application.helpers import app_log, ts2datetime, float2
+from application.helpers import ts2datetime, float2
 
 def create_job_stat_view(app, name):
 	connection = global_db.get_engine(app).connect()
@@ -81,18 +83,26 @@ def setup_database(app: Flask, drop = False):
 def create_app(config: str) -> Flask:
 	app = Flask(__name__, static_folder=None)
 
+	handler = RotatingFileHandler('flask.log', maxBytes=10*1000*1000, backupCount=1)
+	handler.setFormatter(logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(message)s'
+		, datefmt='%Y-%m-%d %H:%M:%S'))
+
+	app.logger.handlers.extend(logging.getLogger('gunicorn.error').handlers)
+	app.logger.setLevel(logging.INFO)
+
+	app.logger.addHandler(handler)
 	app.template_filter('ts2datetime')(ts2datetime)
 	app.template_filter('float2')(float2)
 
 	if config == "dev":
 		app.config.from_object('config.DevelopmentConfig')
-		app_log("starting with development config")
+		app.logger.info("starting with development config")
 	elif config == "prod":
 		app.config.from_object('config.ProductionConfig')
-		app_log("starting with production config")
+		app.logger.info("starting with production config")
 	elif config == "testing":
 		app.config.from_object('config.TestingConfig')
-		app_log("starting with testing config")
+		app.logger.info("starting with testing config")
 	else:
 		raise RuntimeError("specify configuration - dev, prod or testing")
 

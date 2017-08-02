@@ -1,5 +1,4 @@
 from typing import List, Optional
-import sys
 
 from flask import current_app
 from flask import Blueprint
@@ -94,7 +93,7 @@ def calculate_job_query_stat(query_string: str, query: BaseQuery):
 		return result
 
 	for job,tag,perf in jobs:
-		result["cpu_h"] += (job.t_end-job.t_start) * job.num_cores / 3600;
+		result["cpu_h"] += (job.t_end-job.t_start) * job.num_cores / 3600
 
 		result["state"][job.state] += 1
 
