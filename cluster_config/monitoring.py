@@ -1,3 +1,4 @@
+import sys
 from cluster_config.node_switch_map import node_switch_map
 
 aggregation_interval = 180
@@ -118,7 +119,8 @@ def get_occupied_switches(job):
 		try:
 			switch = node_switch_map[node]
 		except:
-			switch = "unknown"
+			switch = "unknown_switch_" + node # using dummy line to show very bad locality
+			print("unable to find switch for " + node, file=sys.stderr)
 
 		switches.add(switch)
 
@@ -126,7 +128,7 @@ def get_occupied_switches(job):
 
 def get_network_locality(job, occupied_switches):
 	"""this formula assumes occupied switches count should be equal to num_nodes / 8"""
-	1.0 * len(occupied_switches) / (job.num_nodes / 8)
+	return 1.0 * len(occupied_switches) / (job.num_nodes / 8)
 
 def calculate_derivative(job, monitoring: dict):
 	derivative = {}
@@ -169,7 +171,7 @@ def calculate_derivative(job, monitoring: dict):
 
 	try:
 		switches = get_occupied_switches(job)
-		derivative["leaf switches"] = len(switches)
+		derivative["network_leaf_switches"] = len(switches)
 		derivative["network_locality (1.0=ideal)"] = get_network_locality(job, switches)
 	except:
 		pass
