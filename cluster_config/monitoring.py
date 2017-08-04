@@ -1,3 +1,5 @@
+from cluster_config.node_switch_map import node_switch_map
+
 aggregation_interval = 180
 
 RED = "#ff8080"
@@ -107,8 +109,26 @@ SENSOR_INFO = {
 	, "memory_free" : ("Free memory", "Free memeory on node")
 }
 
+def get_occupied_switches(job):
+	nodes = job.expand_nodelist()
 
-def calculate_derivative(monitoring: dict):
+	switches = set()
+
+	for node in nodes:
+		try:
+			switch = node_switch_map[node]
+		except:
+			switch = "unknown"
+
+		switches.add(switch)
+
+	return list(switches)
+
+def get_network_locality(job, occupied_switches):
+	"""this formula assumes occupied switches count should be equal to num_nodes / 8"""
+	1.0 * len(occupied_switches) / (job.num_nodes / 8)
+
+def calculate_derivative(job, monitoring: dict):
 	derivative = {}
 
 	try:
@@ -146,5 +166,13 @@ def calculate_derivative(monitoring: dict):
 			monitoring["avg"]["ib_xmit_data_mpi"] / monitoring["avg"]["ib_xmit_pckts_mpi"]
 	except:
 		pass
+
+	try:
+		switches = get_occupied_switches(job)
+		derivative["leaf switches"] = len(switches)
+		derivative["network_locality (1.0=ideal)"] = get_network_locality(job, switches)
+	except:
+		pass
+
 
 	return derivative

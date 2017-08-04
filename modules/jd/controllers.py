@@ -32,7 +32,7 @@ def jd(job_id: int, task_id: int) -> Response:
 
 	return render_template("jd_full.html", anon=False, id2hash=id2hash, username2id=username2id
 		, job=job.to_dict(), tags=tag.to_dict(), monitoring=performance.to_dict()
-		, derivative=current_app.app_config.monitoring["calculate_derivative"](performance.to_dict())
+		, derivative=current_app.app_config.monitoring["calculate_derivative"](job, performance.to_dict())
 		, app_config=current_app.app_config
 		, get_color=partial(get_color, thresholds=current_app.app_config.monitoring["thresholds"]))
 
@@ -51,7 +51,7 @@ def anon_jd(hash: str) -> Response:
 
 	return render_template("jd_anon.html", anon=True, hash=hash
 		, job=job.to_dict(), tags=tag.to_dict(), monitoring=performance.to_dict()
-		, derivative=current_app.app_config.monitoring["calculate_derivative"](performance.to_dict())
+		, derivative=current_app.app_config.monitoring["calculate_derivative"](job, performance.to_dict())
 		, app_config=current_app.app_config
 		, get_color=partial(get_color, thresholds=current_app.app_config.monitoring["thresholds"]))
 
