@@ -3,6 +3,8 @@ from cluster_config.node_switch_map import node_switch_map
 
 aggregation_interval = 180
 
+NODES_PER_SWITCH = 8
+
 RED = "#ff8080"
 YELLOW = "#ffff80"
 GREEN = "#80ff80"
@@ -128,7 +130,7 @@ def get_occupied_switches(job):
 
 def get_network_locality(job, occupied_switches):
 	"""this formula assumes occupied switches count should be equal to num_nodes / 8"""
-	return 1.0 * len(occupied_switches) / (job.num_nodes / 8)
+	return 1.0 * len(occupied_switches) / ((job.num_nodes - 1) // NODES_PER_SWITCH + 1)
 
 def calculate_derivative(job, monitoring: dict):
 	derivative = {}

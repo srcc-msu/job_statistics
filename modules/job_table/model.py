@@ -92,23 +92,32 @@ def calculate_job_query_stat(query_string: str, query: BaseQuery):
 	if len(jobs) == 0:
 		return result
 
+	perf_count = 0
+
 	for job,tag,perf in jobs:
 		result["cpu_h"] += (job.t_end-job.t_start) * job.num_cores / 3600
 
 		result["state"][job.state] += 1
+
+		has_perf_metric = False
 
 		for sensor in sensors:
 			try:
 				result["perf"]["avg"]["avg_" + sensor] += getattr(perf, "avg_" + sensor)
 			except:
 				pass
+			else:
+				has_perf_metric = True
+
+		if has_perf_metric:
+			perf_count += 1
 
 #		except Exception as e:
 #			print("error calculating stat for {0}, skipped".format(job.id), file=sys.stderr)
 #			print(e)
 
 	for sensor in sensors:
-		result["perf"]["avg"]["avg_" + sensor] = result["perf"]["avg"].get("avg_" + sensor, 0) / len(jobs)
+		result["perf"]["avg"]["avg_" + sensor] = result["perf"]["avg"].get("avg_" + sensor, 0) / perf_count
 
 	return result
 
