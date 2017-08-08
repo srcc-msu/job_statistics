@@ -1,5 +1,7 @@
 import unittest
 import base64
+import sys
+import time
 
 from application.database import global_db
 from application.setup import create_app, setup_database, register_blueprints, load_cluster_config
@@ -152,7 +154,7 @@ class TestJob(TestSuit):
 		print(rv.status, rv.data)
 
 		assert "200" in rv.status
-		assert b"id" in rv.data
+		time.sleep(1)
 
 		job = Job.query.filter(Job.account == "test_create_job_slurm_db").one()
 
@@ -169,7 +171,7 @@ class TestJob(TestSuit):
 		print(rv.status, rv.data)
 
 		assert "200" in rv.status
-		assert b"id" in rv.data
+		time.sleep(1)
 
 		job = Job.query.filter(Job.account == "serg").one()
 
@@ -183,16 +185,17 @@ class TestJob(TestSuit):
 				, "data" : "54761|compute|tttttttt|2016-01-14T17:21:23|2016-01-14T17:21:23|2016-01-14T17:21:26|1-00:00:00|COMPLETED|4294900803|2|20|n[48021-48022,51000-51010]"}
 			, headers = TestSuit.auth_headers)
 
+		time.sleep(1)
+
 		rv = TestSuit.client.post("/api/job/"
 			, data={"format" : "sacct"
 				, "stage": "AFTER"
 				, "data" : "54761|compute|tttttttt|2016-01-14T17:21:23|2016-01-14T17:21:23|2016-01-14T17:21:26|1-00:00:00|COMPLETED|4294900803|2|20|n[48021-48022,51000-51010]"}
 			, headers = TestSuit.auth_headers)
-
 		print(rv.status, rv.data)
-
 		assert "200" in rv.status
-		assert b"id" in rv.data
+
+		time.sleep(1)
 
 		job = Job.query.filter(Job.account == "tttttttt").one()
 
@@ -209,7 +212,7 @@ class TestJob(TestSuit):
 		print(rv.status, rv.data)
 
 		assert "200" in rv.status
-		assert b"id" in rv.data
+		time.sleep(1)
 
 		rv = TestSuit.client.post("/api/job/"
 			, data={"format" : "sacct"
@@ -220,7 +223,6 @@ class TestJob(TestSuit):
 		print(rv.status, rv.data)
 
 		assert "200" in rv.status
-		assert b"skipping" in rv.data
 
 		job = Job.query.filter(Job.account == "tttt").one()
 
@@ -237,7 +239,7 @@ class TestJob(TestSuit):
 		print(rv.status, rv.data)
 
 		assert "200" in rv.status
-		assert b"id" in rv.data
+		time.sleep(1)
 
 		job = Job.query.filter(Job.account == "test_create_job_slurm_plugin_2").one()
 
@@ -254,7 +256,7 @@ class TestJob(TestSuit):
 		print(rv.status, rv.data)
 
 		assert "200" in rv.status
-		assert b"id" in rv.data
+		time.sleep(1)
 
 		job = Job.query.filter(Job.account == "test_create_job_slurm_plugin_15").one()
 

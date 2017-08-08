@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 import csv
 import datetime
 import io
@@ -72,32 +73,25 @@ def crossdomain(origin=None, methods=None, headers=None,
 
 import time
 
-def __bg_wrapper(function, params, logger):
-	__bg_wrapper.bg_count += 1
+executor = ThreadPoolExecutor(max_workers=4)
 
-	logger.info("{} started, running: {}, params: {}"
-		.format(function.__name__, __bg_wrapper.bg_count, params))
+def __bg_wrapper(app, function, params):
+	with app.app_context():
+		start = time.time()
 
-	start = time.time()
+		try:
+			function(app, *params)
+		except Exception:
+			app.logger.exception("background task failed")
 
-	try:
-		function(*params)
-	except Exception:
-		logger.exception("background task failed")
+		end = time.time()
 
-	end = time.time()
+		app.logger.info("{} finished in {:.2f} seconds".format(function.__name__, end - start))
 
-	__bg_wrapper.bg_count -= 1
-	logger.info("{} finished in {:.2f} seconds, running: {}"
-		.format(function.__name__, end - start, __bg_wrapper.bg_count, params))
-
-__bg_wrapper.bg_count = 0
-
-def background(function, params, logger):
-
-	thread = threading.Thread(target=__bg_wrapper, args=(function, params, logger))
-	thread.daemon = True
-	thread.start()
+def background(function, params):
+	executor.submit(__bg_wrapper, current_app._get_current_object(), function, params)
+	current_app.logger.info("{} started, running: {}, params: {}"
+			.format(function.__name__, executor._work_queue.qsize(), params))
 
 def check_auth(username, password):
 	"""This function is called to check if a username /

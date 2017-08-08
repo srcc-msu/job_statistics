@@ -17,26 +17,3 @@ autotag_pages = Blueprint('autotag', __name__
 def autotag_list() -> Response:
 	data = global_db.session.query(Tag, AutoTag).join(AutoTag).order_by(Tag.id).all()
 	return render_template("autotag_list.html", data=data)
-
-def __apply_since(app: Flask, since: int):
-	with app.app_context():
-		jobs = Job.query.filter(Job.t_end > since).all()
-
-		app.logger.info("start updating tags for {0} jobs".format(len(jobs)))
-
-		start = time.time()
-		for job in jobs:
-			apply_autotags(job)
-
-		end = time.time()
-
-		app.logger.info("updated {0} since {1} in {2:.2f} seconds".format(len(jobs), since, end - start))
-
-@autotag_pages.route("/apply", methods=["POST"])
-@requires_auth
-def apply_since() -> Response:
-	since = int(request.args.get("since", int(time.time()) - 60*60)) # last hour by default
-
-	background(__apply_since, (current_app._get_current_object(), since), current_app.logger)
-
-	return "ok"
