@@ -1,8 +1,9 @@
 from flask import Blueprint, jsonify, Response, request, current_app, Flask
 
 from application.database import global_db
-from core.job.controllers import update_existing, add_new
+from core.common.controllers import update_existing, add_new
 from core.job.models import Job
+from core.metrics.models import calculate_metrics
 from core.monitoring.models import JobPerformance
 from application.helpers import background
 from modules.autotag.controllers import apply_autotags
@@ -16,6 +17,7 @@ def __update_performance(app: Flask, job: Job, job_performance: JobPerformance):
 	with app.app_context():
 		job_performance.update(app.app_config.monitoring["aggregation_interval"])
 		apply_autotags(job)
+		calculate_metrics(job)
 
 def update_performance(job: Job):
 	job_performance = JobPerformance.query.get(job.id)

@@ -1,9 +1,4 @@
-import sys
-from cluster_config.node_switch_map import node_switch_map
-
 aggregation_interval = 180
-
-NODES_PER_SWITCH = 8
 
 RED = "#ff8080"
 YELLOW = "#ffff80"
@@ -111,72 +106,3 @@ SENSOR_INFO = {
 		Percent of time a core was busy with software interrupts""")
 	, "memory_free" : ("Free memory", "Free memeory on node")
 }
-
-def get_occupied_switches(job):
-	nodes = job.expand_nodelist()
-
-	switches = set()
-
-	for node in nodes:
-		try:
-			switch = node_switch_map[node]
-		except:
-			switch = "unknown_switch_" + node # using dummy line to show very bad locality
-			print("unable to find switch for " + node, file=sys.stderr)
-
-		switches.add(switch)
-
-	return list(switches)
-
-def get_network_locality(job, occupied_switches):
-	"""this formula assumes occupied switches count should be equal to num_nodes / 8"""
-	return 1.0 * len(occupied_switches) / ((job.num_nodes - 1) // NODES_PER_SWITCH + 1)
-
-def calculate_derivative(job, monitoring: dict):
-	derivative = {}
-
-	try:
-		derivative["mem_l1_ratio"] = \
-			(monitoring["avg"]["perf_counter3"] + monitoring["avg"]["perf_counter4"]) / monitoring["avg"]["perf_counter1"]
-	except:
-		pass
-
-	try:
-		derivative["l1_l3_ratio"] = \
-			monitoring["avg"]["perf_counter1"] / monitoring["avg"]["fixed_counter2"]
-	except:
-		pass
-
-	try:
-		derivative["ib_rcv_pckt_size_fs"] = \
-			monitoring["avg"]["ib_rcv_data_fs"] / monitoring["avg"]["ib_rcv_pckts_fs"]
-	except:
-		pass
-
-	try:
-		derivative["ib_xmt_pckt_size_fs"] = \
-			monitoring["avg"]["ib_xmit_data_fs"] / monitoring["avg"]["ib_xmit_pckts_fs"]
-	except:
-		pass
-
-	try:
-		derivative["ib_rcv_pckt_size_mpi"] = \
-			monitoring["avg"]["ib_rcv_data_mpi"] / monitoring["avg"]["ib_rcv_pckts_mpi"]
-	except:
-		pass
-
-	try:
-		derivative["ib_xmt_pckt_size_mpi"] = \
-			monitoring["avg"]["ib_xmit_data_mpi"] / monitoring["avg"]["ib_xmit_pckts_mpi"]
-	except:
-		pass
-
-	try:
-		switches = get_occupied_switches(job)
-		derivative["network_leaf_switches"] = len(switches)
-		derivative["network_locality (1.0=ideal)"] = get_network_locality(job, switches)
-	except:
-		pass
-
-
-	return derivative

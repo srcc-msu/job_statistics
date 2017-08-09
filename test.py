@@ -1,11 +1,10 @@
 import unittest
 import base64
-import sys
 import time
 
 from application.database import global_db
 from application.setup import create_app, setup_database, register_blueprints, load_cluster_config
-from core.job.controllers import add
+from core.common.controllers import add
 from core.job.models import Job
 from core.monitoring.models import JobPerformance
 from core.tag.models import JobTag, Tag

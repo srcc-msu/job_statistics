@@ -24,10 +24,12 @@ def gen_csv_response(header: List[dict], data: List[List]):
 def ts2datetime(ts: int) -> str:
 	return datetime.datetime.fromtimestamp(float(ts)).strftime('%Y-%m-%d %H:%M:%S')
 
-def float2(float) -> str:
-	if float is None:
+def float2(number) -> str:
+	if number is None:
 		return "None"
-	return  "{0:.2f}".format(float)
+	if not isinstance(number, float):
+		return number
+	return  "{0:.2f}".format(number)
 
 def crossdomain(origin=None, methods=None, headers=None,
 				max_age=21600, attach_to_all=True,

@@ -65,6 +65,9 @@ def drop_job_stat(app):
 
 	connection.close()
 
+# ensure all sqlalchemy models are initialized
+from core.common import *
+
 def setup_database(app: Flask, drop = False):
 	global_db.init_app(app)
 

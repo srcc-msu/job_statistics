@@ -160,10 +160,10 @@
 
 			<td valign="top">
 				<table border="1" cellpadding="5">
-					{% for key in derivative.keys()|sort %}
+					{% for key in metrics.keys()|sort %}
 						<tr>
 							<td> {{ key }} </td>
-							<td> {{ derivative[key] | float2 }} </td>
+							<td> {{ metrics[key] | float2 }} </td>
 						</tr>
 					{% endfor %}
 				</table>

@@ -3,6 +3,7 @@ import time
 from typing import List
 
 from flask import Blueprint, Response, render_template, current_app, request
+from core.job.helpers import expand_nodelist
 
 from core.job.models import Job
 from application.helpers import requires_auth
@@ -38,7 +39,7 @@ def get_running_stats(interval: int) -> List[dict]:
 			, "job" : job.to_dict() # TODO: ???
 		}
 
-		nodelist = list(map(current_app.app_config.cluster["node2int"], job.expand_nodelist()))
+		nodelist = list(map(current_app.app_config.cluster["node2int"], expand_nodelist(job.nodelist)))
 
 		data["stats"]["cpu"] = SENSOR_CLASS_MAP["cpu_user"].get_stats(nodelist, timestamp - interval + offset, timestamp)
 		data["stats"]["la"] = SENSOR_CLASS_MAP["loadavg"].get_stats(nodelist, timestamp - interval + offset, timestamp)

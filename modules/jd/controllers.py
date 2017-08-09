@@ -6,10 +6,11 @@ from werkzeug.exceptions import abort
 from core.job.models import Job
 from core.monitoring.models import JobPerformance, SENSOR_CLASS_MAP
 from core.tag.models import JobTag
-from core.job.helpers import id2hash, hash2id, username2id
+from core.job.helpers import id2hash, hash2id, username2id, expand_nodelist
 from application.database import global_db
 from modules.job_table.helpers import get_color
 from application.helpers import requires_auth
+from core.metrics.models import JobMetrics
 
 jd_pages = Blueprint('jd', __name__
 	, template_folder='templates', static_folder='static')
@@ -29,10 +30,11 @@ def jd(job_id: int, task_id: int) -> Response:
 
 	tag = JobTag.query.get(job.id)
 	performance = JobPerformance.query.get(job.id)
+	metrics = JobMetrics.query.get(job.id)
 
 	return render_template("jd_full.html", anon=False, id2hash=id2hash, username2id=username2id
 		, job=job.to_dict(), tags=tag.to_dict(), monitoring=performance.to_dict()
-		, derivative=current_app.app_config.monitoring["calculate_derivative"](job, performance.to_dict())
+		, metrics=metrics.to_dict()
 		, app_config=current_app.app_config
 		, get_color=partial(get_color, thresholds=current_app.app_config.monitoring["thresholds"]))
 
@@ -48,10 +50,11 @@ def anon_jd(hash: str) -> Response:
 
 	tag = JobTag.query.get(job.id)
 	performance = JobPerformance.query.get(job.id)
+	metrics = JobMetrics.query.get(job.id)
 
 	return render_template("jd_anon.html", anon=True, hash=hash
 		, job=job.to_dict(), tags=tag.to_dict(), monitoring=performance.to_dict()
-		, derivative=current_app.app_config.monitoring["calculate_derivative"](job, performance.to_dict())
+		, metrics=metrics.to_dict()
 		, app_config=current_app.app_config
 		, get_color=partial(get_color, thresholds=current_app.app_config.monitoring["thresholds"]))
 
@@ -64,7 +67,7 @@ def __heatmap(job_id: int, task_id: int, sensor: str):
 
 	sensor_class = SENSOR_CLASS_MAP[sensor]
 
-	filter_nodelist = list(map(current_app.app_config.cluster["node2int"], job.expand_nodelist()))
+	filter_nodelist = list(map(current_app.app_config.cluster["node2int"], expand_nodelist(job.nodelist)))
 
 	offset = current_app.app_config.monitoring["aggregation_interval"]
 

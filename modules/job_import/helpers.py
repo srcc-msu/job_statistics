@@ -101,6 +101,9 @@ class SlurmConverter(DBMSConverter):
 		if "CANCEL" in result["state"]:
 			result["state"] = "CANCELLED"
 
+		if "COMPLET" in result["state"]:
+			result["state"] = "COMPLETED"
+
 		if "Unknown" in raw["EndTime"]:
 			result["t_end"] = result["t_start"] + result["timelimit"]
 		else:

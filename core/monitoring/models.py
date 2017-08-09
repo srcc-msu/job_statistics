@@ -3,6 +3,7 @@ from typing import List
 from sqlalchemy import func, Float
 
 from application.database import global_db
+from core.job.helpers import expand_nodelist
 from core.job.models import Job
 from core.monitoring.constants import SENSOR_LIST
 from core.monitoring.helpers import nodelist2ids
@@ -38,7 +39,7 @@ class JobPerformance(global_db.Model):
 	def update(self, offset: int):
 		job = Job.query.get(self.fk_job_id)
 
-		filter_nodelist = nodelist2ids(job.expand_nodelist())
+		filter_nodelist = nodelist2ids(expand_nodelist(job.nodelist))
 
 		for sensor in SENSOR_LIST:
 			stats = SENSOR_CLASS_MAP[sensor].get_stats(filter_nodelist, job.t_start + offset, job.t_end - offset)

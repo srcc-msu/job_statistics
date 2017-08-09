@@ -2,6 +2,7 @@ from flask import jsonify, Response, current_app, Blueprint
 from sqlalchemy import func, Float
 
 from application.database import global_db
+from core.job.helpers import expand_nodelist
 from core.job.models import Job
 from core.monitoring.models import JobPerformance, SENSOR_CLASS_MAP
 from application.helpers import crossdomain
@@ -48,7 +49,7 @@ def job_sensor(sensor: str, record_id: int) -> Response:
 
 	offset = current_app.app_config.monitoring["aggregation_interval"]
 
-	filter_nodelist = list(map(current_app.app_config.cluster["node2int"], job.expand_nodelist()))
+	filter_nodelist = list(map(current_app.app_config.cluster["node2int"], expand_nodelist(job.nodelist)))
 
 	query = global_db.session.query(
 		sensor_class.time
