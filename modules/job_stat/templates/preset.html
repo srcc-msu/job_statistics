@@ -21,13 +21,79 @@
 <script type="text/javascript" src="/job_stat/static/preset.js"></script>
 
 <script type="text/javascript">
-		jQuery(document).ready(function() {
-			google.charts.load('current', {'packages':['corechart', 'bar']});
-			google.charts.setOnLoadCallback(
-				function() {
-					DrawCharts({{ app_config.cluster.num_cores }}, {{ app_config.general.timezone }} * 60 * 60);
-				});
-		});
+	function DrawCharts(num_cores, timezone_offset)
+	{
+		var midnight = (Date.now() - (Date.now()) % (86400 * 1000)) / 1000 + timezone_offset;
+		var last_day = midnight - 60 * 60 * 24 * 1;
+		var last_week = midnight - 60 * 60 * 24 * 7;
+		var last_month = midnight - 60 * 60 * 24 * 30;
+		var since_jan1 = (new Date(new Date().getFullYear(), 0, 1)) / 1000;
+
+		DrawAvgWaitTime("#queue_avg_wait_time_by_day", last_week, midnight);
+
+		DrawTopCpuh("#user_total_work_time", last_week, midnight);
+		DrawTopCount("#user_total_tasks", last_week, midnight);
+
+		DrawUsersCount("#users_by_day", last_week, midnight);
+
+		ShowUsage("#task_total_cpu_1", last_day, midnight, num_cores);
+		ShowUsage("#task_total_cpu_7", last_week, midnight, num_cores);
+		ShowUsage("#task_total_cpu_30", last_month, midnight, num_cores);
+		ShowUsage("#task_total_cpu_365", since_jan1, midnight, num_cores);
+
+		ShowCompleted("completed_1", last_day, midnight);
+		ShowCompleted("completed_7", last_week, midnight);
+		ShowCompleted("completed_30", last_month, midnight);
+		ShowCompleted("completed_365", since_jan1, midnight);
+
+		ShowStarted("started_1", last_day, midnight);
+		ShowStarted("started_7", last_week, midnight);
+		ShowStarted("started_30", last_month, midnight);
+		ShowStarted("started_365", since_jan1, midnight);
+
+		ShowRunning("#avg_running_1", last_day, midnight);
+		ShowRunning("#avg_running_7", last_week, midnight);
+		ShowRunning("#avg_running_30", last_month, midnight);
+		ShowRunning("#avg_running_365", since_jan1, midnight);
+
+		ShowWaiting("#avg_waiting_1", last_day, midnight);
+		ShowWaiting("#avg_waiting_7", last_week, midnight);
+		ShowWaiting("#avg_waiting_30", last_month, midnight);
+		ShowWaiting("#avg_waiting_365", since_jan1, midnight);
+
+		ShowUserCount("#total_user_count_1", last_day, midnight);
+		ShowUserCount("#total_user_count_7", last_week, midnight);
+		ShowUserCount("#total_user_count_30", last_month, midnight);
+		ShowUserCount("#total_user_count_365", since_jan1, midnight);
+
+		ShowAvgCPU("#task_stat_avg_cpu_user_1", last_day, midnight);
+		ShowAvgCPU("#task_stat_avg_cpu_user_7", last_week, midnight);
+		ShowAvgCPU("#task_stat_avg_cpu_user_30", last_month, midnight);
+		ShowAvgCPU("#task_stat_avg_cpu_user_365", since_jan1, midnight);
+
+		ShowAvgWaitTime("#task_avg_waittime_1", last_day, midnight);
+		ShowAvgWaitTime("#task_avg_waittime_7", last_week, midnight);
+		ShowAvgWaitTime("#task_avg_waittime_30", last_month, midnight);
+		ShowAvgWaitTime("#task_avg_waittime_365", since_jan1, midnight);
+
+		var tags = ["cls_sc_appropriate","cls_not_communicative","cls_serial","cls_single","cls_suspicious"];
+
+		for(var i = 0; i < tags.length; i++)
+		{
+			LoadTagStat(tags[i], "#"+tags[i] + "_1", last_day, midnight);
+			LoadTagStat(tags[i], "#"+tags[i] + "_7", last_week, midnight);
+			LoadTagStat(tags[i], "#"+tags[i] + "_30", last_month, midnight);
+			LoadTagStat(tags[i], "#"+tags[i] + "_365", since_jan1, midnight);
+		}
+	}
+
+	jQuery(document).ready(function() {
+		google.charts.load('current', {'packages':['corechart', 'bar']});
+		google.charts.setOnLoadCallback(
+			function() {
+				DrawCharts({{ app_config.cluster.num_cores }}, {{ app_config.general.timezone }} * 60 * 60);
+			});
+	});
 </script>
 
 <h1 style="color:green">General statistics of {{ app_config.cluster.name }}</h1>
@@ -176,24 +242,6 @@
 	</tr>
 
 	<tr>
-		<td class="text_header">Communicative jobs(by bytes)</td>
-		<td class="text_day_ago"> <span id="cls_communicative_volume_1"></span></td>
-		<td class="text_week_ago"> <span id="cls_communicative_volume_7"></span></td>
-		<td class="text_month_ago"> <span id="cls_communicative_volume_30"></span></td>
-		<td class="text_year_ago"> <span id="cls_communicative_volume_365"></span></td>
-		<td class="stat_table_hint">Average data transfer in Bytes per second is above threshold</td>
-	</tr>
-
-	<tr>
-		<td class="text_header">Communicative jobs(by packets)</td>
-		<td class="text_day_ago"> <span id="cls_communicative_packets_1"></span></td>
-		<td class="text_week_ago"> <span id="cls_communicative_packets_7"></span></td>
-		<td class="text_month_ago"> <span id="cls_communicative_packets_30"></span></td>
-		<td class="text_year_ago"> <span id="cls_communicative_packets_365"></span></td>
-		<td class="stat_table_hint">Average packets transfer per second is above threshold</td>
-	</tr>
-
-	<tr>
 		<td class="text_header">Appropriate for SC</td>
 		<td class="text_day_ago"> <span id="cls_sc_appropriate_1"></span></td>
 		<td class="text_week_ago"> <span id="cls_sc_appropriate_7"></span></td>
@@ -236,60 +284,6 @@
 		<td class="text_month_ago"> <span id="cls_suspicious_30"></span></td>
 		<td class="text_year_ago"> <span id="cls_suspicious_365"></span></td>
 		<td class="stat_table_hint">LA < 0.9 and CPU user load below threshold</td>
-	</tr>
-
-	<tr>
-		<td class="text_header">Data intensive</td>
-		<td class="text_day_ago"> <span id="cls_data_intensive_1"></span></td>
-		<td class="text_week_ago"> <span id="cls_data_intensive_7"></span></td>
-		<td class="text_month_ago"> <span id="cls_data_intensive_30"></span></td>
-		<td class="text_year_ago"> <span id="cls_data_intensive_365"></span></td>
-		<td class="stat_table_hint">Memory reads or writes per second above threshold</td>
-	</tr>
-
-	<tr>
-		<td class="text_header">Good locality</td>
-		<td class="text_day_ago"> <span id="cls_locality_good_1"></span></td>
-		<td class="text_week_ago"> <span id="cls_locality_good_7"></span></td>
-		<td class="text_month_ago"> <span id="cls_locality_good_30"></span></td>
-		<td class="text_year_ago"> <span id="cls_locality_good_365"></span></td>
-		<td class="stat_table_hint">Ask Vadim</td>
-	</tr>
-
-	<tr>
-		<td class="text_header">Bad locality</td>
-		<td class="text_day_ago"> <span id="cls_locality_bad_1"></span></td>
-		<td class="text_week_ago"> <span id="cls_locality_bad_7"></span></td>
-		<td class="text_month_ago"> <span id="cls_locality_bad_30"></span></td>
-		<td class="text_year_ago"> <span id="cls_locality_bad_365"></span></td>
-		<td class="stat_table_hint">Ask Vadim</td>
-	</tr>
-
-	<tr>
-		<td class="text_header">Weird locality</td>
-		<td class="text_day_ago"> <span id="cls_locality_weird_1"></span></td>
-		<td class="text_week_ago"> <span id="cls_locality_weird_7"></span></td>
-		<td class="text_month_ago"> <span id="cls_locality_weird_30"></span></td>
-		<td class="text_year_ago"> <span id="cls_locality_weird_365"></span></td>
-		<td class="stat_table_hint">Ask Vadim</td>
-	</tr>
-
-	<tr>
-		<td class="text_header">Pure GPU jobs</td>
-		<td class="text_day_ago"> <span id="cls_gpu_pure_1"></span></td>
-		<td class="text_week_ago"> <span id="cls_gpu_pure_7"></span></td>
-		<td class="text_month_ago"> <span id="cls_gpu_pure_30"></span></td>
-		<td class="text_year_ago"> <span id="cls_gpu_pure_365"></span></td>
-		<td class="stat_table_hint">High GPU load and low CPU load</td>
-	</tr>
-
-	<tr>
-		<td class="text_header">Good Hybrid GPU jobs</td>
-		<td class="text_day_ago"> <span id="cls_gpu_hybrid_good_1"></span></td>
-		<td class="text_week_ago"> <span id="cls_gpu_hybrid_good_7"></span></td>
-		<td class="text_month_ago"> <span id="cls_gpu_hybrid_good_30"></span></td>
-		<td class="text_year_ago"> <span id="cls_gpu_hybrid_good_365"></span></td>
-		<td class="stat_table_hint">High CPU and GPU load</td>
 	</tr>
 </table>
 

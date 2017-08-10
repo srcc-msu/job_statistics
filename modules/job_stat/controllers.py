@@ -24,6 +24,12 @@ def preset():
 	return render_template("preset.html"
 		, app_config=current_app.app_config)
 
+@job_stat_pages.route("/metrics")
+@requires_auth
+def metrics():
+	return render_template("metrics.html"
+		, app_config=current_app.app_config)
+
 def gen_base_query(t_from: int, t_to: int, include: str) -> BaseQuery:
 	scoped_duration = sqlalchemy.func.LEAST(Job.t_end, t_to) - sqlalchemy.func.GREATEST(Job.t_start, t_from)
 
