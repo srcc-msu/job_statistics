@@ -26,7 +26,7 @@ def get_metric(metric: str, aggregation_function: str) -> Response:
 @crossdomain(origin='*')
 def get_tag_stat(tag: str):
 	t_from = request.args["t_from"]
-	t_to = request.args["t_from"]
+	t_to = request.args["t_to"]
 
 	query = (global_db.session.query(Job.account, func.count(Job.id)).join(JobTag)
 		.filter(Job.t_end > t_from)
