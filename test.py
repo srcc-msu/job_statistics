@@ -391,7 +391,7 @@ class TestJobStat(TestSuit):
 		add(global_db, cls.test_job)
 
 	def test_avg(self):
-		rv = TestSuit.client.get("/api/job_stat/run_time/avg?t_from=1&t_to=2")
+		rv = TestSuit.client.get("/api/job_stat/metric/run_time/avg?t_from=1&t_to=2")
 		print(rv.status, rv.data)
 
 		assert "200" in rv.status

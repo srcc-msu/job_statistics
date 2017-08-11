@@ -141,32 +141,32 @@
 
 	function FetchCores()
 	{
-		Fetch("#cores_result", "#cores_graphic", "#cores_params", "/api/job_stat/cores");
+		Fetch("#cores_result", "#cores_graphic", "#cores_params", "/api/job_stat/metric/cores");
 	}
 
 	function FetchCoresSec()
 	{
-		Fetch("#cores_sec_result", "#cores_sec_graphic", "#cores_sec_params", "/api/job_stat/cores_sec");
+		Fetch("#cores_sec_result", "#cores_sec_graphic", "#cores_sec_params", "/api/job_stat/metric/cores_sec");
 	}
 
 	function FetchRunTime()
 	{
-		Fetch("#run_time_result", "#run_time_graphic", "#run_time_params", "/api/job_stat/run_time");
+		Fetch("#run_time_result", "#run_time_graphic", "#run_time_params", "/api/job_stat/metric/run_time");
 	}
 
 	function FetchWaitTime()
 	{
-		Fetch("#wait_time_result", "#wait_time_graphic", "#wait_time_params", "/api/job_stat/wait_time");
+		Fetch("#wait_time_result", "#wait_time_graphic", "#wait_time_params", "/api/job_stat/metric/wait_time");
 	}
 
 	function FetchTasksCount()
 	{
-		Fetch("#tasks_count_result", "#tasks_count_graphic", "#tasks_count_params", "/api/job_stat/jobs");
+		Fetch("#tasks_count_result", "#tasks_count_graphic", "#tasks_count_params", "/api/job_stat/metric/jobs");
 	}
 
 	function FetchUsersCount()
 	{
-		Fetch("#users_count_result", "#users_count_graphic", "#users_count_params", "/api/job_stat/accounts");
+		Fetch("#users_count_result", "#users_count_graphic", "#users_count_params", "/api/job_stat/metric/accounts");
 	}
 </script>
 

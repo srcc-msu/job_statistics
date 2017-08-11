@@ -29,31 +29,26 @@ function LoadTagStat(tag, target, t_from, t_to)
 	AjaxTextWrapper("/api/job_table/common", data, target, transform);
 }
 
-function LoadExtTagStat(tag, target, t_from, t_to, total)
+function LoadExtTagStat(tag, target, t_from, t_to)
 {
 	var data = {
-		date_from: t_from
-		, date_to: t_to
-		, req_tags: tag
-		, accounts: ""
-		, states: ""
-		, partitions: ""
+		t_from: t_from
 	};
 
 	function transform(data)
 	{
-		var user_set = [];
+		var user_count = data.length;
+		var tag_count = 0;
 
 		for(var i = 0; i < data.length; i++)
 		{
-			if(user_set.indexOf(data[i].account) == -1)
-				user_set.push(data[i].account);
+			tag_count += data[i][1];
 		}
 
-		return "(" + Math.floor(100 * data.length / total) + "% " + user_set.length + "u) - " + data.length;
+		return tag_count + " (" + user_count + "u)";
 	}
 
-	AjaxTextWrapper("/api/job_table/common", data, target, transform);
+	AjaxTextWrapper("/api/job_stat/tag/" + tag, data, target, transform);
 }
 
 
@@ -66,7 +61,7 @@ function DrawAvgWaitTime(target, t_start, t_end)
 		, tasks: "t_start"
 	};
 
-	AjaxDrawWrapper("/api/job_stat/wait_time/avg", data, target, true);
+	AjaxDrawWrapper("/api/job_stat/metric/wait_time/avg", data, target, true);
 }
 
 function DrawUsersCount(target, t_start, t_end)
@@ -78,7 +73,7 @@ function DrawUsersCount(target, t_start, t_end)
 		, tasks: "t_start"
 	};
 
-	AjaxDrawWrapper("/api/job_stat/accounts/count", data, target, true);
+	AjaxDrawWrapper("/api/job_stat/metric/accounts/count", data, target, true);
 }
 
 function DrawTopCpuh(target, t_start, t_end)
@@ -89,7 +84,7 @@ function DrawTopCpuh(target, t_start, t_end)
 		, grouping: "account"
 	};
 
-	AjaxDrawWrapper("/api/job_stat/cores_sec/sum", data, target);
+	AjaxDrawWrapper("/api/job_stat/metric/cores_sec/sum", data, target);
 }
 
 function DrawTopCount(target, t_start, t_end)
@@ -100,7 +95,7 @@ function DrawTopCount(target, t_start, t_end)
 		, grouping: "account"
 	};
 
-	AjaxDrawWrapper("/api/job_stat/jobs/count", data, target);
+	AjaxDrawWrapper("/api/job_stat/metric/jobs/count", data, target);
 }
 
 function AjaxTextWrapper(api, data, target, transform_function)
@@ -130,7 +125,7 @@ function ShowUsage(target, t_from, t_to, num_cores)
 		return (cores_sec * 100).toFixed(1) + "%";
 	}
 
-	AjaxTextWrapper("/api/job_stat/cores_sec/sum", data, target, transform);
+	AjaxTextWrapper("/api/job_stat/metric/cores_sec/sum", data, target, transform);
 }
 
 function ShowUserCount(target, t_from, t_to)
@@ -142,7 +137,7 @@ function ShowUserCount(target, t_from, t_to)
 
 	function transform(data) { return parseInt(data.split('\n')[1]); }
 
-	AjaxTextWrapper("/api/job_stat/accounts/count", data, target, transform);
+	AjaxTextWrapper("/api/job_stat/metric/accounts/count", data, target, transform);
 }
 
 function ShowWaiting(target, t_from, t_to)
@@ -157,7 +152,7 @@ function ShowWaiting(target, t_from, t_to)
 		return (-1).toFixed(1);
 	}
 
-	AjaxTextWrapper("/api/job_stat/wait_time/avg", data, target, transform);
+	AjaxTextWrapper("/api/job_stat/metric/wait_time/avg", data, target, transform);
 }
 
 function ShowRunning(target, t_from, t_to)
@@ -172,7 +167,7 @@ function ShowRunning(target, t_from, t_to)
 		return (-1).toFixed(1);
 	}
 
-	AjaxTextWrapper("/api/job_stat/run_time/avg", data, target, transform);
+	AjaxTextWrapper("/api/job_stat/metric/run_time/avg", data, target, transform);
 }
 
 function ShowCompleted(target, t_start, t_end)
@@ -186,8 +181,8 @@ function ShowCompleted(target, t_start, t_end)
 	function avg_transform(data) { return (parseInt(data.split('\n')[1]) / ((t_end - t_start) / 86400)).toFixed(1); }
 	function total_transform(data) { return parseInt(data.split('\n')[1]); }
 
-	AjaxTextWrapper("/api/job_stat/jobs/count", data, "#avg_" + target, avg_transform);
-	AjaxTextWrapper("/api/job_stat/jobs/count", data, "#total_" + target, total_transform);
+	AjaxTextWrapper("/api/job_stat/metric/jobs/count", data, "#avg_" + target, avg_transform);
+	AjaxTextWrapper("/api/job_stat/metric/jobs/count", data, "#total_" + target, total_transform);
 }
 
 function ShowStarted(target, t_start, t_end)
@@ -201,8 +196,8 @@ function ShowStarted(target, t_start, t_end)
 	function avg_transform(data) { return (parseInt(data.split('\n')[1]) / ((t_end - t_start) / 86400)).toFixed(1); }
 	function total_transform(data) { return parseInt(data.split('\n')[1]); }
 
-	AjaxTextWrapper("/api/job_stat/jobs/count", data, "#avg_" + target, avg_transform);
-	AjaxTextWrapper("/api/job_stat/jobs/count", data, "#total_" + target, total_transform);
+	AjaxTextWrapper("/api/job_stat/metric/jobs/count", data, "#avg_" + target, avg_transform);
+	AjaxTextWrapper("/api/job_stat/metric/jobs/count", data, "#total_" + target, total_transform);
 }
 
 function ShowAvgWaitTime(target, t_from, t_to)
@@ -217,7 +212,7 @@ function ShowAvgWaitTime(target, t_from, t_to)
 		return (parseInt(data.split('\n')[1]) / 3600).toFixed(1);
 	}
 
-	AjaxTextWrapper("/api/job_stat/wait_time/avg", data, target, transform);
+	AjaxTextWrapper("/api/job_stat/metric/wait_time/avg", data, target, transform);
 
 }
 
@@ -233,5 +228,5 @@ function ShowAvgCPU(target, t_from, t_to)
 		return (parseInt(data.split('\n')[1])).toFixed(1);
 	}
 
-	AjaxTextWrapper("/api/job_stat/avg_cpu_user/avg", data, target, transform);
+	AjaxTextWrapper("/api/job_stat/metric/avg_cpu_user/avg", data, target, transform);
 }
