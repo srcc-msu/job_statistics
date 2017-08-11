@@ -40,19 +40,19 @@ def gen_base_query(t_from: int, t_to: int, include: str) -> BaseQuery:
 		.join(JobPerformance)
 
 	if include == "all":
-		return  base_query.filter(Job.t_end > t_from) \
-		.filter(Job.t_start < t_to) \
-		.subquery()
+		return  (base_query.filter(Job.t_end > t_from)
+			.filter(Job.t_start < t_to)
+			.subquery())
 
 	elif include == "started":
-		return  base_query.filter(Job.t_start > t_from) \
-		.filter(Job.t_start < t_to) \
-		.subquery()
+		return  (base_query.filter(Job.t_start > t_from)
+			.filter(Job.t_start < t_to)
+			.subquery())
 
 	elif include == "completed":
-		return  base_query.filter(Job.t_end > t_from) \
-		.filter(Job.t_end < t_to) \
-		.subquery()
+		return  (base_query.filter(Job.t_end > t_from)
+			.filter(Job.t_end < t_to)
+			.subquery())
 
 	raise KeyError("wrong include value: " + include)
 

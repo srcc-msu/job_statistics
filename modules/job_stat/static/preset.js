@@ -32,7 +32,8 @@ function LoadTagStat(tag, target, t_from, t_to)
 function LoadExtTagStat(tag, target, t_from, t_to)
 {
 	var data = {
-		t_from: t_from
+		t_from: t_from,
+		t_to: t_to
 	};
 
 	function transform(data)

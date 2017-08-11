@@ -62,13 +62,13 @@ class Sensor(global_db.Model):
 
 	@classmethod
 	def get_stats(cls, nodelist: List[int], t_from : int, t_to: int):
-		sensor_query = global_db.session.query(
+		sensor_query = (global_db.session.query(
 				func.min(cls.min).cast(Float).label("min")
 				, func.max(cls.max).cast(Float).label("max")
-				, func.avg(cls.avg).cast(Float).label("avg"))\
-			.filter(cls.time > t_from)\
-			.filter(cls.time < t_to)\
-			.filter(cls.node_id.in_(nodelist))\
+				, func.avg(cls.avg).cast(Float).label("avg"))
+			.filter(cls.time > t_from)
+			.filter(cls.time < t_to)
+			.filter(cls.node_id.in_(nodelist)))
 
 		result = sensor_query.one()
 

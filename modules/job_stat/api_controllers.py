@@ -26,9 +26,13 @@ def get_metric(metric: str, aggregation_function: str) -> Response:
 @crossdomain(origin='*')
 def get_tag_stat(tag: str):
 	t_from = request.args["t_from"]
+	t_to = request.args["t_from"]
 
-	query = global_db.session.query(Job.account, func.count(Job.id)).group_by(Job.account) \
-		.join(JobTag).filter(Job.t_end > t_from).filter(JobTag.tags.like("%{0}%".format(tag)))
+	query = (global_db.session.query(Job.account, func.count(Job.id)).join(JobTag)
+		.filter(Job.t_end > t_from)
+		.filter(Job.t_end < t_to)
+		.filter(JobTag.tags.like("%{0}%".format(tag)))
+		.group_by(Job.account))
 
 	result = []
 	for entry in query.all():
