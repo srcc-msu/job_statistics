@@ -56,10 +56,10 @@
 
 		function load_tags() {
 			for(var i = 0; i < tags.length; i++) {
-				LoadExtTagStat(tags[i], "#"+tags[i] + "_1", last_day, midnight);
-				LoadExtTagStat(tags[i], "#"+tags[i] + "_7", last_week, midnight);
-				LoadExtTagStat(tags[i], "#"+tags[i] + "_30", last_month, midnight);
-				LoadExtTagStat(tags[i], "#"+tags[i] + "_365", since_jan1, midnight);
+				LoadTagStat(tags[i], "#"+tags[i] + "_1", last_day, midnight, true);
+				LoadTagStat(tags[i], "#"+tags[i] + "_7", last_week, midnight, true);
+				LoadTagStat(tags[i], "#"+tags[i] + "_30", last_month, midnight, true);
+				LoadTagStat(tags[i], "#"+tags[i] + "_365", since_jan1, midnight, true);
 			}
 		}
 

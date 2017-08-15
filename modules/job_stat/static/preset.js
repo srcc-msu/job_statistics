@@ -10,26 +10,7 @@ function AjaxDrawWrapper(api, data, target, sorted)
 	});
 }
 
-function LoadTagStat(tag, target, t_from, t_to)
-{
-	var data = {
-		date_from: t_from
-		, date_to: t_to
-		, req_tags: tag
-		, accounts: ""
-		, states: ""
-		, partitions: ""
-	};
-
-	function transform(data)
-	{
-		return data.length;
-	}
-
-	AjaxTextWrapper("/api/job_table/common", data, target, transform);
-}
-
-function LoadExtTagStat(tag, target, t_from, t_to)
+function LoadTagStat(tag, target, t_from, t_to, show_users)
 {
 	var data = {
 		t_from: t_from,
@@ -46,12 +27,14 @@ function LoadExtTagStat(tag, target, t_from, t_to)
 			tag_count += data[i][1];
 		}
 
-		return tag_count + " (" + user_count + "u)";
+		if(show_users)
+			return tag_count + " (" + user_count + "u)";
+
+		return tag_count;
 	}
 
 	AjaxTextWrapper("/api/job_stat/tag/" + tag, data, target, transform);
 }
-
 
 function DrawAvgWaitTime(target, t_start, t_end)
 {
