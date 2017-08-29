@@ -116,8 +116,9 @@ def calculate_job_query_stat(query_string: str, query: BaseQuery):
 #			print("error calculating stat for {0}, skipped".format(job.id), file=sys.stderr)
 #			print(e)
 
-	for sensor in sensors:
-		result["perf"]["avg"]["avg_" + sensor] = result["perf"]["avg"].get("avg_" + sensor, 0) / perf_count
+	if perf_count > 0:
+		for sensor in sensors:
+			result["perf"]["avg"]["avg_" + sensor] = result["perf"]["avg"].get("avg_" + sensor, 0) / perf_count
 
 	return result
 
