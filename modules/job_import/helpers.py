@@ -113,7 +113,7 @@ class SlurmConverter(DBMSConverter):
 
 class SacctConverter(DBMSConverter):
 	def ParseConvert(self, job_info: str) -> dict:
-		# sacct -S 2015-01-01 --format=JobID,Partition,User,Submit,Start,End,Timelimit,State,Priority,NNodes,alloccpus,NodeList -P
+		# sacct -S 2015-01-01 --format=JobID,Partition,User,Submit,Start,End,Timelimit,State,Priority,NNodes,alloccpus,NodeList -P -X
 		# 5476|compute|serg|2016-01-14T17:21:23|2016-01-14T17:21:23|2016-01-14T17:21:26|1-00:00:00|COMPLETED|4294900803|2|20|n[48021-48022]
 
 		raw = job_info.split("|")
