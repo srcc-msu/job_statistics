@@ -1,0 +1,185 @@
+<!doctype html>
+
+<html>
+<head>
+	<link rel="stylesheet" href="/static/jquery/jquery-ui-1.11.4.css">
+
+	<meta charset="utf-8">
+
+	<title>Average sensor values</title>
+</head>
+
+<body>
+<script type="text/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/static/jquery/jquery-ui-1.11.4.min.js"></script>
+<script type="text/javascript" src="/static/jquery/jquery.csv.min.js"></script>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<script type="text/javascript" src="/job_stat/static/job_stat.js"></script>
+
+<script type="text/javascript">
+		function Toggle(target){
+			$(target).each(function(i) { $(this).toggle(200); });
+		}
+
+		jQuery(document).ready(function() {
+			google.charts.load('current', {'packages':['corechart']});
+
+			$("#date_from").datepicker({
+				altField: "#date_from_ts",
+				altFormat: "@",
+				defaultDate: "-365"
+			});
+			$("#date_to").datepicker({
+				altField: "#date_to_ts",
+				altFormat: "@",
+				defaultDate: "-1"
+			});
+
+			$("#date_from").datepicker('setDate', "-3");
+			$("#date_to").datepicker('setDate', "today");
+		});
+</script>
+
+<script type="text/javascript">
+	function GetSelected(group_name, form)
+	{
+		var selected = [];
+
+		$('input[name="' + group_name + '"]:checked', form).each(function() {
+			selected.push($(this).val());
+		});
+
+		return selected;
+	}
+
+	function GetGeneralParams()
+	{
+		data = {}
+
+		data.t_to = $("#date_to").datepicker('getDate') / 1000;
+		data.t_from = data.t_to - 86400 * 3;
+
+		return data;
+	}
+
+	function Query()
+	{
+		var text_target = "#text_result";
+
+		data = GetGeneralParams();
+
+		if(data === null)
+		{
+			$(text_target).val("error");
+			return;
+		}
+
+		$(text_target).val("");
+
+		var sensor = $("#sensors :selected").val();
+
+		$.ajax({
+			url: "/api/sensor_stat/avg/" + sensor
+			, data: data
+			, success: function(data)
+			{
+				if(data)
+				{
+					$(text_target).val(data);
+					Draw(data);
+				}
+			}
+			, error: function()
+			{
+				$(text_target).val("sorry, bad param configuration or internal error");
+			}
+		});
+	}
+
+	function Draw(data)
+	{
+		var display_data = [];
+		var lines = data.split("\n");
+
+		for(var i = 1; i < lines.length; i++)
+		{
+			var tmp = lines[i].split(",");
+
+			display_data.push([new Date(tmp[0]*1000), parseFloat(tmp[2]), parseInt(tmp[1])]);
+		}
+
+		var options = {
+	//            title: Sensor value and working nodes
+				legend: { position: 'bottom' }
+				, 'chartArea': {backgroundColor: "#f8f8f8", left: 50, top: 20, 'height': '80%', 'width': '100%'}
+				, hAxis: { format: 'HH:mm' } // 'dd/MM/yyyy HH:mm'
+		        , vAxes: {
+					0: {title: 'avg value', format: 'short', minValue: 0},
+					1: {title: 'number of monitoring agents', format: 'short', minValue: 0}
+				}
+				, 'height': 400
+				, series: {
+					0: { lineWidth: 2, targetAxisIndex: 0},
+					1: { lineWidth: 1, targetAxisIndex: 1}
+				}
+				, colors: ['#c0504d', '#4bacc6', '#95b456', '#7b609c', '#f79646']
+			};
+
+			var data = new google.visualization.DataTable();
+			data.addColumn('datetime', 'time');
+			data.addColumn('number', 'value');
+			data.addColumn('number', 'monitoring agents');
+			data.addRows(display_data);
+
+			var chart = new google.visualization.LineChart(document.getElementById("graph_result"));
+
+//			google.visualization.events.addListener(chart, "select", function() { highlightLine(chart, data, options); });
+
+			chart.draw(data, options);
+	}
+</script>
+
+<h1 style="color:green">Average sensor values of {{ app_config.cluster.name }}</h1>
+
+<form id="query_form" style="display: inline-block;">
+	<table>
+		<!--tr>
+			<td>From:</td>
+			<td>
+				<input type="text" id="date_from"/>
+				<input type="hidden" id="date_from_ts" name="date_from"/>
+			</td>
+		</tr-->
+		<tr>
+			<td>Date:</td>
+			<td>
+				<input type="text" id="date_to"/>
+				<input type="hidden" id="date_to_ts" name="date_to"/>
+			</td>
+		</tr>
+		<tr>
+			<td>Sensor: </td>
+			<td>
+				<select id="sensors">
+					{% for sensor in app_config.monitoring.SENSOR_LIST %}
+						<option name="sensor" value="{{sensor}}">{{app_config.monitoring.SENSOR_INFO[sensor][0]}}<br>
+					{% endfor %}
+				</select>
+			</td>
+		</tr>
+	</table>
+
+	<input type="button" value="Draw" onclick="Query();">
+
+</form>
+
+<br>
+
+<textarea rows="10" cols="45" id="text_result">Result</textarea>
+<div id="graph_result"></div>
+
+
+</body>
+</html>
