@@ -12,6 +12,7 @@ job_stat_api_pages = Blueprint('job_stat_api', __name__
 	, template_folder='templates', static_folder='static')
 
 @job_stat_api_pages.route("/metric/<string:metric>/<string:aggregation_function>")
+@job_stat_api_pages.route("/<string:metric>/<string:aggregation_function>") #TODO? legacy support
 @crossdomain(origin='*')
 def get_metric(metric: str, aggregation_function: str) -> Response:
 
