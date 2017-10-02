@@ -2,6 +2,7 @@ venv
 .idea
 *.pyc
 .coverage
-app.log
-flask.log
+app.log*
+flask.log*
 nohup.out
+gunicorn.log*
