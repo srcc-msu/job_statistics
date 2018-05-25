@@ -121,18 +121,18 @@
 
 			<td valign="top">
 				<table border="1" cellpadding="5">
-					<tr><th></th><th>avg</th><th>max</th><th>min</th></tr>
+					<tr><th></th><th>min</th><th>avg</th><th>max</th></tr>
 					{% for sensor in app_config.monitoring.GENERAL_SENSOR_LIST %}
 						<tr>
 							<td> {{ app_config.monitoring.SENSOR_INFO[sensor][0] }} </td>
+							<td style="background-color: {{ get_color(sensor, monitoring['min'][sensor]) }} ">
+								{{ monitoring["min"][sensor]| float2  }}
+							</td>
 							<td style="background-color: {{ get_color(sensor, monitoring['avg'][sensor]) }} ">
 								{{ monitoring["avg"][sensor]| float2  }}
 							</td>
 							<td style="background-color: {{ get_color(sensor, monitoring['max'][sensor]) }} ">
 								{{ monitoring["max"][sensor]| float2  }}
-							</td>
-							<td style="background-color: {{ get_color(sensor, monitoring['min'][sensor]) }} ">
-								{{ monitoring["min"][sensor]| float2  }}
 							</td>
 						</tr>
 					{% endfor %}
@@ -142,14 +142,14 @@
 						{% for sensor in app_config.monitoring.GPU_SENSOR_LIST %}
 							<tr>
 								<td> {{ app_config.monitoring.SENSOR_INFO[sensor][0] }} </td>
+								<td style="background-color: {{ get_color(sensor, monitoring['min'][sensor]) }} ">
+									{{ monitoring["min"][sensor]| float2  }}
+								</td>
 								<td style="background-color: {{ get_color(sensor, monitoring['avg'][sensor]) }} ">
 									{{ monitoring["avg"][sensor]| float2  }}
 								</td>
 								<td style="background-color: {{ get_color(sensor, monitoring['max'][sensor]) }} ">
 									{{ monitoring["max"][sensor]| float2  }}
-								</td>
-								<td style="background-color: {{ get_color(sensor, monitoring['min'][sensor]) }} ">
-									{{ monitoring["min"][sensor]| float2  }}
 								</td>
 							</tr>
 						{% endfor %}
