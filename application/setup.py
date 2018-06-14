@@ -140,6 +140,8 @@ def register_blueprints(app: Flask):
 		import modules.job_analyzer
 		import modules.job_import
 
+		import modules.sensor_heatmap
+
 		app.register_blueprint(application.controllers.core_pages, url_prefix='')
 
 		app.register_blueprint(modules.job_table.controllers.job_table_pages, url_prefix='/job_table')
@@ -167,3 +169,4 @@ def register_blueprints(app: Flask):
 		app.register_blueprint(modules.core_api.monitoring_controllers.job_monitoring_api_pages, url_prefix='/api/job')
 
 		app.register_blueprint(modules.job_import.controllers.job_import_pages, url_prefix='/api/job')
+		app.register_blueprint(modules.sensor_heatmap.controllers.sensor_heatmap_pages, url_prefix='/hm')

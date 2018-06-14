@@ -1,0 +1,40 @@
+<script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
+<script type="text/javascript" src="https://code.highcharts.com/modules/data.js"></script>
+<script type="text/javascript" src="https://code.highcharts.com/modules/heatmap.js"></script>
+<script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
+
+<script type="text/javascript" src="/hm/static/heatmap.js"></script>
+
+<script type="text/javascript" src="/static/jquery/jquery-1.9.1.min.js"></script>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+
+{% for n in [48, 49, 50, 51, 52, 53] %}
+		var data_{{n}} = [];
+{% endfor %}
+
+			{% for node_id, value in data %}
+				data_{{node_id // 1000}}.push([{{(node_id // 100) % 10}}, {{node_id % 100}}, {{value}}]);
+			{% endfor %}
+
+		{% for n in [48, 49, 50, 51, 52, 53] %}
+			draw_heatmap("container_{{n}}", data_{{n}}, "Rack {{n}}", 100, 1, {{n}});
+		{% endfor %}
+	});
+</script>
+
+<h1>CPU usage by node</h1>
+
+
+<table>
+<tr>
+{% for n in [48, 49, 50, 51, 52, 53] %}
+	<td>
+	<div id="container_{{n}}" style="height: 320px; width: 200px; margin: 0 auto"></div>
+	</td>
+{% endfor %}
+
+</tr>
+
+</table>
