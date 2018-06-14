@@ -223,7 +223,7 @@
 				</p>
 			</div>
 
-			{{ self.HeatmapLink() }}
+        {% block HeatmapLinkGpu scoped %}{% endblock %}
 
 		{% endfor %}
 	{% endif %}
