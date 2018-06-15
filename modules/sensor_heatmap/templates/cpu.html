@@ -14,27 +14,53 @@
 		var data_{{n}} = [];
 {% endfor %}
 
-			{% for node_id, value in data %}
+			{% for node_id, value in cpu_data %}
 				data_{{node_id // 1000}}.push([{{(node_id // 100) % 10}}, {{node_id % 100}}, {{value}}]);
 			{% endfor %}
 
 		{% for n in [48, 49, 50, 51, 52, 53] %}
-			draw_heatmap("container_{{n}}", data_{{n}}, "Rack {{n}}", 100, 1, {{n}});
+			draw_heatmap("cpu_{{n}}", data_{{n}}, "Rack {{n}}", 100, 1, {{n}});
+		{% endfor %}
+	});
+
+	$(document).ready(function() {
+
+{% for n in [48, 49, 50, 51, 52, 53] %}
+		var data_{{n}} = [];
+{% endfor %}
+
+			{% for node_id, value in gpu_data %}
+				data_{{node_id // 1000}}.push([{{(node_id // 100) % 10}}, {{node_id % 100}}, {{value}}]);
+			{% endfor %}
+
+		{% for n in [48, 49, 50, 51, 52, 53] %}
+			draw_heatmap("gpu_{{n}}", data_{{n}}, "Rack {{n}}", 100, 1, {{n}});
 		{% endfor %}
 	});
 </script>
 
-<h1>CPU usage by node</h1>
-
+<h3>CPU usage by node</h3>
 
 <table>
 <tr>
 {% for n in [48, 49, 50, 51, 52, 53] %}
 	<td>
-	<div id="container_{{n}}" style="height: 320px; width: 200px; margin: 0 auto"></div>
+	<div id="cpu_{{n}}" style="height: 320px; width: 200px; margin: 0 auto"></div>
 	</td>
 {% endfor %}
 
 </tr>
+</table>
 
+<h3>GPU usage by node</h3>
+<table>
+<tr>
+
+{% for n in [48, 49, 50, 51, 52, 53] %}
+	<td>
+	<div id="gpu_{{n}}" style="height: 320px; width: 200px; margin: 0 auto"></div>
+	</td>
+{% endfor %}
+
+</tr>
 </table>

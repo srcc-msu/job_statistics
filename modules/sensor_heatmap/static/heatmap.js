@@ -124,15 +124,15 @@ function draw_heatmap(id, data, header, max_value, data_step, rack)
 			}
 		},
 
+    tooltip: {
+        formatter: function () {
+		return 'n' + rack + this.point.x + ((this.point.y < 10) ? "0" : "") + this.y + ": " + this.point.value + " %";
+        }
+    },
+
 		series: [{
 			nullColor: '#EFEFEF',
 			colsize: data_step,
-			tooltip: {
-	            headerFormat: '',
-
-				pointFormat: 'n' + rack + '{point.x}{point.y}: {point.value} %'
-
-			},
 			turboThreshold: Number.MAX_VALUE // #3404, remove after 4.0.5 release
 		}]
 	}

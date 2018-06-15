@@ -10,22 +10,24 @@ sensor_heatmap_pages = Blueprint('sensor_heatmap', __name__
 import time
 
 def __heatmap():
-	sensor_class = SENSOR_CLASS_MAP["cpu_user"]
+	cpu = SENSOR_CLASS_MAP["cpu_user"]
+	gpu = SENSOR_CLASS_MAP["gpu_load"]
 
 	interval = current_app.app_config.monitoring["aggregation_interval"]
 
-	time_thr = int(time.time() - interval * 2)
+	time_thr = int(time.time() - interval * 3)
 
-	query = (global_db.session.query(sensor_class.node_id, sensor_class.avg)
-		.filter(sensor_class.time > time_thr)
-		.order_by("time desc")
-		.limit(1364))
+	cpu_data = list(global_db.session.query(cpu.node_id, cpu.avg)
+		.filter(cpu.time > time_thr)
+		.order_by("time desc").all())
 
-	data = query.all()
+	gpu_data = list(global_db.session.query(gpu.node_id, gpu.avg)
+		.filter(gpu.time > time_thr)
+		.order_by("time desc").all())
 
-	return render_template("cpu.html", data = data)
+	return render_template("cpu.html", cpu_data = cpu_data, gpu_data = gpu_data)
 
-@sensor_heatmap_pages.route("/cpu")
+@sensor_heatmap_pages.route("/general")
 @requires_auth
 def heatmap() -> Response:
 	return __heatmap()
