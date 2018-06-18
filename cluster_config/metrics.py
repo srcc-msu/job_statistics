@@ -23,7 +23,7 @@ def get_occupied_switches(job):
 def calculate_network_locality(job, occupied_switches):
 	return 1.0 * len(occupied_switches) / ((job["num_nodes"] - 1) // NODES_PER_SWITCH + 1)
 
-def __test_package(checklist, res, command, workdir):
+def _test_package(checklist, res, command, workdir):
 	if type(checklist) is not list:
 		checklist = [checklist]
 
@@ -58,7 +58,7 @@ def classify(command: str, workdir: str):
 		, [["charmrun", "namd2"], "NAMD"]
 		, ["g09", "Gaussian"]
 		, ["mppcrystal", "Crystal"]
-		, [["flowvison", "fvsolver"], "Flowvison"]
+		, [["flowvision", "fvsolver"], "FlowVision"]
 		, ["materialsstudio", "MaterialsStudio"]
 		, ["openfoam", "OpenFOAM"]
 		, ["turbomole", "Turbomole"]
@@ -68,10 +68,16 @@ def classify(command: str, workdir: str):
 		, ["parMatt", "ParMatt"]
 		, ["priroda", "Priroda"]
 		, ["cabaret", "CABARET"]
+
+		, ["amplxe", "Intel Vtune"]
+		, ["advixe", "Intel Advisor"]
+		, ["inspxe", "Intel Inspector"]
+
+		, ["pmu-tools", "pmu-tools"]
 	]
 
 	for checklist, package in data:
-		result = __test_package(checklist, package, command, workdir)
+		result = _test_package(checklist, package, command, workdir)
 		if result is not None:
 			return result
 
