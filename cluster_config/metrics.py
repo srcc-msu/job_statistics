@@ -28,8 +28,13 @@ def _test_package(checklist, res, command, workdir):
 		checklist = [checklist]
 
 	for item in checklist:
-		if item in command or item in workdir:
+		if item in command:
 			return res
+
+	for item in checklist:
+		if item in workdir:
+			return res
+
 	return None
 
 def classify(command: str, workdir: str):
@@ -42,7 +47,7 @@ def classify(command: str, workdir: str):
 		, [["espresso", "qexpresso"], "Quantum Espresso"]
 		, ["magma", "Magma"]
 		, [["namd"], "NAMD"]
-		, [["mdrun", "gmx_mpi", "gromacs"], "Gromacs"]
+		, [["mdrun", "gmx_mpi", "gromacs", "/gmx"], "Gromacs"]
 		, [["lmp_", "lammps"], "LAMMPS"]
 		, [["sol-p", "dimonta"], "SOL-P"]
 		, ["nwchem", "NWChem"]
@@ -56,7 +61,7 @@ def classify(command: str, workdir: str):
 		, ["athena", "Athena"]
 		, [["dlpoly", "dl_poly", "dl_classic"], "DL_POLY"]
 		, [["charmrun", "namd2"], "NAMD"]
-		, ["g09", "Gaussian"]
+		, [["/g09", "g16/g16", "gaussian"], "Gaussian"]
 		, ["mppcrystal", "Crystal"]
 		, [["flowvision", "fvsolver"], "FlowVision"]
 		, ["materialsstudio", "MaterialsStudio"]
@@ -68,11 +73,18 @@ def classify(command: str, workdir: str):
 		, ["parMatt", "ParMatt"]
 		, ["priroda", "Priroda"]
 		, ["cabaret", "CABARET"]
+		, ["/orca", "ORCA"]
+		, ["/xhpl", "HPL"]
+		, [["/xhpcg", "/hpcg"], "HPCG"]
+		, ["/nemo", "NEMO"]
+		, ["/mustang", "MUSTANG"]
+		, ["/beatbox", "BEATBOX"]
+		, ["/plumed", "PLUMED"]
+		, ["/dpd", "DPD"]
 
 		, ["amplxe", "Intel Vtune"]
-		, ["advixe", "Intel Advisor"]
+		, ["advixse", "Intel Advisor"]
 		, ["inspxe", "Intel Inspector"]
-
 		, ["pmu-tools", "pmu-tools"]
 	]
 
