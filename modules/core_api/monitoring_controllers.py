@@ -38,10 +38,12 @@ def shrinked(data, shrink_threshold):
 
 	return result
 
-@job_monitoring_api_pages.route("/<int:record_id>/sensor/<string:sensor>")
+SHRINK_THRESHOLD = 500
+
+@job_monitoring_api_pages.route("/<int:record_id>/sensor/<string:sensor>", defaults={'shrink': SHRINK_THRESHOLD})
+@job_monitoring_api_pages.route("/<int:record_id>/sensor/<string:sensor>/<int:shrink>")
 @crossdomain(origin='*')
-def job_sensor(sensor: str, record_id: int) -> Response:
-	SHRINK_THRESHOLD = 500
+def job_sensor(sensor: str, record_id: int, shrink: int) -> Response:
 
 	job = Job.query.get(record_id)
 
@@ -66,7 +68,7 @@ def job_sensor(sensor: str, record_id: int) -> Response:
 
 	data = query.all()
 
-	if len(data) < SHRINK_THRESHOLD:
+	if len(data) < shrink:
 		result = []
 
 		for entry in data:
@@ -81,4 +83,5 @@ def job_sensor(sensor: str, record_id: int) -> Response:
 		return jsonify(result)
 
 	else:
-		return jsonify(shrinked(data, SHRINK_THRESHOLD))
+		return jsonify(shrinked(data, shrink))
+
