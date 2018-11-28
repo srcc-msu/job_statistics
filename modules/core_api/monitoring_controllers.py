@@ -6,6 +6,7 @@ from core.job.helpers import expand_nodelist
 from core.job.models import Job
 from core.monitoring.models import JobPerformance, SENSOR_CLASS_MAP
 from application.helpers import crossdomain
+from modules.core_api.helpers import shrinked
 
 job_monitoring_api_pages= Blueprint('job_monitoring_api', __name__
 	, template_folder='templates')
@@ -17,26 +18,6 @@ def json_job_performance(record_id: int) -> Response:
 	data = JobPerformance.query.get(record_id)
 
 	return jsonify(data.to_dict())
-
-def shrinked(data, shrink_threshold):
-	result = []
-
-	factor = len(data) // shrink_threshold
-
-	chunks = (data[x:x+factor] for x in range(0, len(data), factor))
-	for chunk in chunks:
-		l = len(chunk)
-
-		result.append({
-			"time": chunk[0][0]
-			, "min" : min((x[1] for x in chunk))
-			, "max" : max((x[2] for x in chunk))
-			, "avg_min" : sum((x[3] for x in chunk)) / l
-			, "avg_max" : sum((x[4] for x in chunk)) / l
-			, "avg" : sum((x[5] for x in chunk)) / l
-		})
-
-	return result
 
 SHRINK_THRESHOLD = 500
 
