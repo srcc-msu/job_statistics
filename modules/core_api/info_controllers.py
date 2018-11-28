@@ -6,11 +6,11 @@ from application.helpers import crossdomain
 job_info_api_pages = Blueprint('job_info_api', __name__
 	, template_folder='templates')
 
-@job_info_api_pages.route("/job_record/<int:job_id>/<int:task_id>")
-@job_info_api_pages.route("/job_record/<int:job_id>", defaults={'task_id': 0})
+@job_info_api_pages.route("/record/<int:job_id>/<int:task_id>")
+@job_info_api_pages.route("/record/<int:job_id>", defaults={'task_id': 0})
 @crossdomain(origin='*')
 def json_job(job_id: int, task_id: int) -> Response:
-	return Job.get_by_id(job_id, task_id).id
+	return str(Job.get_by_id(job_id, task_id).id)
 
 @job_info_api_pages.route("/<int:record_id>")
 @crossdomain(origin='*')

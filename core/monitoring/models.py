@@ -39,7 +39,7 @@ class JobPerformance(global_db.Model):
 		job = Job.query.get(self.fk_job_id)
 
 		for sensor in SENSOR_LIST:
-			stats = SENSOR_CLASS_MAP[sensor].get_stats(job.expanded_nodelist, job.t_start + offset, job.t_end - offset)
+			stats = SENSOR_CLASS_MAP[sensor].get_stats(job.expanded_nodelist, job.t_start + offset, job.t_end)
 
 			self.__setattr__("min_" + sensor, stats["min"])
 			self.__setattr__("max_" + sensor, stats["max"])
