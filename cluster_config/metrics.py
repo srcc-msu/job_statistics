@@ -1,11 +1,10 @@
 import sys
 from cluster_config.node_switch_map import node_switch_map
-from core.job.helpers import expand_nodelist
 
 NODES_PER_SWITCH = 8
 
 def get_occupied_switches(job):
-	nodes = expand_nodelist(job["nodelist"])
+	nodes = job.expanded_nodelist
 
 	switches = set()
 

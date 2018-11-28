@@ -14,7 +14,7 @@ def json_job(job_id: int, task_id: int) -> Response:
 
 @job_info_api_pages.route("/<int:record_id>")
 @crossdomain(origin='*')
-def json_job(record_id: int) -> Response:
+def job_record(record_id: int) -> Response:
 	return redirect(request.base_url + "/info")
 
 @job_info_api_pages.route("/<int:record_id>/info")

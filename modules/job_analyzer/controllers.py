@@ -31,22 +31,27 @@ def get_running_stats(interval: int) -> List[dict]:
 	offset = current_app.app_config.monitoring["aggregation_interval"]
 
 	for job in jobs:
-		if timestamp - job.t_start < interval:
-			continue
-
 		data = {
-			"stats" : {}
+			"stats" : {"cpu": {"avg": -1}, "la": {"avg": -1}}
 			, "job" : job.to_dict() # TODO: ???
 		}
 
-		nodelist = list(map(current_app.app_config.cluster["node2int"], expand_nodelist(job.nodelist)))
+		results.append(data)
 
-		data["stats"]["cpu"] = SENSOR_CLASS_MAP["cpu_user"].get_stats(nodelist, timestamp - interval + offset, timestamp)
-		data["stats"]["la"] = SENSOR_CLASS_MAP["loadavg"].get_stats(nodelist, timestamp - interval + offset, timestamp)
+		if timestamp - job.t_start < interval:
+			data["class"] = "recent"
+			continue
+
+		if timestamp > job.t_end < interval:
+			data["class"] = "outdated"
+			continue
+
+
+		data["stats"]["cpu"] = SENSOR_CLASS_MAP["cpu_user"].get_stats(job.expanded_nodelist, timestamp - interval + offset, timestamp)
+		data["stats"]["la"] = SENSOR_CLASS_MAP["loadavg"].get_stats(job.expanded_nodelist, timestamp - interval + offset, timestamp)
 
 		data["class"] = assign_job_class(data)
 
-		results.append(data)
 
 	return results
 

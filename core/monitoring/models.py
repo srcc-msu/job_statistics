@@ -3,7 +3,6 @@ from typing import List
 from sqlalchemy import func, Float
 
 from application.database import global_db
-from core.job.helpers import expand_nodelist
 from core.job.models import Job
 from core.monitoring.constants import SENSOR_LIST
 from core.monitoring.helpers import nodelist2ids
@@ -39,10 +38,8 @@ class JobPerformance(global_db.Model):
 	def update(self, offset: int):
 		job = Job.query.get(self.fk_job_id)
 
-		filter_nodelist = nodelist2ids(expand_nodelist(job.nodelist))
-
 		for sensor in SENSOR_LIST:
-			stats = SENSOR_CLASS_MAP[sensor].get_stats(filter_nodelist, job.t_start + offset, job.t_end - offset)
+			stats = SENSOR_CLASS_MAP[sensor].get_stats(job.expanded_nodelist, job.t_start + offset, job.t_end - offset)
 
 			self.__setattr__("min_" + sensor, stats["min"])
 			self.__setattr__("max_" + sensor, stats["max"])
@@ -61,22 +58,61 @@ class Sensor(global_db.Model):
 	avg = global_db.Column("avg", global_db.Float)
 
 	@classmethod
-	def get_stats(cls, nodelist: List[int], t_from : int, t_to: int):
-		sensor_query = (global_db.session.query(
+	def get_stats(cls, nodelist: List[str], t_from : int, t_to: int):
+		id_list = nodelist2ids(nodelist)
+
+		query = (global_db.session.query(
 				func.min(cls.min).cast(Float).label("min")
 				, func.max(cls.max).cast(Float).label("max")
 				, func.avg(cls.avg).cast(Float).label("avg"))
 			.filter(cls.time > t_from)
 			.filter(cls.time < t_to)
-			.filter(cls.node_id.in_(nodelist)))
+			.filter(cls.node_id.in_(id_list)))
 
-		result = sensor_query.one()
+		result = query.one()
 
 		return {
 			"min" : result[0]
 			, "max" : result[1]
 			, "avg" : result[2]
 		}
+
+	@classmethod
+	def get_raw(cls, nodelist: List[str], t_from : int, t_to: int):
+		id_list = nodelist2ids(nodelist)
+
+		query = (global_db.session.query(
+			cls.time
+				, func.min(cls.min).cast(Float).label("min")
+				, func.max(cls.max).cast(Float).label("max")
+				, func.avg(cls.min).cast(Float).label("avg_min")
+				, func.avg(cls.max).cast(Float).label("avg_max")
+				, func.avg(cls.avg).cast(Float).label("avg"))
+			.filter(cls.time > t_from)
+			.filter(cls.time < t_to)
+			.filter(cls.node_id.in_(id_list))
+			.group_by(cls.time)
+			.order_by(cls.time))
+
+		return list(query.all())
+
+	@classmethod
+	def get_heatmap(cls, nodelist: List[str], t_from : int, t_to: int):
+		id_list = nodelist2ids(nodelist)
+
+		query = (global_db.session.query(
+				cls.time
+				, cls.node_id
+				, cls.min
+				, cls.max
+				, cls.avg)
+			.filter(cls.time > t_from)
+			.filter(cls.time < t_to)
+			.filter(cls.node_id.in_(id_list)))
+
+		return list(query.all())
+
+
 
 SENSOR_CLASS_MAP = {}
 

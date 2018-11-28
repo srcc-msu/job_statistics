@@ -2,7 +2,6 @@ from flask import jsonify, Response, current_app, Blueprint
 from sqlalchemy import func, Float
 
 from application.database import global_db
-from core.job.helpers import expand_nodelist
 from core.job.models import Job
 from core.monitoring.models import JobPerformance, SENSOR_CLASS_MAP
 from application.helpers import crossdomain
@@ -32,22 +31,7 @@ def job_sensor(sensor: str, record_id: int, shrink: int) -> Response:
 
 	offset = current_app.app_config.monitoring["aggregation_interval"]
 
-	filter_nodelist = list(map(current_app.app_config.cluster["node2int"], expand_nodelist(job.nodelist)))
-
-	query = global_db.session.query(
-		sensor_class.time
-			, func.min(sensor_class.min).cast(Float).label("min")
-			, func.max(sensor_class.max).cast(Float).label("max")
-			, func.avg(sensor_class.min).cast(Float).label("avg_min")
-			, func.avg(sensor_class.max).cast(Float).label("avg_max")
-			, func.avg(sensor_class.avg).cast(Float).label("avg"))\
-		.filter(sensor_class.time > job.t_start + offset)\
-		.filter(sensor_class.time < job.t_end - offset)\
-		.filter(sensor_class.node_id.in_(filter_nodelist))\
-		.group_by(sensor_class.time)\
-		.order_by(sensor_class.time)
-
-	data = query.all()
+	data = sensor_class.get_raw(job.expanded_nodelist, job.t_start + offset, job.t_end)
 
 	if len(data) < shrink:
 		result = []

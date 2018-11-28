@@ -1,9 +1,9 @@
-import re
+import sqlalchemy
 from typing import List
 
-import sqlalchemy
-
 from application.database import global_db
+from core.job.helpers import expand_nodelist
+
 
 class Job(global_db.Model):
 	__tablename__ = 'job'
@@ -37,6 +37,10 @@ class Job(global_db.Model):
 	command = global_db.Column(global_db.Text())
 	workdir = global_db.Column(global_db.Text())
 	nodelist = global_db.Column(global_db.Text())
+
+	@property
+	def expanded_nodelist(self) -> List[str]:
+		return expand_nodelist(self.nodelist)
 
 	def __init__(self, job_id: int, task_id: int, partition: str, account: str
 			, t_submit: int, t_start: int, t_end: int, timelimit: int

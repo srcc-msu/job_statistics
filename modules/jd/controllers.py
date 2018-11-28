@@ -6,7 +6,7 @@ from werkzeug.exceptions import abort
 from core.job.models import Job
 from core.monitoring.models import JobPerformance, SENSOR_CLASS_MAP
 from core.tag.models import JobTag
-from core.job.helpers import id2hash, hash2id, username2id, expand_nodelist
+from core.job.helpers import id2hash, hash2id, username2id
 from application.database import global_db
 from modules.job_table.helpers import get_color
 from application.helpers import requires_auth
@@ -67,20 +67,9 @@ def __heatmap(job_id: int, task_id: int, sensor: str):
 
 	sensor_class = SENSOR_CLASS_MAP[sensor]
 
-	filter_nodelist = list(map(current_app.app_config.cluster["node2int"], expand_nodelist(job.nodelist)))
-
 	offset = current_app.app_config.monitoring["aggregation_interval"]
 
-	query = global_db.session.query(sensor_class.time
-			, sensor_class.node_id
-			, sensor_class.min
-			, sensor_class.max
-			, sensor_class.avg)\
-		.filter(sensor_class.time > job.t_start + offset)\
-		.filter(sensor_class.time < job.t_end - offset)\
-		.filter(sensor_class.node_id.in_(filter_nodelist))
-
-	data = query.all()
+	data = sensor_class.get_heatmap(job.expanded_nodelist, job.t_start + offset, job.t_end)
 	data_max_value = max(map(lambda x: max(x[2:]), data), default = 0)
 
 	nodes = sorted(list(set([line[1] for line in data])))
