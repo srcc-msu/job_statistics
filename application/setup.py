@@ -165,6 +165,7 @@ def register_blueprints(app: Flask):
 		app.register_blueprint(modules.job_analyzer.api_controllers.job_analyzer_api_pages, url_prefix='/api/analyzer')
 
 		app.register_blueprint(modules.core_api.info_controllers.job_info_api_pages, url_prefix='/api/job')
+		app.register_blueprint(modules.core_api.metrics_controllers.job_metrics_api_pages, url_prefix='/api/job')
 		app.register_blueprint(modules.core_api.tag_controllers.job_tag_api_pages, url_prefix='/api/job')
 		app.register_blueprint(modules.core_api.monitoring_controllers.job_monitoring_api_pages, url_prefix='/api/job')
 
