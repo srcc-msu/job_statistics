@@ -1,4 +1,4 @@
-from flask import jsonify, Response, request, redirect, Blueprint
+from flask import jsonify, Response, request, redirect, Blueprint, abort
 
 from core.job.models import Job
 from application.helpers import crossdomain
@@ -10,7 +10,10 @@ job_info_api_pages = Blueprint('job_info_api', __name__
 @job_info_api_pages.route("/record/<int:job_id>", defaults={'task_id': 0})
 @crossdomain(origin='*')
 def json_job(job_id: int, task_id: int) -> Response:
-	return str(Job.get_by_id(job_id, task_id).id)
+	try:
+		return str(Job.get_by_id(job_id, task_id).id)
+	except LookupError:
+		abort(404)
 
 @job_info_api_pages.route("/<int:record_id>")
 @crossdomain(origin='*')
